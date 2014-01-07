@@ -1,5 +1,7 @@
 package ygame.framework.domain;
 
+import java.util.Map;
+
 import ygame.framework.core.YSystem;
 
 //由系统建立、给予/收回该对象，客户不能控制其创建、回收
@@ -32,50 +34,11 @@ public final class YReadBundle
 {
 	// 换成原子引用会更好?
 	// fei problem
-	volatile YBundleHolder holder;
+	//XXX
+	volatile Map<Integer, Object> map;
 
 	YReadBundle()
 	{
-	}
-
-	/**
-	 * 从包裹中读取“投影-视图-模型矩阵”
-	 * 
-	 * @return “投影-视图-模型矩阵”，浮点型数组
-	 */
-	public float[] readMVP_Matrix()
-	{
-		return holder.f_arrMVP_Matrix;
-	}
-
-	/**
-	 * 从包裹中读取“视图-模型矩阵”
-	 * 
-	 * @return “视图-模型矩阵”，浮点型数组
-	 */
-	public float[] readMV_Matrix()
-	{
-		return holder.f_arrMV_Matrix;
-	}
-
-	/**
-	 * 从包裹中读取“模型矩阵”
-	 * 
-	 * @return “模型矩阵”，浮点型数组
-	 */
-	public float[] readModelMatrix()
-	{
-		return holder.f_arrModelMatrix;
-	}
-
-	/**
-	 * 从包裹中读取“纹理法向量矩阵”
-	 * 
-	 * @return “纹理法向量矩阵”，浮点型数组
-	 */
-	public float[] readNormalMatrix()
-	{
-		return holder.f_arrNormalMatrix;
 	}
 
 	/**
@@ -87,7 +50,7 @@ public final class YReadBundle
 	 */
 	public float[] readFloatArray(int iSlotKey)
 	{
-		return (float[]) holder.map.get(iSlotKey);
+		return (float[]) map.get(iSlotKey);
 	}
 
 }

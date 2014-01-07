@@ -1,5 +1,8 @@
 package ygame.framework.domain;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import android.annotation.SuppressLint;
 import ygame.framework.core.YABaseDomain;
 import ygame.framework.core.YCamera;
@@ -34,9 +37,11 @@ import ygame.math.Matrix4;
  */
 public class YBaseDomain extends YABaseDomain
 {
-	private YBundleHolder holder1 = new YBundleHolder();
-	private YBundleHolder holder2 = new YBundleHolder();
-
+	@SuppressLint("UseSparseArrays")
+	private Map<Integer, Object> map1 = new HashMap<Integer, Object>();
+	@SuppressLint("UseSparseArrays")
+	private Map<Integer, Object> map2 = new HashMap<Integer, Object>();
+	
 	private YADomainLogic logic;
 	private YADomainView view;
 
@@ -59,12 +64,12 @@ public class YBaseDomain extends YABaseDomain
 	{
 		if (bSide)
 		{
-			logic.bundle.holder = holder1;
-			view.bundle.holder = holder2;
+			logic.bundle.map = map1;
+			view.bundle.map = map2;
 		} else
 		{
-			logic.bundle.holder = holder2;
-			view.bundle.holder = holder1;
+			logic.bundle.map = map2;
+			view.bundle.map = map1;
 		}
 	}
 

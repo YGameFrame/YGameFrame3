@@ -23,7 +23,7 @@ import android.opengl.GLES20;
  * @author yunzhong
  * 
  */
-public enum YShaderValueType
+public enum YFormat
 {
 	YVEC2("vec2", 2, GLES20.GL_FLOAT, 4), //
 	YVEC3("vec3", 3, GLES20.GL_FLOAT, 4), //
@@ -47,7 +47,7 @@ public enum YShaderValueType
 	/** <b>维度所占字节数</b> */
 	public final int BYTES_PER_DIMENSION;
 
-	private YShaderValueType(String KEY_WORD, int DIMENSION,
+	private YFormat(String KEY_WORD, int DIMENSION,
 			int DIMENSION_TYPE, int BYTES_PER_DIMENSION)
 	{
 		this.KEY_WORD = KEY_WORD;
