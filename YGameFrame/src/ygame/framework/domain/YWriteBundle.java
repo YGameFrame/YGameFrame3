@@ -8,7 +8,7 @@ public final class YWriteBundle
 {
 	// 换成原子引用会更好?
 	// fei problem
-	//XXX
+	// XXX
 	volatile Map<Integer, Object> map;
 
 	YWriteBundle()
@@ -19,15 +19,14 @@ public final class YWriteBundle
 	 * 向包裹中写入浮点型数组
 	 * 
 	 * @param iDestinationSlotKey
-	 *                包裹目的槽位的键值
+	 *                写值的槽位
 	 * @param fSourceArray
 	 *                要写入包裹的浮点型数组
 	 */
 	public void writeFloatArray(int iDestinationSlotKey,
 			float[] fSourceArray)
 	{
-		float[] fDesArray = (float[]) map
-				.get(iDestinationSlotKey);
+		float[] fDesArray = (float[]) map.get(iDestinationSlotKey);
 		if (null == fDesArray)
 		{
 			fDesArray = new float[fSourceArray.length];
@@ -35,6 +34,19 @@ public final class YWriteBundle
 		}
 		System.arraycopy(fSourceArray, 0, fDesArray, 0,
 				fSourceArray.length);
+	}
+
+	/**
+	 * 向包裹中写入布尔值
+	 * 
+	 * @param iDestinationSlotKey
+	 *                写值的槽位
+	 * @param bSourceBoolean
+	 *                要写入包裹的布尔值
+	 */
+	public void writeBoolean(int iDestinationSlotKey, boolean bSourceBoolean)
+	{
+		map.put(iDestinationSlotKey, bSourceBoolean);
 	}
 
 }

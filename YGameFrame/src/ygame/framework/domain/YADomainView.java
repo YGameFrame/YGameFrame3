@@ -24,7 +24,19 @@ public abstract class YADomainView
 	 */
 	protected abstract void onDraw(YReadBundle bundle,
 			YBaseDomain domainContext);
-	
-	protected abstract void onGL_Initialize(YSystem system , YGL_Configuration configurationGL, int iWidth, int iHeight);
+
+	protected abstract void onGL_Initialize(YSystem system,
+			YGL_Configuration configurationGL, int iWidth,
+			int iHeight);
+
+	/**
+	 * 参见{@link YBaseDomain#onPreframe()}
+	 * 
+	 * @param domainContext
+	 *                实体上下文
+	 */
+	protected void onPreframe(YBaseDomain domainContext)
+	{
+	}
 
 }

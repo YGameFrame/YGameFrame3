@@ -5,7 +5,7 @@ import ygame.framework.core.YCamera;
 import ygame.framework.core.YScene;
 import ygame.framework.core.YSystem;
 import ygame.framework.request.YRequest;
-import ygame.math.Matrix4;
+import ygame.math.YMatrix;
 
 /**
  * <b>实体逻辑</b>
@@ -34,8 +34,8 @@ public abstract class YADomainLogic extends YAStateMachineContext
 
 	void onClockCycle(double dbElapseTime_s, YBaseDomain domainContext,
 			YSystem system, YScene sceneCurrent, YCamera camera,
-			Matrix4 matrix4vp, Matrix4 matrix4Projection,
-			Matrix4 matrix4View)
+			YMatrix matrix4vp, YMatrix matrix4Projection,
+			YMatrix matrix4View)
 	{
 		onClockCycle(dbElapseTime_s, domainContext, bundle, system,
 				sceneCurrent, camera, matrix4vp,
@@ -75,8 +75,8 @@ public abstract class YADomainLogic extends YAStateMachineContext
 	abstract protected void onClockCycle(double dbElapseTime_s,
 			YBaseDomain domainContext, YWriteBundle bundle,
 			YSystem system, YScene sceneCurrent, YCamera camera,
-			Matrix4 matrix4VP, Matrix4 matrix4Projection,
-			Matrix4 matrix4View);
+			YMatrix matrix4VP, YMatrix matrix4Projection,
+			YMatrix matrix4View);
 
 	/**
 	 * 在此处处理对象收到的<b>请求</b>{@link YRequest}
@@ -86,5 +86,15 @@ public abstract class YADomainLogic extends YAStateMachineContext
 	 *                请求
 	 */
 	abstract protected void onDealRequest(YRequest request);
+
+	/**
+	 * 参见{@link YBaseDomain#onPreframe()}
+	 * 
+	 * @param domainContext
+	 *                实体上下文
+	 */
+	protected void onPreframe(YBaseDomain domainContext)
+	{
+	}
 
 }

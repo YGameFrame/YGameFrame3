@@ -25,7 +25,15 @@ import ygame.skeleton.YSkeleton;
  */
 public class YSquare extends YSkeleton
 {
+	private float fSideLength;
+
 	public YSquare(float fSideLength)
+	{
+		this.fSideLength = fSideLength;
+		fillData();
+	}
+
+	private void fillData()
 	{
 		float[] fVertexPosition =
 		{ -fSideLength, -fSideLength, 0, // 左下
@@ -48,5 +56,6 @@ public class YSquare extends YSkeleton
 		setColors(fVertexColor);
 		setPositions(fVertexPosition);
 		setIndices(sIndices);
+
 	}
 }

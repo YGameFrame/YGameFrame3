@@ -12,7 +12,7 @@ import ygame.skeleton.YSkeleton;
  * <b>实体视图</b>
  * 
  * <p>
- * <b>概述</b>： 该视图使用您在构造方法中传入的<b>着色程序</b>
+ * <b>概述</b>： 该视图使用您中传入的<b>着色程序</b>
  * {@link YAShaderProgram}进行渲染
  * 
  * <p>
@@ -32,20 +32,40 @@ import ygame.skeleton.YSkeleton;
  */
 public final class YDomainView extends YADomainView
 {
-	private YAShaderProgram program;
+	YAShaderProgram<?> program;
 	private YSkeleton skeleton;
 
-	public YDomainView(YSkeleton skeleton, YAShaderProgram program)
+	/**
+	 * 指定渲染该视图的<b>渲染程序</b>{@link YAShaderProgram}
+	 * 
+	 * @param program
+	 *                渲染程序
+	 * @return 视图对象
+	 */
+	public YDomainView useProgram(YAShaderProgram<?> program)
 	{
 		this.program = program;
+		return this;
+	}
+
+	/**
+	 * 指定渲染的<b>顶点骨架</b>{@link YSkeleton}
+	 * 
+	 * @param skeleton
+	 *                顶点骨架
+	 * @return 视图对象
+	 */
+	public YDomainView shade(YSkeleton skeleton)
+	{
 		this.skeleton = skeleton;
+		return this;
 	}
 
 	@Override
 	protected void onDraw(YReadBundle bundle, YBaseDomain domainContext)
 	{
 		GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
-		program.startRendering();
+		program.startRendering(skeleton);
 		program.applyParams(program.iProgramHandle, bundle, skeleton);
 		program.endRendering();
 
@@ -120,8 +140,7 @@ public final class YDomainView extends YADomainView
 			YGL_Configuration configurationGL, int iWidth,
 			int iHeight)
 	{
-		int iProgram = program.initialize();
-		skeleton.initilize(iProgram);
+		program.initialize(skeleton);
 		GLES20.glClearColor(1f, 1f, 0.8f, 1f);
 		// YTextureManager textureManager =
 		// YTextureManager.getInstance();

@@ -27,6 +27,11 @@ public class YTriangle extends YSkeleton
 {
 	public YTriangle()
 	{
+		fillData();
+	}
+
+	private void fillData()
+	{
 		float[] fVertexPosition =
 		{ -1, 0, 0,// 左点
 				1, 0, 0, // 右点

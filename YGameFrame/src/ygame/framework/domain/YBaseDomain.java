@@ -10,7 +10,7 @@ import ygame.framework.core.YGL_Configuration;
 import ygame.framework.core.YScene;
 import ygame.framework.core.YSystem;
 import ygame.framework.request.YRequest;
-import ygame.math.Matrix4;
+import ygame.math.YMatrix;
 
 /**
  * <b>实体</b>
@@ -41,9 +41,11 @@ public class YBaseDomain extends YABaseDomain
 	private Map<Integer, Object> map1 = new HashMap<Integer, Object>();
 	@SuppressLint("UseSparseArrays")
 	private Map<Integer, Object> map2 = new HashMap<Integer, Object>();
-	
+
 	private YADomainLogic logic;
 	private YADomainView view;
+
+	private boolean bSide;
 
 	/**
 	 * @param logic
@@ -60,8 +62,18 @@ public class YBaseDomain extends YABaseDomain
 	}
 
 	@Override
-	final protected void onSwap(boolean bSide)
+	protected void onPreframe()
 	{
+		// 交换内存块
+		swapMem();
+		
+		logic.onPreframe(this);
+		view.onPreframe(this);
+	}
+
+	private void swapMem()
+	{
+		bSide = !bSide;
 		if (bSide)
 		{
 			logic.bundle.map = map1;
@@ -82,8 +94,8 @@ public class YBaseDomain extends YABaseDomain
 
 	@Override
 	protected void onClockCycle(double dbElapseTime_s, YSystem system,
-			YScene sceneCurrent, YCamera camera, Matrix4 matrix4VP,
-			Matrix4 matrix4Projection, Matrix4 matrix4View)
+			YScene sceneCurrent, YCamera camera, YMatrix matrix4VP,
+			YMatrix matrix4Projection, YMatrix matrix4View)
 	{
 		logic.onClockCycle(dbElapseTime_s, this, system, sceneCurrent,
 				camera, matrix4VP, matrix4Projection,
@@ -101,7 +113,7 @@ public class YBaseDomain extends YABaseDomain
 			YGL_Configuration configurationGL, int iWidth,
 			int iHeight)
 	{
-		view.onGL_Initialize(system, configurationGL , iWidth, iHeight);
+		view.onGL_Initialize(system, configurationGL, iWidth, iHeight);
 	}
 
 }

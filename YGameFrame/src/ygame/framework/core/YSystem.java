@@ -45,6 +45,7 @@ public final class YSystem extends YAStateMachineContext
 {
 	private static final String strTAG = "YSystem";
 
+	//XXX
 	public YABaseDomain domainTest;
 
 	/**
@@ -83,8 +84,6 @@ public final class YSystem extends YAStateMachineContext
 	private double dbLastClockTime_ms;
 	private ScheduledExecutorService sesTimer;
 	private double dbFrameRate_fps;
-
-	private boolean bSide;
 
 	private CyclicBarrier barrier = new CyclicBarrier(2);
 
@@ -177,11 +176,10 @@ public final class YSystem extends YAStateMachineContext
 				null, null, null);
 	}
 
-	private void swap()
+	private void preFrame()
 	{
 		// TODO
-		bSide = !bSide;
-		domainTest.onSwap(bSide);
+		domainTest.onPreframe();
 	}
 
 	private void notifyClockCycle()
@@ -191,7 +189,7 @@ public final class YSystem extends YAStateMachineContext
 		// pollRequestQueue();
 
 		// // 交换内存块
-		swap();
+		preFrame();
 
 		// 通知视图渲染
 		YVIEW.requestRender();
@@ -223,9 +221,10 @@ public final class YSystem extends YAStateMachineContext
 
 		configurationGL = YGL_Configuration.getInstanceInGL();
 
+		dbLastClockTime_ms = SystemClock.elapsedRealtime();
 		for (int i = 0; i < 2; i++)
 		{
-			swap();
+			preFrame();
 			clockCycle();
 		}
 

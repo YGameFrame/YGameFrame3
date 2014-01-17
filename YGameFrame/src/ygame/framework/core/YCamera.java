@@ -1,271 +1,191 @@
 package ygame.framework.core;
 
-import ygame.math.Matrix4;
-import ygame.math.Quaternion;
-import ygame.math.YATransformer;
-import ygame.math.YFrustum;
+import ygame.math.YMatrix;
 import ygame.math.vector.Vector3;
-import ygame.math.vector.Vector3.Axis;
+import ygame.transformable.IMover;
 
-public class YCamera extends YATransformer
+/**
+ * <b>摄像机</b>
+ * 
+ * <p>
+ * <b>概述</b>： TODO
+ * 
+ * <p>
+ * <b>建议</b>： TODO
+ * 
+ * <p>
+ * <b>详细</b>： TODO
+ * 
+ * <p>
+ * <b>注</b>： TODO
+ * 
+ * <p>
+ * <b>例</b>： TODO
+ * 
+ * @author yunzhong
+ * 
+ */
+public class YCamera implements IMover
 {
+	private YMatrix matrixProj = new YMatrix();
+	private float left;
+	private float right;
+	private float bottom;
+	private float top;
+	private float near = 1;
+	private float far = 30;
+	private boolean bDirtyProj;
 
-	protected final Object mFrustumLock = new Object();
-
-	/**
-	 * The following members are all guarded by
-	 * {@link #mFrustumLock}
-	 */
-	protected final Matrix4 mVMatrix = new Matrix4();
-	protected final Matrix4 mRotationMatrix = new Matrix4();
-	protected final Matrix4 mProjMatrix = new Matrix4();
-	protected double mNearPlane = 1.0;
-	protected double mFarPlane = 120.0;
-	protected double mFieldOfView = 45.0;
-	protected int mLastWidth;
-	protected int mLastHeight;
-	protected final Vector3 mUpAxis;
-	protected boolean mUseRotationMatrix = false;
-	public YFrustum mFrustum;
-
-	// Camera's localized vectors
-	protected Vector3 mRightVector;
-	protected Vector3 mUpVector;
-	protected Vector3 mLookVector;
-	protected Quaternion mLocalOrientation;
-	/**
-	 * End guarded members
-	 */
-
-	protected int mFogColor = 0xdddddd;
-	protected float mFogNear = 5f;
-	protected float mFogFar = 25f;
-	protected boolean mFogEnabled = false;
+	private YMatrix matrixView = new YMatrix();
+	private float eyeX = 0;
+	private float eyeY = 0;
+	private float eyeZ = 3;
+	private float targetX = 0;
+	private float targetY = 0;
+	private float targetZ = 0;
+	private float upX = 0;
+	private float upY = 1;
+	private float upZ = 0;
+	private boolean bDirtyView = false;
+	private float angle = 0;
+	private Vector3 vector3Shaft = new Vector3(0, 0, 1);
 
 	public YCamera()
 	{
-		super();
-		mLocalOrientation = Quaternion.getIdentity();
-		mUpAxis = new Vector3(0, 1, 0);
-		mIsCamera = true;
-		mFrustum = new YFrustum();
+		matrixView.setLookAtM(eyeX, eyeY, eyeZ, targetX, targetY,
+				targetZ, upX, upY, upZ);
 	}
 
-	public Matrix4 getViewMatrix()
+	/**
+	 * 设置投影矩阵
+	 * 
+	 * @param iWidth
+	 *                视口宽度
+	 * @param iHeight
+	 *                视口高度
+	 */
+	public void setProjectionMatrix(int iWidth, int iHeight)
 	{
-		synchronized (mFrustumLock)
+		bDirtyProj = true;
+		left = -1;
+		right = 1;
+		bottom = -iHeight / (float) iWidth;
+		top = iHeight / (float) iWidth;
+	}
+
+	/**
+	 * 获取视图矩阵
+	 * 
+	 * @return 视图矩阵
+	 */
+	public YMatrix getViewMatrix()
+	{
+		update();
+		return matrixView;
+	}
+
+	/**
+	 * 获取投影矩阵
+	 * 
+	 * @return 投影矩阵
+	 */
+	public YMatrix getProjectMatrix()
+	{
+		update();
+		return matrixProj;
+	}
+
+	private boolean update()
+	{
+		boolean bRes = false;
+		if (bDirtyProj)
 		{
-			if (mLookAt != null)
-			{
-				mVMatrix.setToLookAt(mPosition, mLookAt,
-						mUpAxis);
-				mLocalOrientation.fromEuler(mRotation.y,
-						mRotation.z, mRotation.x);
-				mVMatrix.rotate(mLocalOrientation);
-			} else
-			{
-				if (mUseRotationMatrix == false
-						&& mRotationDirty)
-				{
-					setOrientation();
-					mRotationDirty = false;
-				}
-				if (mUseRotationMatrix == false)
-				{
-					mOrientation.toRotationMatrix(mVMatrix);
-				} else
-				{
-					mVMatrix.setAll(mRotationMatrix);
-				}
-				mVMatrix.negTranslate(mPosition);
-			}
-			return mVMatrix;
+			matrixProj.frustum(left, right, bottom, top, near, far);
+			bDirtyProj = false;
+			bRes = true;
 		}
-	}
 
-	public void updateFrustum(Matrix4 invVPMatrix)
-	{
-		synchronized (mFrustumLock)
+		if (bDirtyView)
 		{
-			mFrustum.update(invVPMatrix);
+			matrixView.setLookAtM(eyeX, eyeY, eyeZ, targetX,
+					targetY, targetZ, upX, upY, upZ)
+					.rotate(angle, vector3Shaft.x,
+							vector3Shaft.y,
+							vector3Shaft.z);
+			bDirtyView = false;
+			bRes = true;
 		}
+
+		return bRes;
 	}
 
-	public void setRotationMatrix(Matrix4 m)
+	public float getAngle()
 	{
-		synchronized (mFrustumLock)
-		{
-			mRotationMatrix.setAll(m);
-		}
+		return angle;
 	}
 
-	public Matrix4 getRotationMatrix()
+	public YCamera setAngle(float angle)
 	{
-		synchronized (mFrustumLock)
-		{
-			return mRotationMatrix;
-		}
+		if (this.angle == angle)
+			return this;
+		bDirtyView = true;
+		this.angle = angle;
+		return this;
 	}
 
-	public void setProjectionMatrix(int width, int height)
+	public Vector3 getShaft()
 	{
-		synchronized (mFrustumLock)
-		{
-			mLastWidth = width;
-			mLastHeight = height;
-			double ratio = ((double) width) / ((double) height);
-			mProjMatrix.setToPerspective(mNearPlane, mFarPlane,
-					mFieldOfView, ratio);
-		}
+		return vector3Shaft;
 	}
 
-	public void setProjectionMatrix(double fieldOfView, int width,
-			int height)
+	public YCamera setShaft(Vector3 vector3Shaft)
 	{
-		synchronized (mFrustumLock)
-		{
-			mFieldOfView = fieldOfView;
-			setProjectionMatrix(width, height);
-		}
+		if (this.vector3Shaft.equals(vector3Shaft))
+			return this;
+		bDirtyView = true;
+		this.vector3Shaft = vector3Shaft;
+		return this;
 	}
 
-	public void setUpAxis(double x, double y, double z)
+	public float getX()
 	{
-		synchronized (mFrustumLock)
-		{
-			mUpAxis.setAll(x, y, z);
-		}
+		return eyeX;
 	}
 
-	public void setUpAxis(Vector3 upAxis)
+	public float getY()
 	{
-		synchronized (mFrustumLock)
-		{
-			mUpAxis.setAll(upAxis);
-		}
+		return eyeY;
 	}
 
-	public void setUpAxis(Axis upAxis)
+	public float getZ()
 	{
-		synchronized (mFrustumLock)
-		{
-			mUpAxis.setAll(upAxis);
-		}
+		return eyeZ;
 	}
 
-	public Matrix4 getProjectionMatrix()
+	public YCamera setX(float fX)
 	{
-		synchronized (mFrustumLock)
-		{
-			return mProjMatrix;
-		}
+		if (this.eyeX == fX)
+			return this;
+		bDirtyView = true;
+		eyeX = fX;
+		return this;
 	}
 
-	public double getNearPlane()
+	public YCamera setY(float fY)
 	{
-		synchronized (mFrustumLock)
-		{
-			return mNearPlane;
-		}
+		if (this.eyeY == fY)
+			return this;
+		bDirtyView = true;
+		eyeY = fY;
+		return this;
 	}
 
-	public void setNearPlane(double nearPlane)
+	public YCamera setZ(float fZ)
 	{
-		synchronized (mFrustumLock)
-		{
-			mNearPlane = nearPlane;
-			setProjectionMatrix(mLastWidth, mLastHeight);
-		}
+		if (this.eyeZ == fZ)
+			return this;
+		bDirtyView = true;
+		eyeZ = fZ;
+		return this;
 	}
-
-	public double getFarPlane()
-	{
-		synchronized (mFrustumLock)
-		{
-			return mFarPlane;
-		}
-	}
-
-	public void setFarPlane(double farPlane)
-	{
-		synchronized (mFrustumLock)
-		{
-			mFarPlane = farPlane;
-			setProjectionMatrix(mLastWidth, mLastHeight);
-		}
-	}
-
-	public double getFieldOfView()
-	{
-		synchronized (mFrustumLock)
-		{
-			return mFieldOfView;
-		}
-	}
-
-	public void setFieldOfView(double fieldOfView)
-	{
-		synchronized (mFrustumLock)
-		{
-			mFieldOfView = fieldOfView;
-			setProjectionMatrix(mLastWidth, mLastHeight);
-		}
-	}
-
-	public boolean getUseRotationMatrix()
-	{
-		synchronized (mFrustumLock)
-		{
-			return mUseRotationMatrix;
-		}
-	}
-
-	public void setUseRotationMatrix(boolean useRotationMatrix)
-	{
-		synchronized (mFrustumLock)
-		{
-			mUseRotationMatrix = useRotationMatrix;
-		}
-	}
-
-	public int getFogColor()
-	{
-		return mFogColor;
-	}
-
-	public void setFogColor(int fogColor)
-	{
-		mFogColor = fogColor;
-	}
-
-	public float getFogNear()
-	{
-		return mFogNear;
-	}
-
-	public void setFogNear(float fogNear)
-	{
-		mFogNear = fogNear;
-	}
-
-	public float getFogFar()
-	{
-		return mFogFar;
-	}
-
-	public void setFogFar(float fogFar)
-	{
-		mFogFar = fogFar;
-	}
-
-	public boolean isFogEnabled()
-	{
-		return mFogEnabled;
-	}
-
-	public void setFogEnabled(boolean fogEnabled)
-	{
-		mFogEnabled = fogEnabled;
-	}
-
 }

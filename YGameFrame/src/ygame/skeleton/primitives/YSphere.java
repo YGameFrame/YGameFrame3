@@ -34,6 +34,11 @@ public class YSphere extends YSkeleton
 
 	public YSphere()
 	{
+		fillData();
+	}
+
+	private void fillData()
+	{
 		int numVertices = (mSegmentsW + 1) * (mSegmentsH + 1);
 		int numIndices = 2 * mSegmentsW * (mSegmentsH - 1) * 3;
 

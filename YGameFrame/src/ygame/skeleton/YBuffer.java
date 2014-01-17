@@ -60,5 +60,11 @@ public final class YBuffer
 		this.buffer = YBufferUtils
 				.transportArrayToNativeBuffer(i_arrData);
 	}
+	
+	public YBuffer(YFormat format , short[] s_arrData)
+	{
+		this.format = format;
+		this.buffer = YBufferUtils.transportArrayToNativeBuffer(s_arrData);
+	}
 
 }

@@ -6,15 +6,16 @@ import ygame.framework.core.YSystem;
 import ygame.framework.domain.YADomainLogic;
 import ygame.framework.domain.YBaseDomain;
 import ygame.framework.domain.YWriteBundle;
-import ygame.math.Matrix4;
+import ygame.math.YMatrix;
 
 /**
  * <b>实体逻辑</b>
  * 
  * <p>
- * <b>概述</b>： 该对象中有一个<b>变换子</b>{@link YTransformer}——
- * {@link #transformer}，
- * 您可以使用它方便地对物体实施几何变换，如位移、旋转、缩放等，从而做出不错的 动画效果。
+ * <b>概述</b>： 在每个周期，您应该通过调用
+ * {@link YDomain#getParametersAdapter()}得到
+ * <b>参数适配器</b>，向其填充参数，从而操作每一帧画面的渲染。参见
+ * {@link #onCycle(double, YDomain, YWriteBundle, YSystem, YScene, YCamera, YMatrix, YMatrix, YMatrix)}
  * 
  * <p>
  * <b>建议</b>： TODO
@@ -33,39 +34,58 @@ import ygame.math.Matrix4;
  */
 public abstract class YDomainLogic extends YADomainLogic
 {
-	private Matrix4 mVMatrix;
-	private Matrix4 mPMatrix;
-	private Matrix4 mVPMatrix;
-	private Matrix4 mInvVPMatrix = new Matrix4();
-
-	protected final YTransformer transformer = new YTransformer();
+	// protected final YTransformer transformer =
+	// new YTransformer();
 
 	@Override
 	protected final void onClockCycle(double dbElapseTime_s,
 			YBaseDomain domainContext, YWriteBundle bundle,
 			YSystem system, YScene sceneCurrent, YCamera camera,
-			Matrix4 matrix4vp, Matrix4 matrix4Projection,
-			Matrix4 matrix4View)
+			YMatrix matrix4vp, YMatrix matrix4Projection,
+			YMatrix matrix4View)
 	{
-		onCycle(dbElapseTime_s, domainContext, bundle, system,
-				sceneCurrent, camera, matrix4vp,
-				matrix4Projection, matrix4View);
-		mVMatrix = camera.getViewMatrix();
-		mPMatrix = camera.getProjectionMatrix();
-		// Pre-multiply View and Projection
-		// matricies once for speed
-		mVPMatrix = mPMatrix.clone().multiply(mVMatrix);
-		mInvVPMatrix.setAll(mVPMatrix).inverse();
-		camera.updateFrustum(mInvVPMatrix); // update
+		YDomain domain = (YDomain) domainContext;
+		onCycle(dbElapseTime_s, domain, bundle, system, sceneCurrent,
+				camera, matrix4vp, matrix4Projection,
+				matrix4View);
+		domain.getParametersAdapter().bundleMapping(bundle);
+		// mVMatrix = camera.getViewMatrix();
+		// mPMatrix =
+		// camera.getProjectionMatrix();
+		// // Pre-multiply View and
+		// Projection
+		// // matricies once for speed
+		// mVPMatrix =
+		// mPMatrix.clone().multiply(mVMatrix);
+		// mInvVPMatrix.setAll(mVPMatrix).inverse();
+		// camera.updateFrustum(mInvVPMatrix);
+		// // update
 
-		transformer.calculate(mVPMatrix, mPMatrix, mVMatrix, null,
-				bundle);
+		// transformer.calculate(mVPMatrix,
+		// mPMatrix, mVMatrix, null,
+		// bundle);
 	}
 
+	/**
+	 * <b>系统</b>{@link YSystem}
+	 * 启动后，定时计算每一帧的画面渲染参数。 您应该通过复写该方法，计算出这些参数，并调用
+	 * {@link YDomain#getParametersAdapter()}
+	 * 获得<b>参数适配器</b>， 将计算的参数依次填入，从而完成画面渲染。
+	 * 
+	 * @param dbElapseTime_s
+	 * @param domainContext
+	 * @param bundle
+	 * @param system
+	 * @param sceneCurrent
+	 * @param camera
+	 * @param matrix4vp
+	 * @param matrix4Projection
+	 * @param matrix4View
+	 */
 	protected abstract void onCycle(double dbElapseTime_s,
-			YBaseDomain domainContext, YWriteBundle bundle,
+			YDomain domainContext, YWriteBundle bundle,
 			YSystem system, YScene sceneCurrent, YCamera camera,
-			Matrix4 matrix4vp, Matrix4 matrix4Projection,
-			Matrix4 matrix4View);
+			YMatrix matrix4vp, YMatrix matrix4Projection,
+			YMatrix matrix4View);
 
 }

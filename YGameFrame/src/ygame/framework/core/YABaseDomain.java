@@ -1,7 +1,7 @@
 package ygame.framework.core;
 
 import ygame.framework.YAStateMachineContext;
-import ygame.math.Matrix4;
+import ygame.math.YMatrix;
 
 /**
  * <b>基本实体</b>
@@ -39,12 +39,13 @@ public abstract class YABaseDomain extends YAStateMachineContext
 	}
 
 	/**
-	 * 交换内存块时回调此函数
+	 * 每帧开始绘制前回调此函数，即在此时只有逻辑线程运行，绘图线程完成任务处于等待状态，
+	 * 在此之后逻辑线程与绘图线程开始并发运行
+	 * ，为了保证线程安全，它们之间不可再有任何交互！您可以通过复写该方法，在逻辑线程与
+	 * 绘图线程“分道扬镳”之前做一些设置。
 	 * 
-	 * @param bSide
-	 *                本次交换内存所处的“标识面”
 	 */
-	protected abstract void onSwap(boolean bSide);
+	protected abstract void onPreframe();
 
 	/**
 	 * 绘图时回调此函数
@@ -69,8 +70,8 @@ public abstract class YABaseDomain extends YAStateMachineContext
 	 */
 	protected abstract void onClockCycle(double dbElapseTime_s,
 			YSystem system, YScene sceneCurrent, YCamera camera,
-			Matrix4 matrix4VP, Matrix4 matrix4Projection,
-			Matrix4 matrix4View);
+			YMatrix matrix4VP, YMatrix matrix4Projection,
+			YMatrix matrix4View);
 
 	/**
 	 * 在渲染线程中被初始化时，回调该函数，您可以在此进行相应的开放图库（OpenGL）操作

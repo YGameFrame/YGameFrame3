@@ -34,7 +34,7 @@ public final class YReadBundle
 {
 	// 换成原子引用会更好?
 	// fei problem
-	//XXX
+	// XXX
 	volatile Map<Integer, Object> map;
 
 	YReadBundle()
@@ -45,12 +45,24 @@ public final class YReadBundle
 	 * 从包裹中读取指定槽位的浮点型数组
 	 * 
 	 * @param iSlotKey
-	 *                要读取的浮点型数组的槽位
+	 *                浮点型数组的所处槽位
 	 * @return 指定槽位的浮点型数组
 	 */
 	public float[] readFloatArray(int iSlotKey)
 	{
 		return (float[]) map.get(iSlotKey);
+	}
+
+	/**
+	 * 从包裹中读取制定槽位的布尔值
+	 * 
+	 * @param iSlotKey
+	 *                布尔值所处槽位
+	 * @return 指定槽位的布尔值
+	 */
+	public boolean readBoolean(int iSlotKey)
+	{
+		return (Boolean) map.get(iSlotKey);
 	}
 
 }
