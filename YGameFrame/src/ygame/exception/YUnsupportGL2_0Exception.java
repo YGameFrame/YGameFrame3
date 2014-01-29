@@ -1,4 +1,4 @@
-package ygame.framework;
+package ygame.exception;
 
 import android.util.Log;
 

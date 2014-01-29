@@ -1,5 +1,6 @@
 ﻿package ygame.utils;
 
+import ygame.exception.YException;
 import android.opengl.GLES20;
 
 public final class YShaderUtils
@@ -16,6 +17,24 @@ public final class YShaderUtils
 		GLES20.glShaderSource(iShader, strSrc);
 		// 编译shader
 		GLES20.glCompileShader(iShader);
+
+		int[] compileStatus = new int[1];
+		// 获取shader的编译情况
+		GLES20.glGetShaderiv(iShader, GLES20.GL_COMPILE_STATUS,
+				compileStatus, 0);
+		// 若编译失败则报错并删除程序
+		if (compileStatus[0] != GLES20.GL_TRUE)
+		{
+			GLES20.glDeleteShader(iShader);
+
+			String strType = GLES20.GL_VERTEX_SHADER == iShaderType ? "顶点着色器"
+					: "片元着色器";
+			String detailMessage = "编译失败，" + strType + ":      "
+					+ GLES20.glGetShaderInfoLog(iShader);
+			String strTag = YShaderUtils.class.getName();
+			String strSuggest = "无法编译着色脚本，请您细查其代码";
+			throw new YException(detailMessage, strTag, strSuggest);
+		}
 		return iShader;
 	}
 
@@ -52,7 +71,15 @@ public final class YShaderUtils
 				linkStatus, 0);
 		// 若链接失败则报错并删除程序
 		if (linkStatus[0] != GLES20.GL_TRUE)
-			throw new RuntimeException("编译错误");
+		{
+			GLES20.glDeleteProgram(iProgram);
+
+			String detailMessage = "链接失败，" +  ":      "
+					+ GLES20.glGetProgramInfoLog(iProgram);
+			String strTag = YShaderUtils.class.getName();
+			String strSuggest = "无法链接着色脚本，请您细查其代码";
+			throw new YException(detailMessage, strTag, strSuggest);
+		}
 
 		return iProgram;
 	}

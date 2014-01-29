@@ -1,13 +1,14 @@
 package ygame.framework.core;
 
 import ygame.framework.YAStateMachineContext;
+import ygame.framework.request.YRequest;
 import ygame.math.YMatrix;
 
 /**
- * <b>基本实体</b>
+ * <b>抽象基础实体</b>
  * 
  * <p>
- * <b>概述</b>： 提供给系统的调用界面
+ * <b>概述</b>： 提供给系统关于实体的调用界面
  * 
  * <p>
  * <b>建议</b>： TODO
@@ -27,15 +28,15 @@ import ygame.math.YMatrix;
 public abstract class YABaseDomain extends YAStateMachineContext
 {
 	/** <b>实体标识</b> */
-	public final int iKEY;
+	public final String KEY;
 
 	/**
-	 * @param iKEY
-	 *                参阅{@link #iKEY}
+	 * @param KEY
+	 *                参阅{@link #KEY}
 	 */
-	public YABaseDomain(int iKEY)
+	public YABaseDomain(String KEY)
 	{
-		this.iKEY = iKEY;
+		this.KEY = KEY;
 	}
 
 	/**
@@ -52,6 +53,9 @@ public abstract class YABaseDomain extends YAStateMachineContext
 	 */
 	protected abstract void onDraw();
 
+	@Override
+	protected abstract void inputRequest(YRequest request);
+
 	/**
 	 * @param dbElapseTime_s
 	 *                两周期之间间隔时间，秒为单位
@@ -59,22 +63,19 @@ public abstract class YABaseDomain extends YAStateMachineContext
 	 *                系统
 	 * @param sceneCurrent
 	 *                当前场景
-	 * @param camera
-	 *                摄像机
-	 * @param matrix4VP
-	 *                “视图-投影矩阵”
+	 * @param matrix4PV
+	 *                “投影-视图矩阵”
 	 * @param matrix4Projection
 	 *                “投影矩阵”
 	 * @param matrix4View
 	 *                “视图矩阵”
 	 */
 	protected abstract void onClockCycle(double dbElapseTime_s,
-			YSystem system, YScene sceneCurrent, YCamera camera,
-			YMatrix matrix4VP, YMatrix matrix4Projection,
-			YMatrix matrix4View);
+			YSystem system, YScene sceneCurrent, YMatrix matrix4PV,
+			YMatrix matrix4Projection, YMatrix matrix4View);
 
 	/**
-	 * 在渲染线程中被初始化时，回调该函数，您可以在此进行相应的开放图库（OpenGL）操作
+	 * 在渲染线程中被初始化时回调该函数，您可以在此进行相应的开放图库（OpenGL）操作
 	 * 
 	 * @param system
 	 *                引擎系统

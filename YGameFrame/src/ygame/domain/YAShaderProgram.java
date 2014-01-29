@@ -2,7 +2,6 @@
 
 import ygame.framework.domain.YReadBundle;
 import ygame.framework.domain.YWriteBundle;
-import ygame.skeleton.YSkeleton;
 import ygame.utils.YShaderUtils;
 import android.opengl.GLES20;
 
@@ -50,7 +49,7 @@ public abstract class YAShaderProgram<DA extends YAShaderProgram.YAParametersAda
 	 * @param clazzDataAdapter
 	 *                该渲染程序的参数适配器类
 	 */
-	public YAShaderProgram(String strVertexShaderSrc,
+	final protected void fillCodeAndParam(String strVertexShaderSrc,
 			String strFragmentShaderSrc, Class<DA> clazzDataAdapter)
 	{
 		this.strFragmentShaderCode = strFragmentShaderSrc;
@@ -58,20 +57,22 @@ public abstract class YAShaderProgram<DA extends YAShaderProgram.YAParametersAda
 		this.daParamsAdapter = createDataAdapter(clazzDataAdapter);
 	}
 
-	void startRendering(YSkeleton skeleton)
+	void startRendering()
 	{
 		if (-1 == iProgramHandle)
-			initialize(skeleton);
+			initialize();
 		GLES20.glUseProgram(iProgramHandle);
 	}
 
-	void initialize(YSkeleton skeleton)
+	void initialize()
 	{
-		System.out.println("初始化");
+		System.out.println("初始化，当前句柄： " + iProgramHandle);
+		if (-1 != iProgramHandle)
+			return;
 		// 创建程序，更新程序句柄
 		iProgramHandle = YShaderUtils.createProgram(
 				strVertexShaderCode, strFragmentShaderCode);
-		onInitialize(iProgramHandle, skeleton);
+		onInitialize(iProgramHandle);
 	}
 
 	void endRendering()
@@ -101,11 +102,8 @@ public abstract class YAShaderProgram<DA extends YAShaderProgram.YAParametersAda
 	 * 
 	 * @param iProgramHandle
 	 *                着色程序句柄
-	 * @param skeleton
-	 *                顶点骨架
 	 */
-	abstract protected void onInitialize(int iProgramHandle,
-			YSkeleton skeleton);
+	abstract protected void onInitialize(int iProgramHandle);
 
 	/**
 	 * 您可以通过复写该方法向着色脚本的变量传递值</br>
@@ -114,11 +112,50 @@ public abstract class YAShaderProgram<DA extends YAShaderProgram.YAParametersAda
 	 *                着色程序句柄
 	 * @param bundle
 	 *                可读包裹
-	 * @param skeleton
-	 *                顶点骨架
 	 */
 	abstract protected void applyParams(int iProgramHandle,
-			YReadBundle bundle, YSkeleton skeleton);
+			YReadBundle bundle);
+
+	/**
+	 * 将顶点缓冲对象索引（即数据源）与渲染程序中的变量绑定
+	 * 
+	 * @param iDataSrcHandle
+	 *                顶点缓冲（即数据源）在开放图形库（OpenGL ES
+	 *                2.0）中的句柄
+	 * @param iValueHandle
+	 *                渲染程序中变量的句柄
+	 * @param iFloatsPerValue
+	 *                该渲染程序变量由几个浮点数（float）组成
+	 */
+	public static void bindVBODataSourcToValue(int iDataSrcHandle,
+			int iValueHandle, int iFloatsPerValue)
+	{
+		GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, iDataSrcHandle);
+
+		GLES20.glEnableVertexAttribArray(iValueHandle);
+		GLES20.glVertexAttribPointer(iValueHandle, iFloatsPerValue,
+				GLES20.GL_FLOAT, false, 0, 0);
+	}
+
+	/**
+	 * 使用索引缓冲对象绘制画面
+	 * 
+	 * @param iIBODataSrcHandle
+	 *                索引缓冲（即数据源）在开放图形库（OpenGL ES
+	 *                2.0）中的句柄
+	 * @param iVertexNum
+	 *                要绘制的顶点的个数
+	 * @param iDrawMode
+	 *                绘制的图元装配模式
+	 */
+	public static void drawWithIBO(int iIBODataSrcHandle, int iVertexNum,
+			int iDrawMode)
+	{
+		GLES20.glBindBuffer(GLES20.GL_ELEMENT_ARRAY_BUFFER,
+				iIBODataSrcHandle);
+		GLES20.glDrawElements(iDrawMode, iVertexNum,
+				GLES20.GL_UNSIGNED_SHORT, 0);
+	}
 
 	/**
 	 * <b>参数适配器</b>
@@ -137,9 +174,8 @@ public abstract class YAShaderProgram<DA extends YAShaderProgram.YAParametersAda
 	 * <b>详细</b>： TODO
 	 * 
 	 * <p>
-	 * <b>注</b>：
-	 * 作为使用者，为了确保数据的正确，您在每周期都应该对<b>适配器</b
-	 * >中声明的参数<b>全部</b>填写一遍。
+	 * <b>注</b>： 作为使用者，为了确保数据的正确，您每次都应该对<b>适配器</b
+	 * >中声明的参数<b>全部重新</b>填写一遍。
 	 * 
 	 * <p>
 	 * <b>例</b>： TODO

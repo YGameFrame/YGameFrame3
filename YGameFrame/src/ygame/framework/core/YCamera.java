@@ -2,7 +2,7 @@ package ygame.framework.core;
 
 import ygame.math.YMatrix;
 import ygame.math.vector.Vector3;
-import ygame.transformable.IMover;
+import ygame.transformable.YIMover;
 
 /**
  * <b>摄像机</b>
@@ -25,30 +25,39 @@ import ygame.transformable.IMover;
  * @author yunzhong
  * 
  */
-public class YCamera implements IMover
+// 初始：眼睛在z = 50处，视景体为眼前0.1至100、视角为45度的椎体
+public class YCamera implements YIMover
 {
 	private YMatrix matrixProj = new YMatrix();
 	private float left;
 	private float right;
 	private float bottom;
 	private float top;
-	private float near = 1;
-	private float far = 30;
-	private boolean bDirtyProj;
+	private float near = 0.1f;
+	private float far = 100;
+	private boolean bDirtyProj = false;
 
 	private YMatrix matrixView = new YMatrix();
+	// private float eyeX = 0;
+	// private float eyeY = 0;
+	// private float eyeZ = 3;
+	// private float targetX = 0;
+	// private float targetY = 0;
+	// private float targetZ = 0;
 	private float eyeX = 0;
 	private float eyeY = 0;
-	private float eyeZ = 3;
+	private float eyeZ = 50;
 	private float targetX = 0;
 	private float targetY = 0;
 	private float targetZ = 0;
 	private float upX = 0;
 	private float upY = 1;
 	private float upZ = 0;
-	private boolean bDirtyView = false;
+	private boolean bDirtyView = true;
 	private float angle = 0;
 	private Vector3 vector3Shaft = new Vector3(0, 0, 1);
+	/** <b>宽高比</b> */
+	private float fRadio;
 
 	public YCamera()
 	{
@@ -67,10 +76,15 @@ public class YCamera implements IMover
 	public void setProjectionMatrix(int iWidth, int iHeight)
 	{
 		bDirtyProj = true;
-		left = -1;
-		right = 1;
-		bottom = -iHeight / (float) iWidth;
-		top = iHeight / (float) iWidth;
+
+		fRadio = (float) iWidth / iHeight;
+		float fov = 45; // degrees, try also
+				// 45, or different
+				// number if you like
+		top = (float) (Math.tan(fov * 3.1415926 / 360.0f) * near);
+		bottom = -top;
+		left = fRadio * bottom;
+		right = fRadio * top;
 	}
 
 	/**
@@ -101,6 +115,11 @@ public class YCamera implements IMover
 		if (bDirtyProj)
 		{
 			matrixProj.frustum(left, right, bottom, top, near, far);
+			// matrixProj.perspective(45
+			// ,1 /fRadio, near, far);
+			// matrixProj.ortho(left,
+			// right, bottom, top, near,
+			// far);
 			bDirtyProj = false;
 			bRes = true;
 		}
@@ -168,6 +187,7 @@ public class YCamera implements IMover
 			return this;
 		bDirtyView = true;
 		eyeX = fX;
+		// targetX = eyeX;
 		return this;
 	}
 
@@ -177,6 +197,7 @@ public class YCamera implements IMover
 			return this;
 		bDirtyView = true;
 		eyeY = fY;
+		targetY = eyeY;
 		return this;
 	}
 
@@ -186,6 +207,7 @@ public class YCamera implements IMover
 			return this;
 		bDirtyView = true;
 		eyeZ = fZ;
+		// targetZ = eyeZ + 3;
 		return this;
 	}
 }

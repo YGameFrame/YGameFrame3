@@ -1,6 +1,6 @@
 package ygame.framework.core;
 
-import ygame.framework.YUnsupportGL2_0Exception;
+import ygame.exception.YUnsupportGL2_0Exception;
 import android.content.Context;
 import android.opengl.GLSurfaceView;
 import android.util.AttributeSet;

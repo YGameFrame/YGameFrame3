@@ -1,24 +1,21 @@
 package ygame.framework.domain;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import android.annotation.SuppressLint;
 import ygame.framework.core.YABaseDomain;
-import ygame.framework.core.YCamera;
 import ygame.framework.core.YGL_Configuration;
 import ygame.framework.core.YScene;
 import ygame.framework.core.YSystem;
 import ygame.framework.request.YRequest;
 import ygame.math.YMatrix;
+import android.annotation.SuppressLint;
 
 /**
  * <b>实体</b>
  * 
  * <p>
  * <b>概述</b>： <b>基础实体</b>{@link YABaseDomain}
- * 的一个实现：将计算与渲染分别交给 <b>实体逻辑</b>{@link YADomainLogic}
- * 与<b>实体视图</b>{@link YADomainView}进行。即该对象实现了一种分工模型。
+ * 的一个实现：将计算与渲染分别交给 <b>实体逻辑</b>
+ * {@link YABaseDomainLogic} 与<b>实体视图</b>
+ * {@link YABaseDomainView}进行。即该对象实现了一种分工模型。
  * 
  * <p>
  * <b>建议</b>： TODO
@@ -37,13 +34,12 @@ import ygame.math.YMatrix;
  */
 public class YBaseDomain extends YABaseDomain
 {
-	@SuppressLint("UseSparseArrays")
-	private Map<Integer, Object> map1 = new HashMap<Integer, Object>();
-	@SuppressLint("UseSparseArrays")
-	private Map<Integer, Object> map2 = new HashMap<Integer, Object>();
+	// XXX 内存块容量尚未完成可调设置
+	private Object[] map1 = new Object[20];
+	private Object[] map2 = new Object[20];
 
-	private YADomainLogic logic;
-	private YADomainView view;
+	private YABaseDomainLogic logic;
+	private YABaseDomainView view;
 
 	private boolean bSide;
 
@@ -54,11 +50,15 @@ public class YBaseDomain extends YABaseDomain
 	 *                实体视图，不可为空
 	 */
 	// TODO 非空检查为完成
-	public YBaseDomain(int iKEY, YADomainLogic logic, YADomainView view)
+	public YBaseDomain(String KEY, YABaseDomainLogic logic,
+			YABaseDomainView view)
 	{
-		super(iKEY);
+		super(KEY);
 		this.logic = logic;
 		this.view = view;
+
+		logic.bundle.map = map1;
+		view.bundle.map = map2;
 	}
 
 	@Override
@@ -66,7 +66,7 @@ public class YBaseDomain extends YABaseDomain
 	{
 		// 交换内存块
 		swapMem();
-		
+
 		logic.onPreframe(this);
 		view.onPreframe(this);
 	}
@@ -94,12 +94,11 @@ public class YBaseDomain extends YABaseDomain
 
 	@Override
 	protected void onClockCycle(double dbElapseTime_s, YSystem system,
-			YScene sceneCurrent, YCamera camera, YMatrix matrix4VP,
+			YScene sceneCurrent, YMatrix matrix4PV,
 			YMatrix matrix4Projection, YMatrix matrix4View)
 	{
 		logic.onClockCycle(dbElapseTime_s, this, system, sceneCurrent,
-				camera, matrix4VP, matrix4Projection,
-				matrix4View);
+				matrix4PV, matrix4Projection, matrix4View);
 	}
 
 	@Override

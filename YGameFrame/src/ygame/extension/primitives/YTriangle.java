@@ -1,9 +1,9 @@
-﻿package ygame.skeleton.primitives;
+﻿package ygame.extension.primitives;
 
 import ygame.skeleton.YSkeleton;
 
 /**
- * <b>正方形骨架</b>
+ * <b>三角形骨架 </b>
  * 
  * <p>
  * <b>概述</b>： TODO
@@ -23,23 +23,19 @@ import ygame.skeleton.YSkeleton;
  * @author yunzhong
  * 
  */
-public class YSquare extends YSkeleton
+public class YTriangle extends YSkeleton
 {
-	private float fSideLength;
-
-	public YSquare(float fSideLength)
+	public YTriangle()
 	{
-		this.fSideLength = fSideLength;
 		fillData();
 	}
 
 	private void fillData()
 	{
 		float[] fVertexPosition =
-		{ -fSideLength, -fSideLength, 0, // 左下
-				-fSideLength, fSideLength, 0,// 左上
-				fSideLength, fSideLength, 0, // 右上
-				fSideLength, -fSideLength, 0 // 右下
+		{ -1, 0, 0,// 左点
+				1, 0, 0, // 右点
+				0, 1, 0 // 上点
 		};
 
 		// rgba
@@ -47,15 +43,13 @@ public class YSquare extends YSkeleton
 		{ 1, 0, 0, 1, // 红
 				0, 1, 0, 1, // 绿
 				0, 0, 1, 1,// 蓝
-				1, 1, 1, 1 // 白色
 		};
 
 		short[] sIndices =
-		{ 2, 1, 0, 2, 0, 3 };
+		{ 1, 2, 0 };
 
 		setColors(fVertexColor);
 		setPositions(fVertexPosition);
 		setIndices(sIndices);
-
 	}
 }

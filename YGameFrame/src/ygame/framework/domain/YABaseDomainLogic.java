@@ -1,14 +1,13 @@
 package ygame.framework.domain;
 
 import ygame.framework.YAStateMachineContext;
-import ygame.framework.core.YCamera;
 import ygame.framework.core.YScene;
 import ygame.framework.core.YSystem;
 import ygame.framework.request.YRequest;
 import ygame.math.YMatrix;
 
 /**
- * <b>实体逻辑</b>
+ * <b>抽象基础实体逻辑</b>
  * 
  * <p>
  * <b>概述</b>： 负责实体逻辑方面的计算
@@ -28,18 +27,17 @@ import ygame.math.YMatrix;
  * @author yunzhong
  * 
  */
-public abstract class YADomainLogic extends YAStateMachineContext
+public abstract class YABaseDomainLogic extends YAStateMachineContext
 {
 	final YWriteBundle bundle = new YWriteBundle();
 
 	void onClockCycle(double dbElapseTime_s, YBaseDomain domainContext,
-			YSystem system, YScene sceneCurrent, YCamera camera,
-			YMatrix matrix4vp, YMatrix matrix4Projection,
-			YMatrix matrix4View)
+			YSystem system, YScene sceneCurrent, YMatrix matrix4PV,
+			YMatrix matrix4Projection, YMatrix matrix4View)
 	{
 		onClockCycle(dbElapseTime_s, domainContext, bundle, system,
-				sceneCurrent, camera, matrix4vp,
-				matrix4Projection, matrix4View);
+				sceneCurrent, matrix4PV, matrix4Projection,
+				matrix4View);
 	}
 
 	@Override
@@ -58,14 +56,12 @@ public abstract class YADomainLogic extends YAStateMachineContext
 	 *                所隶属的实体，实体上下文，可类型转换为所属实体类型
 	 * @param bundle
 	 *                可写包裹，包裹中的内容将会被对应的<b>实体视图</b
-	 *                >{@link YADomainView}收到
+	 *                >{@link YABaseDomainView}收到
 	 * @param system
 	 *                系统
 	 * @param sceneCurrent
 	 *                当前场景
-	 * @param camera
-	 *                摄像机
-	 * @param matrix4VP
+	 * @param matrix4PV
 	 *                “视图-投影矩阵”
 	 * @param matrix4Projection
 	 *                “投影矩阵”
@@ -74,9 +70,8 @@ public abstract class YADomainLogic extends YAStateMachineContext
 	 */
 	abstract protected void onClockCycle(double dbElapseTime_s,
 			YBaseDomain domainContext, YWriteBundle bundle,
-			YSystem system, YScene sceneCurrent, YCamera camera,
-			YMatrix matrix4VP, YMatrix matrix4Projection,
-			YMatrix matrix4View);
+			YSystem system, YScene sceneCurrent, YMatrix matrix4PV,
+			YMatrix matrix4Projection, YMatrix matrix4View);
 
 	/**
 	 * 在此处处理对象收到的<b>请求</b>{@link YRequest}

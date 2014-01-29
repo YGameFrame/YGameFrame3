@@ -23,7 +23,7 @@ import ygame.math.vector.Vector3;
  * @author yunzhong
  * 
  */
-public interface IMoverGetter
+public interface YIMoverGetter
 {
 
 	/**

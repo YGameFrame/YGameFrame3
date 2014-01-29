@@ -3,31 +3,26 @@ package ygame.math;
 import android.opengl.Matrix;
 
 /**
-*<b>4阶矩阵</b>
-*
-*<p>
-*<b>概述</b>：
-*TODO
-*
-*<p>
-*<b>建议</b>：
-*TODO
-*
-*<p>
-*<b>详细</b>：
-*TODO
-*
-*<p>
-*<b>注</b>：
-*TODO
-*
-*<p>
-*<b>例</b>：
-*TODO
-*
-*@author yunzhong
-*
-*/
+ * <b>4阶矩阵</b>
+ * 
+ * <p>
+ * <b>概述</b>： TODO
+ * 
+ * <p>
+ * <b>建议</b>： TODO
+ * 
+ * <p>
+ * <b>详细</b>： TODO
+ * 
+ * <p>
+ * <b>注</b>： TODO
+ * 
+ * <p>
+ * <b>例</b>： TODO
+ * 
+ * @author yunzhong
+ * 
+ */
 public final class YMatrix
 {
 
@@ -89,6 +84,13 @@ public final class YMatrix
 				matrix.toFloatValues(), 0);
 	}
 
+	public YMatrix transpose()
+	{
+		Matrix.transposeM(f_arrTemp, 0, toFloatValues(), 0);
+		System.arraycopy(f_arrTemp, 0, f_arrData, 0, 16);
+		return this;
+	}
+
 	/**
 	 * 逆矩阵4*4
 	 */
@@ -96,6 +98,20 @@ public final class YMatrix
 	{
 		return Matrix.invertM(matrixRes.toFloatValues(), 0,
 				matrix.toFloatValues(), 0);
+	}
+
+	private static float[] f_arrTemp = new float[16];
+
+	/**
+	 * 原地逆矩阵4*4
+	 * 
+	 * @return 逆矩阵
+	 */
+	public YMatrix invert()
+	{
+		Matrix.invertM(f_arrTemp, 0, toFloatValues(), 0);
+		System.arraycopy(f_arrTemp, 0, f_arrData, 0, 16);
+		return this;
 	}
 
 	/**
@@ -141,12 +157,14 @@ public final class YMatrix
 	 *                ratio of the viewport
 	 * @param zNear
 	 * @param zFar
+	 * @return
 	 */
-	public void perspective(float fovy, float aspect, float zNear,
+	public YMatrix perspective(float fovy, float aspect, float zNear,
 			float zFar)
 	{
 		Matrix.perspectiveM(toFloatValues(), 0, fovy, aspect, zNear,
 				zFar);
+		return this;
 	}
 
 	/**
@@ -330,9 +348,10 @@ public final class YMatrix
 	 * @param z
 	 *                scale factor z
 	 */
-	public void rotate(float a, float x, float y, float z)
+	public YMatrix rotate(float a, float x, float y, float z)
 	{
 		Matrix.rotateM(toFloatValues(), 0, a, x, y, z);
+		return this;
 	}
 
 	/**

@@ -3,10 +3,10 @@ package ygame.framework.core;
 import ygame.framework.request.YRequest;
 
 /**
- * <b>实体逻辑请求</b>
+ * <b>实体请求</b>
  * 
  * <p>
- * <b>概述</b>： 对实体逻辑发出的请求
+ * <b>概述</b>： 对实体发出的请求
  * 
  * <p>
  * <b>建议</b>： TODO
@@ -25,35 +25,18 @@ import ygame.framework.request.YRequest;
  */
 public class YDomainRequest extends YRequest
 {
-
-	final int iWHO;
-	final YABaseDomain DOMAIN;
+	final String WHO;
 
 	/**
-	 * @param iKEY
+	 * @param KEY
 	 *                请求的标识
-	 * @param iWHO
+	 * @param WHO
 	 *                请求接收者的标识
-	 *                {@link YABaseDomain#iKEY}
+	 *                {@link YABaseDomain#KEY}
 	 */
-	public YDomainRequest(int iKEY, int iWHO)
+	public YDomainRequest(int KEY, String WHO , YWhen when)
 	{
-		super(iKEY);
-		this.DOMAIN = null;
-		this.iWHO = iWHO;
+		super(KEY , when);
+		this.WHO = WHO;
 	}
-
-	/**
-	 * @param iKEY
-	 *                请求标识
-	 * @param domain
-	 *                请求接收者
-	 */
-	public YDomainRequest(int iKEY, YABaseDomain domain)
-	{
-		super(iKEY);
-		this.DOMAIN = domain;
-		this.iWHO = Integer.MAX_VALUE;
-	}
-
 }

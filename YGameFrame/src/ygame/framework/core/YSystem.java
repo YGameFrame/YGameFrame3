@@ -1,5 +1,7 @@
 package ygame.framework.core;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.Executors;
@@ -10,16 +12,16 @@ import javax.microedition.khronos.opengles.GL10;
 
 import ygame.framework.YAStateMachineContext;
 import ygame.framework.request.YRequest;
+import ygame.framework.request.YRequest.YWhen;
 import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.pm.ConfigurationInfo;
+import android.opengl.GLES20;
 import android.os.SystemClock;
 import android.util.Log;
 import android.view.WindowManager;
 
-//文档
-//TODO 
 /**
  * <b>系统</b>
  * 
@@ -45,39 +47,16 @@ public final class YSystem extends YAStateMachineContext
 {
 	private static final String strTAG = "YSystem";
 
-	//XXX
-	public YABaseDomain domainTest;
+	private static final int iCOMMA = Integer.MIN_VALUE;
+	private static final YRequest requestCOMMA_BeforeRendering = new YRequest(
+			iCOMMA, YWhen.BEFORE_RENDER);
+	private static final YRequest requestCOMMA_Rendering_LogicThread = new YRequest(
+			iCOMMA, YWhen.RENDERING_EXE_IN_LOGIC_THREAD);
+	private final YIConcurrentQueue<YRequest> queueRendering = new YConcurrentQueue<YRequest>();
+	private final YIConcurrentQueue<YRequest> queueBeforeRendering = new YConcurrentQueue<YRequest>();
 
-	/**
-	 * 判断手机是否支持OpenGL_ES2.0
-	 * 
-	 * @param context
-	 *                上下文
-	 * @return 支持返回真，否则假
-	 */
-	public static boolean isSupportGL2_0(Context context)
-	{
-		ActivityManager activityManager = (ActivityManager) context
-				.getSystemService(Context.ACTIVITY_SERVICE);
-		ConfigurationInfo configurationInfo = activityManager
-				.getDeviceConfigurationInfo();
-		boolean supportsEs2 = configurationInfo.reqGlEsVersion >= 0x20000;
-		return supportsEs2;
-	}
-
-	/**
-	 * 获取系统刷新速率
-	 * 
-	 * @param context
-	 *                上下文
-	 * @return 系统帧速率
-	 */
-	public static double getRefreshRate(Context context)
-	{
-		return ((WindowManager) context
-				.getSystemService(Context.WINDOW_SERVICE))
-				.getDefaultDisplay().getRefreshRate();
-	}
+	private final List<YScene> scenes = new ArrayList<YScene>();
+	private YScene sceneCurrent;
 
 	private final YView YVIEW;
 	private boolean bGLInitialized;
@@ -91,13 +70,28 @@ public final class YSystem extends YAStateMachineContext
 
 	private YGL_Configuration configurationGL;
 
+	// 测试帧速率
+	private int mFrameCount;
+	private long mStartTime;
+	private double mLastMeasuredFPS;
+	private static final boolean bDEBUG = true;
+
 	YSystem(YView yview)
 	{
 		YVIEW = yview;
 		dbFrameRate_fps = getRefreshRate(YVIEW.getContext());
 		context = YVIEW.getContext();
+
+		YScene sceneDefault = new YScene(this);
+		scenes.add(sceneDefault);
+		sceneCurrent = sceneDefault;
 	}
 
+	/**
+	 * 获取上下文
+	 * 
+	 * @return 上下文
+	 */
 	public Context getContext()
 	{
 		return context;
@@ -111,6 +105,7 @@ public final class YSystem extends YAStateMachineContext
 	public void start()
 	{
 		System.out.println("系统启动");
+		inputRequest(requestCOMMA_BeforeRendering);
 		if (!bGLInitialized)
 			return;
 		dbLastClockTime_ms = SystemClock.elapsedRealtime();
@@ -163,7 +158,15 @@ public final class YSystem extends YAStateMachineContext
 			start();
 	}
 
-	private YCamera cameraTest = new YCamera();
+	/**
+	 * 获取当前场景
+	 * 
+	 * @return 当前场景
+	 */
+	public YScene getCurrentScene()
+	{
+		return sceneCurrent;
+	}
 
 	private void clockCycle()
 	{
@@ -171,22 +174,69 @@ public final class YSystem extends YAStateMachineContext
 		final double dbDeltaTime_s = (dbCurrentClockCycle_ms - dbLastClockTime_ms) / 1000.0;
 		dbLastClockTime_ms = dbCurrentClockCycle_ms;
 		// 通知下属
+		/************************** 测试区 *****************************/
 		// TODO
-		domainTest.onClockCycle(dbDeltaTime_s, this, null, cameraTest,
-				null, null, null);
+		sceneCurrent.onClockCycle(dbDeltaTime_s);
+		if (bDEBUG)
+			calculateFPS();
+		// float fDel = (float) (2 *
+		// dbDeltaTime_s);
+		// if (cameraTest.getZ() > 20)
+		// iFlag = -1;
+		// else if (cameraTest.getZ() < -7)
+		// iFlag = 1;
+		//
+		// // cameraTest.setShaft(new
+		// Vector3(2,
+		// // 1, 1));
+		// cameraTest.setZ(cameraTest.getZ()
+		// + fDel * iFlag);
+		// cameraTest.setX(cameraTest.getX()
+		// + fDel * iFlag);
+		// cameraTest.setAngle(cameraTest.getAngle()
+		// + 1);
+		// YMatrix matrixProj =
+		// cameraTest.getProjectMatrix();
+		// YMatrix matrixView =
+		// cameraTest.getViewMatrix();
+		// YMatrix.multiplyMM(matrixPV,
+		// matrixProj, matrixView);
+		//
+		// for (YABaseDomain domain :
+		// domainsTest)
+		// domain.onClockCycle(dbDeltaTime_s,
+		// this, null,
+		// cameraTest, matrixPV, matrixProj,
+		// matrixView);
+
+		/************************** 测试区 ***************************/
+	}
+
+	private void calculateFPS()
+	{
+		++mFrameCount;
+		if (mFrameCount % 50 == 0)
+		{
+			long now = System.nanoTime();
+			double elapsedS = (now - mStartTime) / 1.0e9;
+			double msPerFrame = (1000 * elapsedS / mFrameCount);
+			mLastMeasuredFPS = 1000 / msPerFrame;
+
+			mFrameCount = 0;
+			mStartTime = now;
+			System.out.println("fps=" + mLastMeasuredFPS);
+		}
 	}
 
 	private void preFrame()
 	{
-		// TODO
-		domainTest.onPreframe();
+		sceneCurrent.onPreframe();
 	}
 
 	private void notifyClockCycle()
 	{
-		// 轮询队列
-		// TODO
-		// pollRequestQueue();
+		// 轮询渲染前队列
+		pollRequestQueue(queueBeforeRendering);
 
 		// // 交换内存块
 		preFrame();
@@ -194,42 +244,55 @@ public final class YSystem extends YAStateMachineContext
 		// 通知视图渲染
 		YVIEW.requestRender();
 
+		// 轮询渲染时队列
+		pollRequestQueue(queueRendering);
+
 		// 通知逻辑周期到来
 		clockCycle();
 
 		// 队列发送分隔符
-		// TODO
-		// launchRequest(requestCOMMA);
+		inputRequest(requestCOMMA_BeforeRendering);
+		inputRequest(requestCOMMA_Rendering_LogicThread);
 
-		try
+	}
+
+	private void pollRequestQueue(YIConcurrentQueue<YRequest> queue)
+	{
+		for (;;)
 		{
-			barrier.await();
-		} catch (InterruptedException e)
-		{
-			e.printStackTrace();
-		} catch (BrokenBarrierException e)
-		{
-			e.printStackTrace();
+			YRequest request = queue.dequeue();
+			if (null == request)
+				return;
+			if (iCOMMA == request.iKEY)
+				return;
+			if (request instanceof YSystemRequest)
+				dealRequest((YSystemRequest) request);
+			else
+				sceneCurrent.inputRequest(request);
 		}
+	}
+
+	private void dealRequest(YSystemRequest requestDeal)
+	{
+		// TODO Auto-generated method stub
+
 	}
 
 	void notifyGL_Ready(GL10 gl10, int iWidth, int iHeight)
 	{
-		// fei test
-		cameraTest.setProjectionMatrix(iWidth, iHeight);
-		cameraTest.setZ(6);
-
+		GLES20.glViewport(0, 0, iWidth, iHeight);
+		
 		configurationGL = YGL_Configuration.getInstanceInGL();
 
 		dbLastClockTime_ms = SystemClock.elapsedRealtime();
+		
 		for (int i = 0; i < 2; i++)
 		{
 			preFrame();
 			clockCycle();
 		}
 
-		domainTest.onGL_Initialize(this, configurationGL, iWidth,
-				iHeight);
+		sceneCurrent.onGL_Initialize(configurationGL, iWidth, iHeight);
 
 		bGLInitialized = true;
 		start();
@@ -238,18 +301,24 @@ public final class YSystem extends YAStateMachineContext
 	@SuppressLint("WrongCall")
 	void notifyGL_Draw()
 	{
-		// TODO Auto-generated method stub
-		domainTest.onDraw();
-
 		try
 		{
-			barrier.await();
-		} catch (InterruptedException e)
+			sceneCurrent.onDraw();
+		} catch (Exception e)
 		{
 			e.printStackTrace();
-		} catch (BrokenBarrierException e)
+		} finally
 		{
-			e.printStackTrace();
+			try
+			{
+				barrier.await();
+			} catch (InterruptedException e)
+			{
+				e.printStackTrace();
+			} catch (BrokenBarrierException e)
+			{
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -264,8 +333,50 @@ public final class YSystem extends YAStateMachineContext
 	@Override
 	public void inputRequest(YRequest request)
 	{
-		// TODO Auto-generated method stub
+		switch (request.WHEN)
+		{
+		case BEFORE_RENDER:
+			queueBeforeRendering.enqueue(request);
+			break;
 
+		case RENDERING_EXE_IN_LOGIC_THREAD:
+			queueRendering.enqueue(request);
+			break;
+
+		default:
+			break;
+		}
+	}
+
+	/**
+	 * 判断手机是否支持OpenGL_ES2.0
+	 * 
+	 * @param context
+	 *                上下文
+	 * @return 支持返回真，否则假
+	 */
+	public static boolean isSupportGL2_0(Context context)
+	{
+		ActivityManager activityManager = (ActivityManager) context
+				.getSystemService(Context.ACTIVITY_SERVICE);
+		ConfigurationInfo configurationInfo = activityManager
+				.getDeviceConfigurationInfo();
+		boolean supportsEs2 = configurationInfo.reqGlEsVersion >= 0x20000;
+		return supportsEs2;
+	}
+
+	/**
+	 * 获取系统刷新速率
+	 * 
+	 * @param context
+	 *                上下文
+	 * @return 系统帧速率
+	 */
+	public static double getRefreshRate(Context context)
+	{
+		return ((WindowManager) context
+				.getSystemService(Context.WINDOW_SERVICE))
+				.getDefaultDisplay().getRefreshRate();
 	}
 
 	private class YClockTask implements Runnable
@@ -273,9 +384,35 @@ public final class YSystem extends YAStateMachineContext
 		@Override
 		public void run()
 		{
-			notifyClockCycle();
+			try
+			{
+				notifyClockCycle();
+			} catch (Exception e)
+			{
+				e.printStackTrace();
+			} finally
+			{
+				try
+				{
+					barrier.await();
+				} catch (InterruptedException e1)
+				{
+					e1.printStackTrace();
+				} catch (BrokenBarrierException e1)
+				{
+					e1.printStackTrace();
+				}
+			}
 		}
 
+	}
+
+	private static class YSystemRequest extends YRequest
+	{
+		public YSystemRequest(int iKEY, YWhen when)
+		{
+			super(iKEY, when);
+		}
 	}
 
 }

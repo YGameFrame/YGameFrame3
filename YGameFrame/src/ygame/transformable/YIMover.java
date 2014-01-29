@@ -3,7 +3,7 @@ package ygame.transformable;
 import ygame.math.vector.Vector3;
 
 /**
- * <b>移动体</b>
+ * <b>移动子</b>
  * 
  * <p>
  * <b>概述</b>：设置或读取移动体的位置信息
@@ -23,7 +23,7 @@ import ygame.math.vector.Vector3;
  * @author yunzhong
  * 
  */
-public interface IMover extends IMoverGetter
+public interface YIMover extends YIMoverGetter
 {
 
 	/**
@@ -33,7 +33,7 @@ public interface IMover extends IMoverGetter
 	 *                竖坐标
 	 * @return 移动者
 	 */
-	public abstract IMover setZ(float fZ);
+	public abstract YIMover setZ(float fZ);
 
 	/**
 	 * 设置位置纵坐标
@@ -42,7 +42,7 @@ public interface IMover extends IMoverGetter
 	 *                纵坐标
 	 * @return 移动者
 	 */
-	public abstract IMover setY(float fY);
+	public abstract YIMover setY(float fY);
 
 	/**
 	 * 设置位置横坐标
@@ -51,7 +51,7 @@ public interface IMover extends IMoverGetter
 	 *                横坐标
 	 * @return 移动者
 	 */
-	public abstract IMover setX(float fX);
+	public abstract YIMover setX(float fX);
 
 	/**
 	 * 设置旋转角度
@@ -60,7 +60,7 @@ public interface IMover extends IMoverGetter
 	 *                旋转角度
 	 * @return 移动者
 	 */
-	public abstract IMover setAngle(float angle);
+	public abstract YIMover setAngle(float angle);
 
 	/**
 	 * 设置转轴
@@ -69,6 +69,6 @@ public interface IMover extends IMoverGetter
 	 *                转轴
 	 * @return 移动者
 	 */
-	public abstract IMover setShaft(Vector3 vector3Shaft);
+	public abstract YIMover setShaft(Vector3 vector3Shaft);
 
 }

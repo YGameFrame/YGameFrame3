@@ -1,4 +1,4 @@
-package ygame.skeleton.primitives;
+package ygame.extension.primitives;
 
 import ygame.skeleton.YSkeleton;
 
@@ -32,12 +32,13 @@ public class YSphere extends YSkeleton
 	private boolean mCreateTextureCoords = false;
 	private boolean mCreateVertexColorBuffer = true;
 
-	public YSphere()
+	public YSphere(float fRadius , float[] f_arrRGBA)
 	{
-		fillData();
+		this.mRadius = fRadius;
+		fillData(f_arrRGBA);
 	}
 
-	private void fillData()
+	private void fillData(float[] f_arrRGBA)
 	{
 		int numVertices = (mSegmentsW + 1) * (mSegmentsH + 1);
 		int numIndices = 2 * mSegmentsW * (mSegmentsH - 1) * 3;
@@ -123,27 +124,31 @@ public class YSphere extends YSkeleton
 
 		float[] colors = null;
 
-		if (mCreateVertexColorBuffer)
-		{
-			int numColors = numVertices * 4;
-			colors = new float[numColors];
-			for (j = 0; j < numColors; j += 4)
-			{
-				// colors[j] = 1.0f;
-				// colors[j + 1] = 0;
-				// colors[j + 2] = 0;
-				// colors[j + 3] =
-				// 1.0f;
-
-				colors[j] = 0;
-				colors[j + 1] = 0;
-				colors[j + 2] = 1;
-				colors[j + 3] = 1.0f;
-			}
-		}
+//		if (mCreateVertexColorBuffer)
+//		{
+//			int numColors = numVertices * 4;
+//			colors = new float[numColors];
+//			for (j = 0; j < numColors; j += 4)
+//			{
+//				// colors[j] = 1.0f;
+//				// colors[j + 1] = 0;
+//				// colors[j + 2] = 0;
+//				// colors[j + 3] =
+//				// 1.0f;
+//
+//				colors[j] = 0;
+//				colors[j + 1] = 0;
+//				colors[j + 2] = 1;
+//				colors[j + 3] = 1.0f;
+//			}
+//		}
+		if(null == f_arrRGBA)
+			colors = createRandomColorData(vertices.length / 3);
+		else
+			colors = createColorData(vertices.length / 3, f_arrRGBA);
 
 		setPositions(vertices);
-		// setNormals(normals);
+		 setNormals(normals);
 		// setTexCoords(textureCoords);
 		setColors(colors);
 		setIndices(indices);

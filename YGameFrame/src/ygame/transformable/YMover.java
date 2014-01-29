@@ -4,7 +4,7 @@ import ygame.math.YMatrix;
 import ygame.math.vector.Vector3;
 
 /**
- * <b>移动体实现</b>
+ * <b>移动子实现</b>
  * 
  * <p>
  * <b>概述</b>： TODO
@@ -24,18 +24,19 @@ import ygame.math.vector.Vector3;
  * @author yunzhong
  * 
  */
-public class Mover implements IMover
+public class YMover implements YIMover
 {
 	private YMatrix matrix = new YMatrix();
 
 	// private boolean bDirty;
+	boolean bRotatePrior = true;
 
-	private Vector3 vector3Shaft = new Vector3(0, 0, 1);
+	private Vector3 vector3Shaft = new Vector3(0, 1, 0);
 
 	private float[] f_arrData = new float[]
 	{ 0,// dirty,1为脏数据
 			0, 0, 0, // x , y , z
-			0, 0, 1, // rx , ry , rz
+			0, 1, 0, // rx , ry , rz
 			0,// angle
 	};
 
@@ -48,9 +49,29 @@ public class Mover implements IMover
 	private static final int RZ = 6;
 	private static final int ANGLE = 7;
 
-	public Mover()
+	public YMover()
 	{
+	}
+
+	/**
+	 * @param bRotatePrior
+	 *                真表示先旋转后平移，反之则反
+	 */
+	public YMover(boolean bRotatePrior)
+	{
+		this.bRotatePrior = bRotatePrior;
 		matrix.identity();
+	}
+
+	/**
+	 * 设置移动子获取变换矩阵时旋转、平移的顺序
+	 * 
+	 * @param bRotatePrior
+	 *                真表示先旋转后平移，反之则反
+	 */
+	public void setRotatePrior(boolean bRotatePrior)
+	{
+		this.bRotatePrior = bRotatePrior;
 	}
 
 	/**
@@ -89,13 +110,26 @@ public class Mover implements IMover
 	{
 		if (1 == f_arrData[DIRTY])
 		{
-			matrix.identity()
-					.translate(f_arrData[X], f_arrData[Y],
-							f_arrData[Z])
-					.rotate(f_arrData[ANGLE],
-							f_arrData[RX],
-							f_arrData[RY],
-							f_arrData[RZ]);
+			if (bRotatePrior)
+				// TranM*RotM*Point
+				matrix.identity()
+						.translate(f_arrData[X],
+								f_arrData[Y],
+								f_arrData[Z])
+						.rotate(f_arrData[ANGLE],
+								f_arrData[RX],
+								f_arrData[RY],
+								f_arrData[RZ]);
+			else
+				// RotM*TranM*Point
+				matrix.identity()
+						.rotate(f_arrData[ANGLE],
+								f_arrData[RX],
+								f_arrData[RY],
+								f_arrData[RZ])
+						.translate(f_arrData[X],
+								f_arrData[Y],
+								f_arrData[Z]);
 			f_arrData[DIRTY] = 0;
 			return true;
 		}
@@ -110,7 +144,7 @@ public class Mover implements IMover
 	}
 
 	@Override
-	public IMover setZ(float fZ)
+	public YIMover setZ(float fZ)
 	{
 		if (f_arrData[Z] == fZ)
 			return this;
@@ -126,7 +160,7 @@ public class Mover implements IMover
 	}
 
 	@Override
-	public IMover setY(float fY)
+	public YIMover setY(float fY)
 	{
 		if (f_arrData[Y] == fY)
 			return this;
@@ -142,7 +176,7 @@ public class Mover implements IMover
 	}
 
 	@Override
-	public IMover setX(float fX)
+	public YIMover setX(float fX)
 	{
 		if (f_arrData[X] == fX)
 			return this;
@@ -158,7 +192,7 @@ public class Mover implements IMover
 	}
 
 	@Override
-	public IMover setAngle(float angle)
+	public YIMover setAngle(float angle)
 	{
 		if (f_arrData[ANGLE] == angle)
 			return this;
@@ -177,7 +211,7 @@ public class Mover implements IMover
 	}
 
 	@Override
-	public IMover setShaft(Vector3 vector3Shaft)
+	public YIMover setShaft(Vector3 vector3Shaft)
 	{
 		if (this.vector3Shaft.equals(vector3Shaft))
 			return this;
@@ -187,5 +221,16 @@ public class Mover implements IMover
 		f_arrData[RY] = vector3Shaft.y;
 		f_arrData[RZ] = vector3Shaft.z;
 		return this;
+	}
+
+	@Override
+	public String toString()
+	{
+		return "X=" + f_arrData[1] + "   Y=" + f_arrData[2] + "   Z="
+				+ f_arrData[3] + "\n"
+				+ //
+				"RX=" + f_arrData[4] + "   RY=" + f_arrData[5]
+				+ "   RZ=" + f_arrData[6] + "\n" + //
+				"   Angle=" + f_arrData[7];
 	}
 }
