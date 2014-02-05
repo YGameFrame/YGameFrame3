@@ -6,6 +6,7 @@ import java.util.Map;
 import ygame.domain.YABaseShaderProgram;
 import ygame.exception.YException;
 import ygame.skeleton.YAttributeDataSource;
+import ygame.texture.YTexture;
 import android.opengl.GLES20;
 
 /**
@@ -48,8 +49,7 @@ import android.opengl.GLES20;
 // 哈希表求哈希值、查表耗时，所以又提供了"bindXXX"接口作为一个解决方法，
 // 使用bindXXX方法时，需要复写onInitialize(int)，找到变量引用用以完成bindXXX
 // 参数传递（但一定要注意必须先调用super.onInitalize(int)）。
-public abstract class YAShaderProgram<DA extends YABaseShaderProgram.YAParametersAdapter>
-		extends YABaseShaderProgram<DA>
+public abstract class YAShaderProgram extends YABaseShaderProgram
 {
 
 	private Map<String, Integer> uniforms;
@@ -86,6 +86,44 @@ public abstract class YAShaderProgram<DA extends YABaseShaderProgram.YAParameter
 	protected final void bindUniformi(int iUniformHandle, int x)
 	{
 		GLES20.glUniform1i(iUniformHandle, x);
+	}
+
+	/**
+	 * 为一致变量设置纹理
+	 * 
+	 * @param strUniformValueName
+	 *                一致变量名
+	 * @param texture
+	 *                纹理
+	 */
+	protected final void setUniformTexture(String strUniformValueName,
+			YTexture texture)
+	{
+		bindUniformTexture(uniforms.get(strUniformValueName), texture);
+	}
+
+	/**
+	 * 为一致变量绑定纹理
+	 * 
+	 * @param iUniformHandle
+	 *                一致变量句柄
+	 * @param texture
+	 *                纹理
+	 */
+	protected final void bindUniformTexture(int iUniformHandle,
+			YTexture texture)
+	{
+		// Set the active texture unit to
+		// texture unit 0.
+		GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
+		// Bind the texture to this unit.
+		GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, texture.getHandle());
+		// Tell the texture uniform sampler
+		// to use this texture in the
+		// shader by binding to texture unit
+		// 0.
+		setUniformf("sTexture", 0);
+		bindUniformf(iUniformHandle, 0);
 	}
 
 	/**

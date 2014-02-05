@@ -30,13 +30,13 @@ import ygame.framework.domain.YReadBundle;
  */
 public class YDomainView extends YABaseDomainView
 {
-	YABaseShaderProgram<?> program;
+	YABaseShaderProgram program;
 
 	/**
 	 * @param program
 	 *                渲染视图所使用的<b>渲染程序</b>
 	 */
-	public YDomainView(YABaseShaderProgram<?> program)
+	public YDomainView(YABaseShaderProgram program)
 	{
 		this.program = program;
 	}
@@ -47,7 +47,7 @@ public class YDomainView extends YABaseDomainView
 	 * @param program
 	 *                渲染程序
 	 */
-	public void useProgram(YABaseShaderProgram<?> program)
+	public void useProgram(YABaseShaderProgram program)
 	{
 		this.program = program;
 	}

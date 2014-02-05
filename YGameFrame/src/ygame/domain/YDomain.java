@@ -1,6 +1,6 @@
 package ygame.domain;
 
-import ygame.domain.YABaseShaderProgram.YAParametersAdapter;
+import ygame.domain.YABaseShaderProgram.YABaseParametersAdapter;
 import ygame.framework.domain.YBaseDomain;
 
 /**
@@ -45,13 +45,13 @@ public class YDomain extends YBaseDomain
 
 	/**
 	 * 获取<b>渲染程序</b>的<b>参数适配器</b>
-	 * {@link YAParametersAdapter}</br>
+	 * {@link YABaseParametersAdapter}</br>
 	 * 注：您应该对获得的<b>参数适配器</b>根据当前使用的<b>具体渲染程序</b>进行类型转换
 	 * ，并进而填写之
 	 * 
 	 * @return 参数适配器
 	 */
-	public final YAParametersAdapter getParametersAdapter()
+	public final YABaseParametersAdapter getParametersAdapter()
 	{
 		return view.program.daParamsAdapter;
 	}

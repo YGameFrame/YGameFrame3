@@ -30,8 +30,7 @@ import android.opengl.GLES20;
  * @author yunzhong
  * 
  */
-public class YSandboxProgram extends
-		YABaseProgram<YSandboxProgram.YSandboxAdapter>
+public class YSandboxProgram extends YAInternalProgram
 {
 	private float time;
 	private float fVelocity = 1;
@@ -103,7 +102,7 @@ public class YSandboxProgram extends
 	 * 
 	 */
 	public static final class YSandboxAdapter extends
-			YABaseProgram.YABaseAdapter<YSandboxAdapter>
+			YAInternalProgram.YAInternalAdapter<YSandboxAdapter>
 	{
 
 	}

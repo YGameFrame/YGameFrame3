@@ -33,8 +33,8 @@ import android.opengl.GLES20;
  * @author yunzhong
  * 
  */
-abstract class YABaseProgram<BDA extends YABaseProgram.YABaseAdapter<?>> extends
-		YAShaderProgram<BDA>
+abstract class YAInternalProgram extends
+		YAShaderProgram
 {
 	private static final int SKE = 0;
 	private static final int PVM = 1;
@@ -45,7 +45,7 @@ abstract class YABaseProgram<BDA extends YABaseProgram.YABaseAdapter<?>> extends
 	private YAttributeValue aNormal;
 	private YAttributeValue aTexCoord;
 
-	YABaseProgram(Resources resources, int iDrawMode)
+	YAInternalProgram(Resources resources, int iDrawMode)
 	{
 		this.iDrawMode = iDrawMode;
 	}
@@ -101,8 +101,8 @@ abstract class YABaseProgram<BDA extends YABaseProgram.YABaseAdapter<?>> extends
 	 * @author yunzhong
 	 * 
 	 */
-	static abstract class YABaseAdapter<BA extends YABaseAdapter<?>> extends
-			YABaseShaderProgram.YAParametersAdapter
+	static abstract class YAInternalAdapter<BA extends YAInternalAdapter<?>> extends
+			YABaseShaderProgram.YABaseParametersAdapter
 	{
 		private YMover mover;
 		private YMatrix matrixPV;

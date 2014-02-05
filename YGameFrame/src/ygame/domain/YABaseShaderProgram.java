@@ -29,11 +29,8 @@ import android.opengl.GLES20;
  * 
  * @author yunzhong
  * 
- * @param <DA>
- *                <b>参数适配器</b>
- *                {@link YAParametersAdapter}类型
  */
-public abstract class YABaseShaderProgram<DA extends YABaseShaderProgram.YAParametersAdapter>
+public abstract class YABaseShaderProgram
 {
 	int iProgramHandle = -1;
 
@@ -41,7 +38,7 @@ public abstract class YABaseShaderProgram<DA extends YABaseShaderProgram.YAParam
 
 	private String strVertexShaderCode;
 
-	DA daParamsAdapter;
+	YABaseParametersAdapter daParamsAdapter;
 
 	/**
 	 * @param strVertexShaderSrc
@@ -52,7 +49,7 @@ public abstract class YABaseShaderProgram<DA extends YABaseShaderProgram.YAParam
 	 *                该渲染程序的参数适配器类
 	 */
 	final protected void fillCodeAndParam(String strVertexShaderSrc,
-			String strFragmentShaderSrc, Class<DA> clazzDataAdapter)
+			String strFragmentShaderSrc, Class<?> clazzDataAdapter)
 	{
 		this.strFragmentShaderCode = strFragmentShaderSrc;
 		this.strVertexShaderCode = strVertexShaderSrc;
@@ -83,11 +80,11 @@ public abstract class YABaseShaderProgram<DA extends YABaseShaderProgram.YAParam
 		GLES20.glBindBuffer(GLES20.GL_ELEMENT_ARRAY_BUFFER, 0);
 	}
 
-	private DA createDataAdapter(Class<DA> clazzDataAdapter)
+	private YABaseParametersAdapter createDataAdapter(Class<?> clazzDataAdapter)
 	{
 		try
 		{
-			return clazzDataAdapter.newInstance();
+			return (YABaseParametersAdapter) clazzDataAdapter.newInstance();
 		} catch (InstantiationException e)
 		{
 			e.printStackTrace();
@@ -114,7 +111,7 @@ public abstract class YABaseShaderProgram<DA extends YABaseShaderProgram.YAParam
 	 *                着色程序句柄
 	 * @param bundle
 	 *                可读包裹
-	 * @param system 
+	 * @param system
 	 */
 	abstract protected void applyParams(int iProgramHandle,
 			YReadBundle bundle, YSystem system);
@@ -139,7 +136,7 @@ public abstract class YABaseShaderProgram<DA extends YABaseShaderProgram.YAParam
 		GLES20.glVertexAttribPointer(iValueHandle, iFloatsPerValue,
 				GLES20.GL_FLOAT, false, 0, 0);
 	}
-	
+
 	/**
 	 * 使用索引缓冲对象绘制画面
 	 * 
@@ -167,7 +164,7 @@ public abstract class YABaseShaderProgram<DA extends YABaseShaderProgram.YAParam
 	 * <b>概述</b>：这是<b>渲染程序</b>的参数适配器。</br>
 	 * <li>作为使用者，您应该依次填写适配器中所声明的参数；
 	 * <li>如果您开发了一个<b> 渲染程序</b> ，您应该再开发本类
-	 * {@link YAParametersAdapter}的一个子类，
+	 * {@link YABaseParametersAdapter}的一个子类，
 	 * 用来向外界声明使用此<b>渲染程序</b>时应该向其传递怎样的参数。
 	 * 
 	 * <p>
@@ -191,7 +188,7 @@ public abstract class YABaseShaderProgram<DA extends YABaseShaderProgram.YAParam
 	// 除此而外，不应为该类设计其他用途。
 	// 作为渲染程序的设计者，可同时接触到可写包裹和可读包裹，所以自己最清楚每个参数相应的键值，
 	// 自己匹配键值即可，从而不用向外界声明这些繁琐的键值。
-	public static abstract class YAParametersAdapter
+	public static abstract class YABaseParametersAdapter
 	{
 		/**
 		 * 将<b>适配器</b>中的属性依次映射进<b>可写包裹</b>

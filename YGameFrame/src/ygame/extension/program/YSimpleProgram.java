@@ -34,8 +34,7 @@ import android.opengl.GLES20;
  * @author yunzhong
  * 
  */
-public final class YSimpleProgram extends
-		YAShaderProgram<YSimpleProgram.YSimpleParamAdapter>
+public final class YSimpleProgram extends YAShaderProgram
 {
 	// private int iPositionHandle = -1;
 	// private int iColorHandle = -1;
@@ -76,7 +75,8 @@ public final class YSimpleProgram extends
 	// }
 
 	@Override
-	protected void applyParams(int iProgramHandle, YReadBundle bundle , YSystem system)
+	protected void applyParams(int iProgramHandle, YReadBundle bundle,
+			YSystem system)
 	{
 		YSkeleton skeleton = (YSkeleton) bundle
 				.readObject(YSimpleParamAdapter.SKELETON);
@@ -133,7 +133,7 @@ public final class YSimpleProgram extends
 	 * 
 	 */
 	public static class YSimpleParamAdapter extends
-			YABaseShaderProgram.YAParametersAdapter
+			YABaseShaderProgram.YABaseParametersAdapter
 	{
 		private static final int SKELETON = 0;
 		private static final int MATRIX_PVM = 1;
