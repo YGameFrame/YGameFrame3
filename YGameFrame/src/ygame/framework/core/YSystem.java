@@ -58,7 +58,7 @@ public final class YSystem extends YAStateMachineContext
 	private final List<YScene> scenes = new ArrayList<YScene>();
 	private YScene sceneCurrent;
 
-	private final YView YVIEW;
+	public final YView YVIEW;
 	private boolean bGLInitialized;
 	private double dbLastClockTime_ms;
 	private ScheduledExecutorService sesTimer;
@@ -174,42 +174,9 @@ public final class YSystem extends YAStateMachineContext
 		final double dbDeltaTime_s = (dbCurrentClockCycle_ms - dbLastClockTime_ms) / 1000.0;
 		dbLastClockTime_ms = dbCurrentClockCycle_ms;
 		// 通知下属
-		/************************** 测试区 *****************************/
-		// TODO
 		sceneCurrent.onClockCycle(dbDeltaTime_s);
 		if (bDEBUG)
 			calculateFPS();
-		// float fDel = (float) (2 *
-		// dbDeltaTime_s);
-		// if (cameraTest.getZ() > 20)
-		// iFlag = -1;
-		// else if (cameraTest.getZ() < -7)
-		// iFlag = 1;
-		//
-		// // cameraTest.setShaft(new
-		// Vector3(2,
-		// // 1, 1));
-		// cameraTest.setZ(cameraTest.getZ()
-		// + fDel * iFlag);
-		// cameraTest.setX(cameraTest.getX()
-		// + fDel * iFlag);
-		// cameraTest.setAngle(cameraTest.getAngle()
-		// + 1);
-		// YMatrix matrixProj =
-		// cameraTest.getProjectMatrix();
-		// YMatrix matrixView =
-		// cameraTest.getViewMatrix();
-		// YMatrix.multiplyMM(matrixPV,
-		// matrixProj, matrixView);
-		//
-		// for (YABaseDomain domain :
-		// domainsTest)
-		// domain.onClockCycle(dbDeltaTime_s,
-		// this, null,
-		// cameraTest, matrixPV, matrixProj,
-		// matrixView);
-
-		/************************** 测试区 ***************************/
 	}
 
 	private void calculateFPS()
@@ -281,11 +248,11 @@ public final class YSystem extends YAStateMachineContext
 	void notifyGL_Ready(GL10 gl10, int iWidth, int iHeight)
 	{
 		GLES20.glViewport(0, 0, iWidth, iHeight);
-		
+
 		configurationGL = YGL_Configuration.getInstanceInGL();
 
 		dbLastClockTime_ms = SystemClock.elapsedRealtime();
-		
+
 		for (int i = 0; i < 2; i++)
 		{
 			preFrame();

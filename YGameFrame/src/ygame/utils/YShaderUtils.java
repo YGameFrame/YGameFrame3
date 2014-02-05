@@ -18,19 +18,24 @@ public final class YShaderUtils
 		// 编译shader
 		GLES20.glCompileShader(iShader);
 
-		int[] compileStatus = new int[1];
 		// 获取shader的编译情况
+		int[] compileStatus = new int[1];
 		GLES20.glGetShaderiv(iShader, GLES20.GL_COMPILE_STATUS,
 				compileStatus, 0);
+		// 确定着色器类型
+		String strType = GLES20.GL_VERTEX_SHADER == iShaderType ? "顶点着色器"
+				: "片元着色器";
+		// 获取编译日志
+		String err = GLES20.glGetShaderInfoLog(iShader);
+		if (err != null && err.length() != 0)
+			System.out.println(strType + "编译：" + err);
 		// 若编译失败则报错并删除程序
 		if (compileStatus[0] != GLES20.GL_TRUE)
 		{
 			GLES20.glDeleteShader(iShader);
 
-			String strType = GLES20.GL_VERTEX_SHADER == iShaderType ? "顶点着色器"
-					: "片元着色器";
-			String detailMessage = "编译失败，" + strType + ":      "
-					+ GLES20.glGetShaderInfoLog(iShader);
+			String detailMessage = "编译失败，" + strType + ":"
+					+ iShader + "，" + err;
 			String strTag = YShaderUtils.class.getName();
 			String strSuggest = "无法编译着色脚本，请您细查其代码";
 			throw new YException(detailMessage, strTag, strSuggest);
@@ -74,7 +79,7 @@ public final class YShaderUtils
 		{
 			GLES20.glDeleteProgram(iProgram);
 
-			String detailMessage = "链接失败，" +  ":      "
+			String detailMessage = "链接失败，" + ":      "
 					+ GLES20.glGetProgramInfoLog(iProgram);
 			String strTag = YShaderUtils.class.getName();
 			String strSuggest = "无法链接着色脚本，请您细查其代码";

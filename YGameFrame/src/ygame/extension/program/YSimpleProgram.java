@@ -1,15 +1,17 @@
 package ygame.extension.program;
 
-import android.content.res.Resources;
-import android.opengl.GLES20;
-import ygame.domain.YAShaderProgram;
+import ygame.domain.YABaseShaderProgram;
 import ygame.framework.R;
+import ygame.framework.core.YSystem;
 import ygame.framework.domain.YReadBundle;
 import ygame.framework.domain.YWriteBundle;
 import ygame.math.YMatrix;
+import ygame.program.YAShaderProgram;
 import ygame.skeleton.YSkeleton;
 import ygame.transformable.YMover;
 import ygame.utils.YTextFileUtils;
+import android.content.res.Resources;
+import android.opengl.GLES20;
 
 /**
  * <b>简单渲染程序</b>
@@ -32,13 +34,16 @@ import ygame.utils.YTextFileUtils;
  * @author yunzhong
  * 
  */
-public class YSimpleProgram extends
+public final class YSimpleProgram extends
 		YAShaderProgram<YSimpleProgram.YSimpleParamAdapter>
 {
-	private int iPositionHandle = -1;
-	private int iColorHandle = -1;
-	private int iPVMMatrixHandle = -1;
+	// private int iPositionHandle = -1;
+	// private int iColorHandle = -1;
+	// private int iPVMMatrixHandle = -1;
 	private int iDrawMode = GLES20.GL_TRIANGLES;
+
+	// private YAttributeValue aPosition;
+	// private YAttributeValue aColor;
 
 	public YSimpleProgram(Resources resources, int iDrawMode)
 	{
@@ -50,34 +55,52 @@ public class YSimpleProgram extends
 				YSimpleParamAdapter.class);
 	}
 
-	@Override
-	protected void onInitialize(int iProgramHandle)
-	{
-		iPositionHandle = GLES20.glGetAttribLocation(iProgramHandle,
-				"aPosition");
-		iColorHandle = GLES20.glGetAttribLocation(iProgramHandle,
-				"aColor");
+	// @Override
+	// protected void onInitialize(int
+	// iProgramHandle)
+	// {
+	// iPositionHandle =
+	// GLES20.glGetAttribLocation(iProgramHandle,
+	// "aPosition");
+	// iColorHandle =
+	// GLES20.glGetAttribLocation(iProgramHandle,
+	// "aColor");
+	// // super.onInitialize(iProgramHandle);
+	//
+	//
+	// // aPosition = getAttribute("aPosition");
+	// // aColor = getAttribute("aColor");
+	// iPVMMatrixHandle =
+	// GLES20.glGetUniformLocation(iProgramHandle,
+	// "uPVMMatrix");
+	// }
 
-		iPVMMatrixHandle = GLES20.glGetUniformLocation(iProgramHandle,
-				"uPVMMatrix");
-	}
-
 	@Override
-	protected void applyParams(int iProgramHandle, YReadBundle bundle)
+	protected void applyParams(int iProgramHandle, YReadBundle bundle , YSystem system)
 	{
 		YSkeleton skeleton = (YSkeleton) bundle
 				.readObject(YSimpleParamAdapter.SKELETON);
-		bindVBODataSourcToValue(skeleton.getColorHandle(),
-				iColorHandle, 4);
-		bindVBODataSourcToValue(skeleton.getPositionHandle(),
-				iPositionHandle, 3);
+		setAttribute("aPosition", skeleton.getPositionDataSource());
+		setAttribute("aColor", skeleton.getColorDataSource());
+		setUniformMatrix(
+				"uPVMMatrix",
+				bundle.readFloatArray(YSimpleParamAdapter.MATRIX_PVM));
 
-		GLES20.glUniformMatrix4fv(
-				iPVMMatrixHandle,
-				1,
-				false,
-				bundle.readFloatArray(YSimpleParamAdapter.MATRIX_PVM),
-				0);
+		// setAttribute(aColor,
+		// skeleton.getColorData());
+		// setAttribute(aPosition,
+		// skeleton.getPositionData());
+		// bindVBODataSourcToValue(skeleton.getColorHandle(),
+		// iColorHandle, 4);
+		// bindVBODataSourcToValue(skeleton.getPositionHandle(),
+		// iPositionHandle, 3);
+
+		// GLES20.glUniformMatrix4fv(
+		// iPVMMatrixHandle,
+		// 1,
+		// false,
+		// bundle.readFloatArray(YSimpleParamAdapter.MATRIX_PVM),
+		// 0);
 
 		drawWithIBO(skeleton.getIndexHandle(), skeleton.getVertexNum(),
 				iDrawMode);
@@ -110,7 +133,7 @@ public class YSimpleProgram extends
 	 * 
 	 */
 	public static class YSimpleParamAdapter extends
-			YAShaderProgram.YAParametersAdapter
+			YABaseShaderProgram.YAParametersAdapter
 	{
 		private static final int SKELETON = 0;
 		private static final int MATRIX_PVM = 1;

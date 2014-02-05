@@ -60,7 +60,6 @@ public class YMover implements YIMover
 	public YMover(boolean bRotatePrior)
 	{
 		this.bRotatePrior = bRotatePrior;
-		matrix.identity();
 	}
 
 	/**

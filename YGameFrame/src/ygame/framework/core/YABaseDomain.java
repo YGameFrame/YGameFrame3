@@ -50,8 +50,11 @@ public abstract class YABaseDomain extends YAStateMachineContext
 
 	/**
 	 * 绘图时回调此函数
+	 * 
+	 * @param system
+	 *                系统
 	 */
-	protected abstract void onDraw();
+	protected abstract void onDraw(YSystem system);
 
 	@Override
 	protected abstract void inputRequest(YRequest request);

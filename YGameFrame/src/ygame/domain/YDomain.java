@@ -1,6 +1,6 @@
 package ygame.domain;
 
-import ygame.domain.YAShaderProgram.YAParametersAdapter;
+import ygame.domain.YABaseShaderProgram.YAParametersAdapter;
 import ygame.framework.domain.YBaseDomain;
 
 /**

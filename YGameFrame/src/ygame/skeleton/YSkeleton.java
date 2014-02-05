@@ -1,8 +1,10 @@
 ﻿package ygame.skeleton;
 
+import java.nio.Buffer;
 import java.util.Random;
 
 import android.opengl.GLES20;
+import ygame.program.YAttributeType;
 import ygame.utils.YBufferUtils;
 
 /**
@@ -31,65 +33,65 @@ import ygame.utils.YBufferUtils;
 public abstract class YSkeleton
 {
 
-	private YBuffer aColor;
-	private YBuffer aTexCoord;
-	private YBuffer aNormal;
-	private YBuffer aPosition;
-
-	private YFormat format;
+	private YAttributeDataSource aColor;
+	private YAttributeDataSource aTexCoord;
+	private YAttributeDataSource aNormal;
+	private YAttributeDataSource aPosition;
 
 	private int iVertexNum;
-
-	private YBuffer bufferIndex;
-
-	private int aColorHandle = -1;
-	private int aTexCoordHandle = -1;
-	private int aNormalHandle = -1;
-	private int aPositionHandle = -1;
+	private Buffer bufferIndex;
 	private int iIndexHandle = -1;
 
 	/**
-	 * 设置顶点位置坐标
+	 * 设置顶点位置坐标，默认其类型为<b>三维浮点向量</b>
+	 * {@link YAttributeType#VEC3}
 	 * 
 	 * @param f_arrPosition
 	 *                顶点位置坐标数组
 	 */
 	final protected void setPositions(float[] f_arrPosition)
 	{
-		aPosition = new YBuffer(format, f_arrPosition);
+		aPosition = new YAttributeDataSource(f_arrPosition,
+				YAttributeType.VEC3);
 	}
 
 	/**
-	 * 设置顶点法向量
+	 * 设置顶点法向量，默认其类型为<b>三维浮点向量</b>
+	 * {@link YAttributeType#VEC3}
 	 * 
 	 * @param f_arrNormals
 	 *                顶点法向量数组
 	 */
 	final protected void setNormals(float[] f_arrNormals)
 	{
-		aNormal = new YBuffer(format, f_arrNormals);
+		aNormal = new YAttributeDataSource(f_arrNormals,
+				YAttributeType.VEC3);
 	}
 
 	/**
-	 * 设置顶点纹理坐标
+	 * 设置顶点纹理坐标，默认其类型为<b>二维浮点向量</b>
+	 * {@link YAttributeType#VEC2}
 	 * 
 	 * @param f_arrTexCoords
 	 *                顶点纹理坐标数组
 	 */
 	final protected void setTexCoords(float[] f_arrTexCoords)
 	{
-		aTexCoord = new YBuffer(format, f_arrTexCoords);
+		aTexCoord = new YAttributeDataSource(f_arrTexCoords,
+				YAttributeType.VEC2);
 	}
 
 	/**
-	 * 设置顶点颜色
+	 * 设置顶点颜色，默认其类型为<b>四维浮点向量</b>
+	 * {@link YAttributeType#VEC4}
 	 * 
 	 * @param f_arrColors
 	 *                顶点颜色数组
 	 */
 	final protected void setColors(float[] f_arrColors)
 	{
-		aColor = new YBuffer(format, f_arrColors);
+		aColor = new YAttributeDataSource(f_arrColors,
+				YAttributeType.VEC4);
 	}
 
 	/**
@@ -100,46 +102,47 @@ public abstract class YSkeleton
 	 */
 	final protected void setIndices(short[] s_arrIndices)
 	{
-		bufferIndex = new YBuffer(format, s_arrIndices);
+		bufferIndex = YBufferUtils
+				.transportArrayToNativeBuffer(s_arrIndices);
 		iVertexNum = s_arrIndices.length;
 	}
 
 	/**
-	 * 获取顶点颜色数据
+	 * 获取顶点颜色数据源
 	 * 
-	 * @return 顶点颜色数据
+	 * @return 顶点颜色数据源
 	 */
-	final public YBuffer getColorData()
+	final public YAttributeDataSource getColorDataSource()
 	{
 		return aColor;
 	}
 
 	/**
-	 * 获取顶点纹理坐标数据
+	 * 获取顶点纹理坐标数据源
 	 * 
-	 * @return 顶点纹理坐标数据
+	 * @return 顶点纹理坐标数据源
 	 */
-	final public YBuffer getTexCoordData()
+	final public YAttributeDataSource getTexCoordDataSource()
 	{
 		return aTexCoord;
 	}
 
 	/**
-	 * 获取顶点法向量数据
+	 * 获取顶点法向量数据源
 	 * 
-	 * @return 顶点法向量数据
+	 * @return 顶点法向量数据源
 	 */
-	final public YBuffer getNormalData()
+	final public YAttributeDataSource getNormalDataSource()
 	{
 		return aNormal;
 	}
 
 	/**
-	 * 获取顶点位置坐标数据
+	 * 获取顶点位置坐标数据源
 	 * 
-	 * @return 顶点位置坐标数据
+	 * @return 顶点位置坐标数据源
 	 */
-	final public YBuffer getPositionData()
+	final public YAttributeDataSource getPositionDataSource()
 	{
 		return aPosition;
 	}
@@ -149,75 +152,9 @@ public abstract class YSkeleton
 	 * 
 	 * @return 顶点索引数据
 	 */
-	final public YBuffer getIndexData()
+	final public Buffer getIndexData()
 	{
 		return bufferIndex;
-	}
-
-	/**
-	 * 获取顶点数目
-	 * 
-	 * @return 顶点数目
-	 */
-	final public int getVertexNum()
-	{
-		return iVertexNum;
-	}
-
-	/**
-	 * 获取顶点缓冲对象颜色句柄
-	 * 
-	 * @return 顶点颜色句柄
-	 */
-	final public int getColorHandle()
-	{
-		if (-1 == aColorHandle)
-			aColorHandle = YBufferUtils.upload(aColor.buffer,
-					GLES20.GL_ARRAY_BUFFER, 4,
-					GLES20.GL_STATIC_DRAW);
-		return aColorHandle;
-	}
-
-	/**
-	 * 获取顶点缓冲对象纹理坐标句柄
-	 * 
-	 * @return 顶点纹理坐标句柄
-	 */
-	final public int getTexCoordHandle()
-	{
-		if (-1 == aTexCoordHandle)
-			aTexCoordHandle = YBufferUtils.upload(aTexCoord.buffer,
-					GLES20.GL_ARRAY_BUFFER, 4,
-					GLES20.GL_STATIC_DRAW);
-		return aTexCoordHandle;
-	}
-
-	/**
-	 * 获取顶点缓冲对象法向量句柄
-	 * 
-	 * @return 顶点法向量句柄
-	 */
-	final public int getNormalHandle()
-	{
-		if (-1 == aNormalHandle)
-			aNormalHandle = YBufferUtils.upload(aNormal.buffer,
-					GLES20.GL_ARRAY_BUFFER, 4,
-					GLES20.GL_STATIC_DRAW);
-		return aNormalHandle;
-	}
-
-	/**
-	 * 获取顶点缓冲对象位置坐标句柄
-	 * 
-	 * @return 顶点位置坐标句柄
-	 */
-	final public int getPositionHandle()
-	{
-		if (-1 == aPositionHandle)
-			aPositionHandle = YBufferUtils.upload(aPosition.buffer,
-					GLES20.GL_ARRAY_BUFFER, 4,
-					GLES20.GL_STATIC_DRAW);
-		return aPositionHandle;
 	}
 
 	/**
@@ -228,10 +165,20 @@ public abstract class YSkeleton
 	final public int getIndexHandle()
 	{
 		if (-1 == iIndexHandle)
-			iIndexHandle = YBufferUtils.upload(bufferIndex.buffer,
+			iIndexHandle = YBufferUtils.upload(bufferIndex,
 					GLES20.GL_ELEMENT_ARRAY_BUFFER, 2,
 					GLES20.GL_STATIC_DRAW);
 		return iIndexHandle;
+	}
+
+	/**
+	 * 获取顶点数目
+	 * 
+	 * @return 顶点数目
+	 */
+	final public int getVertexNum()
+	{
+		return iVertexNum;
 	}
 
 	private static Random random = new Random();

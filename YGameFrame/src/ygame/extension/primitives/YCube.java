@@ -6,7 +6,7 @@ public class YCube extends YSkeleton
 {
 
 	private float mSize;
-	private boolean mCreateTextureCoords;
+	private boolean mCreateTextureCoords = true;
 	private boolean mCreateVertexColorBuffer = true;
 
 	public YCube(float fSideLength , float[] f_arrRGBA)

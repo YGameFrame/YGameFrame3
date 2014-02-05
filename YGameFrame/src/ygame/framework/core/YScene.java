@@ -99,7 +99,6 @@ public class YScene extends YAStateMachineContext
 				YWhen.BEFORE_RENDER);
 		request.domains = domains;
 		SYSTEM.inputRequest(request);
-		// internalAddDomains(domains);
 	}
 
 	private void internalAddDomains(YABaseDomain[] domains)
@@ -154,22 +153,8 @@ public class YScene extends YAStateMachineContext
 		return camera;
 	}
 
-	// private int iFlagTest = 1;
-
 	protected void onClockCycle(double dbDeltaTime_s)
 	{
-		// float z = camera.getZ();
-		// if (z > 60)
-		// iFlagTest = -1;
-		// else if (z < 1)
-		// iFlagTest = 1;
-		// camera.setZ((float) (z + iFlagTest
-		// * dbDeltaTime_s * 5));
-		//
-		// camera.setAngle((float)
-		// (camera.getAngle() + dbDeltaTime_s
-		// * 20));
-
 		YMatrix.multiplyMM(matrixPV, camera.getProjectMatrix(),
 				camera.getViewMatrix());
 		Collection<YABaseDomain> domains = mapDomains.values();
@@ -205,7 +190,7 @@ public class YScene extends YAStateMachineContext
 
 		Collection<YABaseDomain> domains = mapDomains.values();
 		for (YABaseDomain domain : domains)
-			domain.onDraw();
+			domain.onDraw(SYSTEM);
 	}
 
 	private static class YSceneRequest extends YRequest

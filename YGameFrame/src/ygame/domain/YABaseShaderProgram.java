@@ -1,12 +1,14 @@
 ﻿package ygame.domain;
 
+import ygame.framework.core.YSystem;
 import ygame.framework.domain.YReadBundle;
 import ygame.framework.domain.YWriteBundle;
+import ygame.skeleton.YSkeleton;
 import ygame.utils.YShaderUtils;
 import android.opengl.GLES20;
 
 /**
- * <b>着色（渲染）程序</b>
+ * <b>基础抽象着色（渲染）程序</b>
  * 
  * <p>
  * <b>概述</b>： 您可以通过复写 {@link #onInitialize(int)}以及
@@ -31,7 +33,7 @@ import android.opengl.GLES20;
  *                <b>参数适配器</b>
  *                {@link YAParametersAdapter}类型
  */
-public abstract class YAShaderProgram<DA extends YAShaderProgram.YAParametersAdapter>
+public abstract class YABaseShaderProgram<DA extends YABaseShaderProgram.YAParametersAdapter>
 {
 	int iProgramHandle = -1;
 
@@ -112,9 +114,10 @@ public abstract class YAShaderProgram<DA extends YAShaderProgram.YAParametersAda
 	 *                着色程序句柄
 	 * @param bundle
 	 *                可读包裹
+	 * @param system 
 	 */
 	abstract protected void applyParams(int iProgramHandle,
-			YReadBundle bundle);
+			YReadBundle bundle, YSystem system);
 
 	/**
 	 * 将顶点缓冲对象索引（即数据源）与渲染程序中的变量绑定
@@ -136,7 +139,7 @@ public abstract class YAShaderProgram<DA extends YAShaderProgram.YAParametersAda
 		GLES20.glVertexAttribPointer(iValueHandle, iFloatsPerValue,
 				GLES20.GL_FLOAT, false, 0, 0);
 	}
-
+	
 	/**
 	 * 使用索引缓冲对象绘制画面
 	 * 

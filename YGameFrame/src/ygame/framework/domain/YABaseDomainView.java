@@ -34,11 +34,13 @@ public abstract class YABaseDomainView
 	 * 
 	 * @param domainContext
 	 *                实体上下文
+	 * @param system
+	 *                系统
 	 */
 	@SuppressLint("WrongCall")
-	void onDraw(YBaseDomain domainContext)
+	void onDraw(YBaseDomain domainContext, YSystem system)
 	{
-		onDraw(bundle, domainContext);
+		onDraw(bundle, domainContext, system);
 	}
 
 	/**
@@ -48,9 +50,11 @@ public abstract class YABaseDomainView
 	 *                可读包裹
 	 * @param domainContext
 	 *                所隶属的实体，实体上下文，可类型转换为所属实体类型
+	 * @param system
+	 *                系统
 	 */
 	protected abstract void onDraw(YReadBundle bundle,
-			YBaseDomain domainContext);
+			YBaseDomain domainContext, YSystem system);
 
 	/**
 	 * 初始化时被调用

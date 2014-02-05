@@ -47,9 +47,13 @@ public final class YMatrix
 
 	private float[] f_arrData;
 
+	/**
+	 * 建立一个4阶幺阵
+	 */
 	public YMatrix()
 	{
 		f_arrData = new float[16];
+		identity();
 	}
 
 	public void setData(float[] f_arrData)

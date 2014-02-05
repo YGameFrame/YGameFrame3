@@ -87,9 +87,9 @@ public class YBaseDomain extends YABaseDomain
 
 	@SuppressLint("WrongCall")
 	@Override
-	protected void onDraw()
+	protected void onDraw(YSystem system)
 	{
-		view.onDraw(this);
+		view.onDraw(this , system);
 	}
 
 	@Override

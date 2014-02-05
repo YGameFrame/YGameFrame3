@@ -29,10 +29,10 @@ public class YSphere extends YSkeleton
 	private float mRadius = 1;
 	private int mSegmentsW = 24;
 	private int mSegmentsH = 24;
-	private boolean mCreateTextureCoords = false;
-	private boolean mCreateVertexColorBuffer = true;
+	private boolean mCreateTextureCoords = true;
+//	private boolean mCreateVertexColorBuffer = true;
 
-	public YSphere(float fRadius , float[] f_arrRGBA)
+	public YSphere(float fRadius, float[] f_arrRGBA)
 	{
 		this.mRadius = fRadius;
 		fillData(f_arrRGBA);
@@ -124,32 +124,32 @@ public class YSphere extends YSkeleton
 
 		float[] colors = null;
 
-//		if (mCreateVertexColorBuffer)
-//		{
-//			int numColors = numVertices * 4;
-//			colors = new float[numColors];
-//			for (j = 0; j < numColors; j += 4)
-//			{
-//				// colors[j] = 1.0f;
-//				// colors[j + 1] = 0;
-//				// colors[j + 2] = 0;
-//				// colors[j + 3] =
-//				// 1.0f;
-//
-//				colors[j] = 0;
-//				colors[j + 1] = 0;
-//				colors[j + 2] = 1;
-//				colors[j + 3] = 1.0f;
-//			}
-//		}
-		if(null == f_arrRGBA)
+		// if (mCreateVertexColorBuffer)
+		// {
+		// int numColors = numVertices * 4;
+		// colors = new float[numColors];
+		// for (j = 0; j < numColors; j += 4)
+		// {
+		// // colors[j] = 1.0f;
+		// // colors[j + 1] = 0;
+		// // colors[j + 2] = 0;
+		// // colors[j + 3] =
+		// // 1.0f;
+		//
+		// colors[j] = 0;
+		// colors[j + 1] = 0;
+		// colors[j + 2] = 1;
+		// colors[j + 3] = 1.0f;
+		// }
+		// }
+		if (null == f_arrRGBA)
 			colors = createRandomColorData(vertices.length / 3);
 		else
 			colors = createColorData(vertices.length / 3, f_arrRGBA);
 
 		setPositions(vertices);
-		 setNormals(normals);
-		// setTexCoords(textureCoords);
+		setNormals(normals);
+		setTexCoords(textureCoords);
 		setColors(colors);
 		setIndices(indices);
 

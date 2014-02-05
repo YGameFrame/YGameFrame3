@@ -17,9 +17,10 @@ public class YException extends RuntimeException
 	 * @param strSuggest
 	 *                解决或避免该异常的一些建议
 	 */
-	public YException(String strDetailMessage, String strTag, String strSuggest)
+	public YException(String strDetailMessage, String strTag,
+			String strSuggest)
 	{
 		super(strDetailMessage);
-		Log.e(strTag, strSuggest);
+		Log.e(strTag, strSuggest + "\n" + strDetailMessage);
 	}
 }

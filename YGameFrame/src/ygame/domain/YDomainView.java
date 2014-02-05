@@ -11,7 +11,7 @@ import ygame.framework.domain.YReadBundle;
  * 
  * <p>
  * <b>概述</b>： 该视图使用您中传入的<b>着色程序</b>
- * {@link YAShaderProgram}进行渲染
+ * {@link YABaseShaderProgram}进行渲染
  * 
  * <p>
  * <b>建议</b>： TODO
@@ -30,33 +30,33 @@ import ygame.framework.domain.YReadBundle;
  */
 public class YDomainView extends YABaseDomainView
 {
-	YAShaderProgram<?> program;
+	YABaseShaderProgram<?> program;
 
 	/**
 	 * @param program
 	 *                渲染视图所使用的<b>渲染程序</b>
 	 */
-	public YDomainView(YAShaderProgram<?> program)
+	public YDomainView(YABaseShaderProgram<?> program)
 	{
 		this.program = program;
 	}
 
 	/**
-	 * 指定渲染该视图的<b>渲染程序</b>{@link YAShaderProgram}
+	 * 指定渲染该视图的<b>渲染程序</b>{@link YABaseShaderProgram}
 	 * 
 	 * @param program
 	 *                渲染程序
 	 */
-	public void useProgram(YAShaderProgram<?> program)
+	public void useProgram(YABaseShaderProgram<?> program)
 	{
 		this.program = program;
 	}
 
 	@Override
-	protected void onDraw(YReadBundle bundle, YBaseDomain domainContext)
+	protected void onDraw(YReadBundle bundle, YBaseDomain domainContext , YSystem system)
 	{
 		program.startRendering();
-		program.applyParams(program.iProgramHandle, bundle);
+		program.applyParams(program.iProgramHandle, bundle , system);
 		program.endRendering();
 	}
 
