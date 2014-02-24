@@ -13,11 +13,9 @@ import android.opengl.GLES20;
  * <b>抽象着色程序</b>
  * 
  * <p>
- * <b>概述</b>：使用该类时，您不需要复写{@link #onInitialize(int)}
- * 方法。此外在对着色程序赋值时（
+ * <b>概述</b>：使用该类时，您不需要复写{@link #onInitialize(int)} 方法。此外在对着色程序赋值时（
  * {@link #applyParams(int, ygame.framework.domain.YReadBundle)}
- * ），可以利用更为方便的setXXX（如：
- * {@link #setUniformf(String, float)}等）方法实现。
+ * ），可以利用更为方便的setXXX（如： {@link #setUniformf(String, float)}等）方法实现。
  * 
  * <p>
  * <b>建议</b>： TODO
@@ -27,13 +25,10 @@ import android.opengl.GLES20;
  * 
  * <p>
  * <b>注</b>：如果您在意效率的话，请不要采用setXXX方法赋值，改用bindXXX（如：
- * {@link #bindUniformf(int, float)}等）方法。 具体地，复写
- * {@link #onInitialize(int)}方法，利用
- * {@link #getAttribute(String)}和
- * {@link #getUniform(String)}获取相关引用存为属性，而后在
- * {@link #applyParams(int, ygame.framework.domain.YReadBundle)}
- * 中使用bindXXX方法。 </br><b>值得注意的是，您复写
- * {@link #onInitialize(int)}方法时，应该保证最先调用父类的该方法！</b>
+ * {@link #bindUniformf(int, float)}等）方法。 具体地，复写 {@link #onInitialize(int)}方法，利用
+ * {@link #getAttribute(String)}和 {@link #getUniform(String)}获取相关引用存为属性，而后在
+ * {@link #applyParams(int, ygame.framework.domain.YReadBundle)} 中使用bindXXX方法。
+ * </br><b>值得注意的是，您复写 {@link #onInitialize(int)}方法时，应该保证最先调用父类的该方法！</b>
  * 
  * <p>
  * <b>例</b>： TODO
@@ -95,11 +90,14 @@ public abstract class YAShaderProgram extends YABaseShaderProgram
 	 *                一致变量名
 	 * @param texture
 	 *                纹理
+	 * @param iTextureUnit
+	 *                纹理单元
 	 */
 	protected final void setUniformTexture(String strUniformValueName,
-			YTexture texture)
+			YTexture texture, int iTextureUnit)
 	{
-		bindUniformTexture(uniforms.get(strUniformValueName), texture);
+		bindUniformTexture(uniforms.get(strUniformValueName), texture,
+				iTextureUnit);
 	}
 
 	/**
@@ -109,21 +107,22 @@ public abstract class YAShaderProgram extends YABaseShaderProgram
 	 *                一致变量句柄
 	 * @param texture
 	 *                纹理
+	 * @param iTextureUnit
+	 *                绑定到的纹理单元
 	 */
 	protected final void bindUniformTexture(int iUniformHandle,
-			YTexture texture)
+			YTexture texture, int iTextureUnit)
 	{
 		// Set the active texture unit to
 		// texture unit 0.
-		GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
+		GLES20.glActiveTexture(GLES20.GL_TEXTURE0 + iTextureUnit);
 		// Bind the texture to this unit.
 		GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, texture.getHandle());
 		// Tell the texture uniform sampler
 		// to use this texture in the
 		// shader by binding to texture unit
 		// 0.
-		setUniformf("sTexture", 0);
-		bindUniformf(iUniformHandle, 0);
+		bindUniformi(iUniformHandle, iTextureUnit);
 	}
 
 	/**
@@ -218,6 +217,47 @@ public abstract class YAShaderProgram extends YABaseShaderProgram
 			float z)
 	{
 		GLES20.glUniform3f(iUniformHandle, x, y, z);
+	}
+
+	/**
+	 * 为一致变量赋值
+	 * 
+	 * @param strUniformValueName
+	 *                一致变量名
+	 * @param x
+	 *                值
+	 * @param y
+	 *                值
+	 * @param z
+	 *                值
+	 * @param w
+	 *                值
+	 */
+	protected final void setUniformf(String strUniformValueName, float x,
+			float y, float z, float w)
+	{
+		bindUniformf(uniforms.get(strUniformValueName).intValue(), x,
+				y, z, w);
+	}
+
+	/**
+	 * 为一致变量绑定值
+	 * 
+	 * @param iUniformHandle
+	 *                一致变量句柄
+	 * @param x
+	 *                值
+	 * @param y
+	 *                值
+	 * @param z
+	 *                值
+	 * @param w
+	 *                值
+	 */
+	protected final void bindUniformf(int iUniformHandle, float x, float y,
+			float z, float w)
+	{
+		GLES20.glUniform4f(iUniformHandle, x, y, z, w);
 	}
 
 	/**

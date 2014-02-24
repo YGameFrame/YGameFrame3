@@ -85,6 +85,7 @@ public class YCamera implements YIMover
 		bottom = -top;
 		left = fRadio * bottom;
 		right = fRadio * top;
+		System.out.println("投影矩阵：top" + top + "   left" + left);
 	}
 
 	/**
@@ -114,7 +115,9 @@ public class YCamera implements YIMover
 		boolean bRes = false;
 		if (bDirtyProj)
 		{
+			//XXX 测试
 			matrixProj.frustum(left, right, bottom, top, near, far);
+//			matrixProj.ortho(left, right, bottom, top, near, far);
 			// matrixProj.perspective(45
 			// ,1 /fRadio, near, far);
 			// matrixProj.ortho(left,
@@ -187,7 +190,7 @@ public class YCamera implements YIMover
 			return this;
 		bDirtyView = true;
 		eyeX = fX;
-		// targetX = eyeX;
+		targetX = eyeX;
 		return this;
 	}
 

@@ -30,8 +30,10 @@ public class YTexture
 	private Bitmap bitmap;
 	private int iTexHandle = -1;
 
-	private int iWidth = 512;
-	private int iHeight = 512;
+	/** <b>纹理宽度</b>：以像素为单位 */
+	public final int WIDTH;
+	/** <b>纹理高度</b>：以像素为单位 */
+	public final int HEIGHT;
 
 	/**
 	 * 新建一个以指定位图为内容纹理
@@ -42,6 +44,8 @@ public class YTexture
 	public YTexture(Bitmap bitmap)
 	{
 		this.bitmap = bitmap;
+		this.WIDTH = bitmap.getWidth();
+		this.HEIGHT = bitmap.getHeight();
 	}
 
 	/**
@@ -54,8 +58,8 @@ public class YTexture
 	 */
 	public YTexture(int iWidth, int iHeight)
 	{
-		this.iWidth = iWidth;
-		this.iHeight = iHeight;
+		this.WIDTH = iWidth;
+		this.HEIGHT = iHeight;
 	}
 
 	/**
@@ -76,29 +80,45 @@ public class YTexture
 
 		if (null != bitmap)
 		{// 设置参数
+			// GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D,
+			// GLES20.GL_TEXTURE_MIN_FILTER,
+			// GLES20.GL_NEAREST);
+			// GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D,
+			// GLES20.GL_TEXTURE_MAG_FILTER,
+			// GLES20.GL_LINEAR);
+			// GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D,
+			// GLES20.GL_TEXTURE_WRAP_S,
+			// GLES20.GL_CLAMP_TO_EDGE);
+			// GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D,
+			// GLES20.GL_TEXTURE_WRAP_T,
+			// GLES20.GL_CLAMP_TO_EDGE);
+
 			GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D,
 					GLES20.GL_TEXTURE_MIN_FILTER,
 					GLES20.GL_NEAREST);
 			GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D,
 					GLES20.GL_TEXTURE_MAG_FILTER,
-					GLES20.GL_LINEAR);
+					GLES20.GL_NEAREST);
 			GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D,
 					GLES20.GL_TEXTURE_WRAP_S,
 					GLES20.GL_CLAMP_TO_EDGE);
 			GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D,
 					GLES20.GL_TEXTURE_WRAP_T,
 					GLES20.GL_CLAMP_TO_EDGE);
+
 			// 加载纹理
 			GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, // 纹理类型，在OpenGLES中必须为GL10.GL_TEXTURE_2D
 					0, // 纹理的层次，0表示基本图像层，可以理解为直接贴图
 					bitmap, // 纹理图像
 					0 // 纹理边框尺寸
 			);
+			// GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0,
+			// GLES20.GL_RGBA, bitmap, 0);
 			bitmap.recycle();
 		} else
 		{
 			GLES20.glTexImage2D(GLES20.GL_TEXTURE_2D, 0,
-					GLES20.GL_RGB, iWidth, iHeight, 0,
+					GLES20.GL_RGB, WIDTH, HEIGHT, 0,
 					GLES20.GL_RGB,
 					GLES20.GL_UNSIGNED_SHORT_5_6_5, null);
 			GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D,
@@ -109,10 +129,10 @@ public class YTexture
 					GLES20.GL_CLAMP_TO_EDGE);
 			GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D,
 					GLES20.GL_TEXTURE_MAG_FILTER,
-					GLES20.GL_LINEAR);
+					GLES20.GL_NEAREST);
 			GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D,
 					GLES20.GL_TEXTURE_MIN_FILTER,
-					GLES20.GL_LINEAR);
+					GLES20.GL_NEAREST);
 		}
 		return iTexHandle;
 	}

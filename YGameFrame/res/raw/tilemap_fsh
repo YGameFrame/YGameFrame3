@@ -1,0 +1,75 @@
+precision mediump float;
+
+varying vec2 vTextureCoord; //接收从顶点着色器过来的参数
+
+uniform vec4 uTileGraphicInfo;//索引图信息(以格计高度(行数)0、以格计宽度(列数)1、单格高度2、单格宽度3)
+uniform vec2 uTileDataInfo;//地图数据矩阵信息(单格高度0、单格宽度1)
+
+uniform sampler2D uTileData;//数据
+uniform sampler2D uTileGraphic;//索引图
+
+vec2 getLocationInTexGraphic(in float index)
+{
+			//1.根据索引值计算其对应图块左上角于索引图中的坐标
+			vec2 baseTilePos = vec2(0, 0);
+			baseTilePos.x = mod(index , uTileGraphicInfo[1]) * uTileGraphicInfo[3];
+			baseTilePos.y = floor(index / uTileGraphicInfo[1]) * uTileGraphicInfo[2];
+			
+			//2.确定在指定图块内部的位置
+			vec2 internalPos = vec2(0 , 0);
+			internalPos.x = mod(vTextureCoord.x , uTileDataInfo[1]) / uTileDataInfo[1] * uTileGraphicInfo[3];
+			internalPos.y = mod(vTextureCoord.y , uTileDataInfo[0]) / uTileDataInfo[0] * uTileGraphicInfo[2];
+			
+			//3.抽取索引图指定图块指定内部位置像素点的值
+			return baseTilePos+internalPos;
+}
+
+//抽取非透明点并将其值交付渲染管线返回真，抽取到透明点返回假
+bool sampleTexGraphicAsFinalColor(float index)
+{
+		vec2 location = getLocationInTexGraphic(index);
+		vec4 color = texture2D(uTileGraphic , location);
+		if(color.a > 0.1)
+		{
+				gl_FragColor = color;
+				return true;
+		}
+		else 
+				return false;
+}
+
+void main()
+{
+		//1.收归除噪（将骨架散点收归到数据纹理具体点上）
+		vec2 tilePos = vec2(0 , 0);
+		tilePos.x = floor(vTextureCoord.x / uTileDataInfo[1]) * uTileDataInfo[1];
+		tilePos.y = floor(vTextureCoord.y / uTileDataInfo[0]) * uTileDataInfo[0];
+		
+		vec4 data = texture2D(uTileData,tilePos);
+		//2.根据数据纹理r通道值判断此处有无瓷砖，约定：
+		//0~0.1，gb通道皆无瓷砖，即修饰、背景皆无
+		//0.1~0.2，g通道有瓷砖、b通道无瓷砖，即修饰有、背景无
+		//0.2~0.3，g通道无瓷砖、b通道有瓷砖，即修饰无、背景有
+		//0.3~0.4，gb通道都有瓷砖，即修饰、背景皆有
+		//此外，还约定g通道为修饰层、b通道为基础背景层
+		if(data.r < 0.1)
+				discard;
+		else if(data.r < 0.2)
+		{//g有b无
+				if(!sampleTexGraphicAsFinalColor(floor(data.g * 256.0)))
+						discard;
+		}
+		else if(data.r < 0.3)
+		{//g无b有
+				if(!sampleTexGraphicAsFinalColor(floor(data.b * 256.0)))
+						discard;
+		}
+		else if(data.r < 0.4)
+		{//gb皆有
+				if(!sampleTexGraphicAsFinalColor(floor(data.g * 256.0)) && !sampleTexGraphicAsFinalColor(floor(data.b * 256.0)))
+						discard;
+		}else
+		{
+				gl_FragColor = vec4(1.0 , 1.0 , 1.0 , 1.0);
+		}
+}

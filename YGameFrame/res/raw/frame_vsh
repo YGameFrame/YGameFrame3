@@ -1,0 +1,14 @@
+uniform mat4 uPVMMatrix; //总变换矩阵
+uniform vec4 uFrameTexParam;//（行索引(0开始计)、列索引(0开始计)、小格宽度、小格高度）
+
+attribute vec3 aPosition;  //顶点位置
+attribute vec2 aTexCoord;    //顶点纹理坐标
+
+varying vec2 vTextureCoord;  //用于传递给片元着色器的变量
+
+void main()     
+{
+		gl_Position = uPVMMatrix * vec4(aPosition,1); //根据总变换矩阵计算此次绘制此顶点位置
+		vTextureCoord.x = (uFrameTexParam[1]  + aTexCoord.x) * uFrameTexParam[2];
+		vTextureCoord.y = (uFrameTexParam[0]  + aTexCoord.y) * uFrameTexParam[3];
+}

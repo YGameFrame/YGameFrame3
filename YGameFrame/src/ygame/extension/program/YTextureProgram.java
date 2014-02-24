@@ -29,7 +29,7 @@ import android.content.res.Resources;
  * @author yunzhong
  * 
  */
-public class YTextureProgram extends YAInternalProgram
+public class YTextureProgram extends YABlankProgram
 {
 	private static final int TEX = 2;
 
@@ -47,12 +47,12 @@ public class YTextureProgram extends YAInternalProgram
 	protected void applyParams(int iProgramHandle, YReadBundle bundle,
 			YSystem system)
 	{
-		setUniformTexture("sTexture", (YTexture) bundle.readObject(TEX));
+		setUniformTexture("sTexture", (YTexture) bundle.readObject(TEX) , 0);
 		super.applyParams(iProgramHandle, bundle, system);
 	}
 
 	public static class YTextureAdapter extends
-			YAInternalProgram.YAInternalAdapter<YTextureAdapter>
+			YABlankProgram.YABlankAdapter<YTextureAdapter>
 	{
 		private YTexture texture;
 

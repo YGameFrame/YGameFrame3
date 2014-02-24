@@ -33,7 +33,7 @@ import android.opengl.GLES20;
  * @author yunzhong
  * 
  */
-abstract class YAInternalProgram extends
+abstract class YABlankProgram extends
 		YAShaderProgram
 {
 	private static final int SKE = 0;
@@ -45,7 +45,7 @@ abstract class YAInternalProgram extends
 	private YAttributeValue aNormal;
 	private YAttributeValue aTexCoord;
 
-	YAInternalProgram(Resources resources, int iDrawMode)
+	YABlankProgram(Resources resources, int iDrawMode)
 	{
 		this.iDrawMode = iDrawMode;
 	}
@@ -101,7 +101,7 @@ abstract class YAInternalProgram extends
 	 * @author yunzhong
 	 * 
 	 */
-	static abstract class YAInternalAdapter<BA extends YAInternalAdapter<?>> extends
+	static abstract class YABlankAdapter<BA extends YABlankAdapter<?>> extends
 			YABaseShaderProgram.YABaseParametersAdapter
 	{
 		private YMover mover;

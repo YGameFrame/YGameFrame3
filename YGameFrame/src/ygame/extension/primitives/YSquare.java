@@ -1,6 +1,5 @@
 ﻿package ygame.extension.primitives;
 
-import ygame.skeleton.YSkeleton;
 
 /**
  * <b>正方形骨架</b>
@@ -23,40 +22,11 @@ import ygame.skeleton.YSkeleton;
  * @author yunzhong
  * 
  */
-public class YSquare extends YSkeleton
+public class YSquare extends YRectangle
 {
-	private float fSideLength;
-
-	public YSquare(float fSideLength)
+	public YSquare(float fSideLength, boolean bCreateColor,
+			boolean bCreateTexCoord)
 	{
-		this.fSideLength = fSideLength;
-		fillData();
-	}
-
-	private void fillData()
-	{
-		float[] fVertexPosition =
-		{ -fSideLength, -fSideLength, 0, // 左下
-				-fSideLength, fSideLength, 0,// 左上
-				fSideLength, fSideLength, 0, // 右上
-				fSideLength, -fSideLength, 0 // 右下
-		};
-
-		// rgba
-		// float[] fVertexColor =
-		// { 1, 1, 0, 0, // 红
-		// 1, 0, 1, 0, // 绿
-		// 1, 0, 0, 1,// 蓝
-		// 1, 1, 1, 1 // 白色
-		// };
-		float[] fVertexColor = createRandomColorData(4);
-
-		short[] sIndices =
-		{ 2, 1, 0, 2, 0, 3 };
-
-		setColors(fVertexColor);
-		setPositions(fVertexPosition);
-		setIndices(sIndices);
-
+		super(fSideLength, fSideLength, bCreateColor, bCreateTexCoord);
 	}
 }
