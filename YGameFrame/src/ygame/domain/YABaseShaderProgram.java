@@ -40,6 +40,11 @@ public abstract class YABaseShaderProgram
 
 	YABaseParametersAdapter daParamsAdapter;
 
+	protected YABaseShaderProgram()
+	{
+		// TODO Auto-generated constructor stub
+	}
+
 	/**
 	 * @param strVertexShaderSrc
 	 *                顶点着色器脚本代码
@@ -80,11 +85,13 @@ public abstract class YABaseShaderProgram
 		GLES20.glBindBuffer(GLES20.GL_ELEMENT_ARRAY_BUFFER, 0);
 	}
 
-	private YABaseParametersAdapter createDataAdapter(Class<?> clazzDataAdapter)
+	private YABaseParametersAdapter createDataAdapter(
+			Class<?> clazzDataAdapter)
 	{
 		try
 		{
-			return (YABaseParametersAdapter) clazzDataAdapter.newInstance();
+			return (YABaseParametersAdapter) clazzDataAdapter
+					.newInstance();
 		} catch (InstantiationException e)
 		{
 			e.printStackTrace();
@@ -96,8 +103,7 @@ public abstract class YABaseShaderProgram
 	}
 
 	/**
-	 * 您可以通过复写该方法利用给定参数“程序句柄”——
-	 * iProgramHandle来获取相应的 着色器变量句柄。
+	 * 您可以通过复写该方法利用给定参数“程序句柄”—— iProgramHandle来获取相应的 着色器变量句柄。
 	 * 
 	 * @param iProgramHandle
 	 *                着色程序句柄
@@ -112,16 +118,19 @@ public abstract class YABaseShaderProgram
 	 * @param bundle
 	 *                可读包裹
 	 * @param system
+	 *                系统
+	 * @param domainView
+	 *                当前渲染的实体视图
 	 */
 	abstract protected void applyParams(int iProgramHandle,
-			YReadBundle bundle, YSystem system);
+			YReadBundle bundle, YSystem system,
+			YDomainView domainView);
 
 	/**
 	 * 将顶点缓冲对象索引（即数据源）与渲染程序中的变量绑定
 	 * 
 	 * @param iDataSrcHandle
-	 *                顶点缓冲（即数据源）在开放图形库（OpenGL ES
-	 *                2.0）中的句柄
+	 *                顶点缓冲（即数据源）在开放图形库（OpenGL ES 2.0）中的句柄
 	 * @param iValueHandle
 	 *                渲染程序中变量的句柄
 	 * @param iFloatsPerValue
@@ -141,8 +150,7 @@ public abstract class YABaseShaderProgram
 	 * 使用索引缓冲对象绘制画面
 	 * 
 	 * @param iIBODataSrcHandle
-	 *                索引缓冲（即数据源）在开放图形库（OpenGL ES
-	 *                2.0）中的句柄
+	 *                索引缓冲（即数据源）在开放图形库（OpenGL ES 2.0）中的句柄
 	 * @param iVertexNum
 	 *                要绘制的顶点的个数
 	 * @param iDrawMode
@@ -163,9 +171,8 @@ public abstract class YABaseShaderProgram
 	 * <p>
 	 * <b>概述</b>：这是<b>渲染程序</b>的参数适配器。</br>
 	 * <li>作为使用者，您应该依次填写适配器中所声明的参数；
-	 * <li>如果您开发了一个<b> 渲染程序</b> ，您应该再开发本类
-	 * {@link YABaseParametersAdapter}的一个子类，
-	 * 用来向外界声明使用此<b>渲染程序</b>时应该向其传递怎样的参数。
+	 * <li>如果您开发了一个<b> 渲染程序</b> ，您应该再开发本类 {@link YABaseParametersAdapter}
+	 * 的一个子类， 用来向外界声明使用此<b>渲染程序</b>时应该向其传递怎样的参数。
 	 * 
 	 * <p>
 	 * <b>建议</b>： TODO
@@ -174,8 +181,7 @@ public abstract class YABaseShaderProgram
 	 * <b>详细</b>： TODO
 	 * 
 	 * <p>
-	 * <b>注</b>： 作为使用者，为了确保数据的正确，您每次都应该对<b>适配器</b
-	 * >中声明的参数<b>全部重新</b>填写一遍。
+	 * <b>注</b>： 作为使用者，为了确保数据的正确，您每次都应该对<b>适配器</b >中声明的参数<b>全部重新</b>填写一遍。
 	 * 
 	 * <p>
 	 * <b>例</b>： TODO
@@ -191,8 +197,7 @@ public abstract class YABaseShaderProgram
 	public static abstract class YABaseParametersAdapter
 	{
 		/**
-		 * 将<b>适配器</b>中的属性依次映射进<b>可写包裹</b>
-		 * {@link YWriteBundle}
+		 * 将<b>适配器</b>中的属性依次映射进<b>可写包裹</b> {@link YWriteBundle}
 		 * 
 		 * @param bundle
 		 *                可写包裹

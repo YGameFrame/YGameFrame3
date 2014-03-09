@@ -98,9 +98,8 @@ public final class YSystem extends YAStateMachineContext
 	}
 
 	/**
-	 * 启动系统</br> 1.若<b>渲染视图</b>{@link YView}
-	 * 表面尚未创建，该系统无法启动；</br> 2.该系统会在<b>渲染视图</b>创建
-	 * 完成后自动启动一次。
+	 * 启动系统</br> 1.若<b>渲染视图</b>{@link YView} 表面尚未创建，该系统无法启动；</br>
+	 * 2.该系统会在<b>渲染视图</b>创建 完成后自动启动一次。
 	 */
 	public void start()
 	{
@@ -166,6 +165,12 @@ public final class YSystem extends YAStateMachineContext
 	public YScene getCurrentScene()
 	{
 		return sceneCurrent;
+	}
+
+	public void testSetScene(YScene scene)
+	{
+		this.sceneCurrent = scene;
+		scenes.add(scene);
 	}
 
 	private void clockCycle()
@@ -345,7 +350,7 @@ public final class YSystem extends YAStateMachineContext
 				.getSystemService(Context.WINDOW_SERVICE))
 				.getDefaultDisplay().getRefreshRate();
 	}
-
+	
 	private class YClockTask implements Runnable
 	{
 		@Override

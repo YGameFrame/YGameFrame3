@@ -1,6 +1,7 @@
 package ygame.extension.program;
 
 import ygame.domain.YABaseShaderProgram;
+import ygame.domain.YDomainView;
 import ygame.framework.R;
 import ygame.framework.core.YSystem;
 import ygame.framework.domain.YReadBundle;
@@ -11,7 +12,6 @@ import ygame.skeleton.YSkeleton;
 import ygame.transformable.YMover;
 import ygame.utils.YTextFileUtils;
 import android.content.res.Resources;
-import android.opengl.GLES20;
 
 /**
  * <b>简单渲染程序</b>
@@ -39,14 +39,25 @@ public final class YSimpleProgram extends YAShaderProgram
 	// private int iPositionHandle = -1;
 	// private int iColorHandle = -1;
 	// private int iPVMMatrixHandle = -1;
-	private int iDrawMode = GLES20.GL_TRIANGLES;
 
 	// private YAttributeValue aPosition;
 	// private YAttributeValue aColor;
+	//private static YSimpleProgram instance;
 
-	public YSimpleProgram(Resources resources, int iDrawMode)
+	public static YSimpleProgram getInstance(Resources resources)
 	{
-		this.iDrawMode = iDrawMode;
+//		if (null == instance)
+//			synchronized (YSimpleProgram.class)
+//			{
+//				if (null == instance)
+//					instance = new YSimpleProgram(resources);
+//			}
+//		return instance;
+		return new YSimpleProgram(resources);
+	}
+
+	private YSimpleProgram(Resources resources)
+	{
 		fillCodeAndParam(YTextFileUtils.getStringFromResRaw(
 				R.raw.simple_vsh, resources),
 				YTextFileUtils.getStringFromResRaw(
@@ -76,7 +87,7 @@ public final class YSimpleProgram extends YAShaderProgram
 
 	@Override
 	protected void applyParams(int iProgramHandle, YReadBundle bundle,
-			YSystem system)
+			YSystem system, YDomainView domainView)
 	{
 		YSkeleton skeleton = (YSkeleton) bundle
 				.readObject(YSimpleParamAdapter.SKELETON);
@@ -103,7 +114,7 @@ public final class YSimpleProgram extends YAShaderProgram
 		// 0);
 
 		drawWithIBO(skeleton.getIndexHandle(), skeleton.getVertexNum(),
-				iDrawMode);
+				domainView.iDrawMode);
 	}
 
 	/**
@@ -119,8 +130,7 @@ public final class YSimpleProgram extends YAShaderProgram
 	 * <b>详细</b>： TODO
 	 * 
 	 * <p>
-	 * <b>注</b>：您每次使用该适配器时，应该全部填写其前缀名为<b>param</b
-	 * >的方法
+	 * <b>注</b>：您每次使用该适配器时，应该全部填写其前缀名为<b>param</b >的方法
 	 * 
 	 * <p>
 	 * <b>例</b>：

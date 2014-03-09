@@ -38,8 +38,8 @@ public class YBaseDomain extends YABaseDomain
 	private Object[] map1 = new Object[20];
 	private Object[] map2 = new Object[20];
 
-	private YABaseDomainLogic logic;
-	private YABaseDomainView view;
+	protected final YABaseDomainLogic logic;
+	protected final YABaseDomainView view;
 
 	private boolean bSide;
 

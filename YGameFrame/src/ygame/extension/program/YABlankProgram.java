@@ -1,6 +1,7 @@
 package ygame.extension.program;
 
 import ygame.domain.YABaseShaderProgram;
+import ygame.domain.YDomainView;
 import ygame.framework.core.YSystem;
 import ygame.framework.domain.YReadBundle;
 import ygame.framework.domain.YWriteBundle;
@@ -10,7 +11,6 @@ import ygame.program.YAttributeValue;
 import ygame.skeleton.YSkeleton;
 import ygame.transformable.YMover;
 import android.content.res.Resources;
-import android.opengl.GLES20;
 
 /**
  * <b>内部用来继承的渲染程序</b>
@@ -39,15 +39,13 @@ abstract class YABlankProgram extends
 	private static final int SKE = 0;
 	private static final int PVM = 1;
 
-	private int iDrawMode = GLES20.GL_TRIANGLES;
 	private YAttributeValue aPosition;
 	private YAttributeValue aColor;
 	private YAttributeValue aNormal;
 	private YAttributeValue aTexCoord;
 
-	YABlankProgram(Resources resources, int iDrawMode)
+	YABlankProgram(Resources resources)
 	{
-		this.iDrawMode = iDrawMode;
 	}
 
 	@Override
@@ -62,7 +60,7 @@ abstract class YABlankProgram extends
 
 	@Override
 	protected void applyParams(int iProgramHandle, YReadBundle bundle,
-			YSystem system)
+			YSystem system , YDomainView domainView)
 	{
 		YSkeleton skeleton = (YSkeleton) bundle.readObject(SKE);
 		bindAttribute(aPosition, skeleton.getPositionDataSource());
@@ -77,7 +75,7 @@ abstract class YABlankProgram extends
 		setUniformMatrix("uPVMMatrix", bundle.readFloatArray(PVM));
 
 		drawWithIBO(skeleton.getIndexHandle(), skeleton.getVertexNum(),
-				iDrawMode);
+				domainView.iDrawMode);
 	}
 
 	/**

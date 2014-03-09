@@ -1,18 +1,17 @@
 package ygame.extension.program;
 
+import ygame.domain.YDomainView;
 import ygame.framework.R;
 import ygame.framework.core.YSystem;
 import ygame.framework.domain.YReadBundle;
 import ygame.utils.YTextFileUtils;
 import android.content.res.Resources;
-import android.opengl.GLES20;
 
 /**
  * <b>WebGL着色程序</b>
  * 
  * <p>
- * <b>概述</b>：您可以将<a
- * href="http://glsl.heroku.com">http
+ * <b>概述</b>：您可以将<a href="http://glsl.heroku.com">http
  * ://glsl.heroku.com</a>上的着色脚本加载进该程序。
  * 
  * <p>
@@ -30,7 +29,7 @@ import android.opengl.GLES20;
  * @author yunzhong
  * 
  */
-public class YSandboxProgram extends YABlankProgram
+public final class YSandboxProgram extends YABlankProgram
 {
 	private float time;
 	private float fVelocity = 1;
@@ -42,18 +41,15 @@ public class YSandboxProgram extends YABlankProgram
 	 * @param resources
 	 *                资源
 	 * @param strFragmentShaderSrc
-	 *                网站<a
-	 *                href="http://glsl.heroku.com"
-	 *                >http
-	 *                ://glsl.heroku.com</a>
-	 *                上的片元着色器代码
+	 *                网站<a href="http://glsl.heroku.com" >http
+	 *                ://glsl.heroku.com</a> 上的片元着色器代码
 	 * @param fVelocity
 	 *                图像表面变化速度
 	 */
 	public YSandboxProgram(Resources resources,
 			String strFragmentShaderSrc, float fVelocity)
 	{
-		super(resources, GLES20.GL_TRIANGLES);
+		super(resources);
 		fillCodeAndParam(YTextFileUtils.getStringFromResRaw(
 				R.raw.sandbox_vsh, resources),
 				strFragmentShaderSrc, YSandboxAdapter.class);
@@ -70,14 +66,14 @@ public class YSandboxProgram extends YABlankProgram
 
 	@Override
 	protected void applyParams(int iProgramHandle, YReadBundle bundle,
-			YSystem system)
+			YSystem system, YDomainView domainView)
 	{
 		if (-1 != uTime)
 			bindUniformf(uTime, (time = time + iFlag) * fVelocity);
 		if (-1 != uResolution)
 			bindUniformf(uResolution, system.YVIEW.getWidth(),
 					system.YVIEW.getHeight());
-		super.applyParams(iProgramHandle, bundle, system);
+		super.applyParams(iProgramHandle, bundle, system, domainView);
 	}
 
 	/**

@@ -1,6 +1,5 @@
-#extension GL_OES_standard_derivatives:enable
 precision highp float;
-
+//实验废品
 varying vec2 vTextureCoord; //接收从顶点着色器过来的参数
 
 uniform vec4 uTileGraphicInfo;//索引图信息(以格计高度(行数)0、以格计宽度(列数)1、单格高度2、单格宽度3)
@@ -8,6 +7,11 @@ uniform vec2 uTileDataInfo;//地图数据矩阵信息(单格高度0、单格宽�
 
 uniform sampler2D uTileData;//数据
 uniform sampler2D uTileGraphic;//索引图
+
+vec2 scale = vec2(2.0 / 256.0 , 0.2);
+vec2 offset = vec2(0.0 / 256.0 , 0.0);
+vec2  newTextureCoord;
+
 
 vec2 getLocationInTexGraphic(in float index)
 {
@@ -18,38 +22,17 @@ vec2 getLocationInTexGraphic(in float index)
 			
 			//2.确定在指定图块内部的位置
 			vec2 internalPos = vec2(0 , 0);
-			internalPos.x = mod(vTextureCoord.x , uTileDataInfo[1]) / uTileDataInfo[1] * uTileGraphicInfo[3];
-			internalPos.y = mod(vTextureCoord.y , uTileDataInfo[0]) / uTileDataInfo[0] * uTileGraphicInfo[2];
-			/*float radioW = 256.0;
-			float radioH = 256.0;
-			vec2 mappingScale = vec2(1.0 / uTileDataInfo[1], 1.0 / uTileDataInfo[0]);
-			vec2 mappingAddress = floor(vTextureCoord.xy * mappingScale);
-			internalPos.x = mod(vTextureCoord.x * radioW , uTileDataInfo[1] * radioW) / uTileDataInfo[1] * uTileGraphicInfo[3] / radioW;
-			internalPos.y = mod(vTextureCoord.y * radioH , uTileDataInfo[0] * radioH) / uTileDataInfo[0] * uTileGraphicInfo[2] / radioH;
-			float mapW = floor(1.0 / uTileDataInfo[1] * 64.0);
-			float mapH = floor(1.0 / uTileDataInfo[0] * 64.0);
-			internalPos.x = mod(vTextureCoord.x * mapW , 64.0) / 512.0;
-			internalPos.y = mod(vTextureCoord.y * mapH , 64.0) / 512.0;*/
-			
-			/*vec2 mappingScale = vec2(1.0 / uTileDataInfo[1], 1.0 / uTileDataInfo[0]);
-			vec2 mappingAddress = vTextureCoord.xy * mappingScale;
-			vec2 tileScale = vec2(uTileGraphicInfo[1], uTileGraphicInfo[0]);
-			internalPos = fract(mappingAddress)/tileScale;*/
-			/*vec4 whichTile = texture2D(uTileData,modMy(mappingAddress, mappingScale));
-			baseTilePos = whichTile.xy/tileScale;*/
+			internalPos.x = mod(newTextureCoord.x , uTileDataInfo[1]) / uTileDataInfo[1] * uTileGraphicInfo[3];
+			internalPos.y = mod(newTextureCoord.y , uTileDataInfo[0]) / uTileDataInfo[0] * uTileGraphicInfo[2];
 			
 			//3.抽取索引图指定图块指定内部位置像素点的值
 			return baseTilePos+internalPos;
-			//return fwidth(mod(baseTilePos+internalPos , 1.0));
-			//return mod(fwidth(baseTilePos+internalPos) , 1.0);
 }
 
 //抽取非透明点并将其值交付渲染管线返回真，抽取到透明点返回假
 bool sampleTexGraphicAsFinalColor(float index)
 {
 		vec2 location = getLocationInTexGraphic(index);
-		
-		//vec2 tileScaledTex = vTextureCoord.xy * vec2(uTileGraphicInfo[3]/uTileDataInfo[1],uTileGraphicInfo[2]/uTileDataInfo[0]);
 		
 		vec4 color = texture2D(uTileGraphic , location);
 		
@@ -66,13 +49,14 @@ bool sampleTexGraphicAsFinalColor(float index)
 
 void main()
 {
+		newTextureCoord = vTextureCoord * scale + offset;
 		//1.收归除噪（将骨架散点收归到数据纹理具体点上）
 		vec2 tilePos = vec2(0 , 0);
-		//tilePos.x = (floor(vTextureCoord.x / uTileDataInfo[1]) + 0.9) * uTileDataInfo[1];
-		//tilePos.y = (floor(vTextureCoord.y / uTileDataInfo[0]) + 0.9) * uTileDataInfo[0];
-		//tilePos = vTextureCoord;
-		tilePos.x = (floor(vTextureCoord.x / uTileDataInfo[1])) / (1.0 / uTileDataInfo[1] - 1.0);
-		tilePos.y = (floor(vTextureCoord.y / uTileDataInfo[0])) / (1.0 / uTileDataInfo[0] - 1.0);
+		//tilePos.x = (floor(newTextureCoord.x / uTileDataInfo[1])) / (1.0 / uTileDataInfo[1] - 1.0);
+		//tilePos.y = (floor(newTextureCoord.y / uTileDataInfo[0])) / (1.0 / uTileDataInfo[0] - 1.0);
+		vec2 mappingScale = vec2(1.0 / uTileDataInfo[1], 1.0 / uTileDataInfo[0]);
+		vec2 mappingAddress = newTextureCoord * mappingScale;
+		tilePos = mod(mappingAddress, mappingScale);
 		
 		vec4 data = texture2D(uTileData,tilePos);
 		//2.根据数据纹理r通道值判断此处有无瓷砖，约定：
@@ -92,8 +76,6 @@ void main()
 		{//g无b有
 				if(!sampleTexGraphicAsFinalColor(floor(data.b * 256.0)))
 						discard;
-					//float indd = data.b * 256.0 / 6.0;
-					//gl_FragColor = vec4(indd , indd , indd , indd);	
 		}
 		else if(data.r < 0.4)
 		{//gb皆有

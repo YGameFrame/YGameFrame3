@@ -1,5 +1,6 @@
 package ygame.domain;
 
+import android.opengl.GLES20;
 import ygame.framework.core.YGL_Configuration;
 import ygame.framework.core.YSystem;
 import ygame.framework.domain.YABaseDomainView;
@@ -31,6 +32,8 @@ import ygame.framework.domain.YReadBundle;
 public class YDomainView extends YABaseDomainView
 {
 	YABaseShaderProgram program;
+	
+	public int iDrawMode = GLES20.GL_TRIANGLES;
 
 	/**
 	 * @param program
@@ -56,7 +59,7 @@ public class YDomainView extends YABaseDomainView
 	protected void onDraw(YReadBundle bundle, YBaseDomain domainContext , YSystem system)
 	{
 		program.startRendering();
-		program.applyParams(program.iProgramHandle, bundle , system);
+		program.applyParams(program.iProgramHandle, bundle , system , this);
 		program.endRendering();
 	}
 

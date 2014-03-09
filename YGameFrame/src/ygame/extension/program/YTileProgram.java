@@ -1,5 +1,6 @@
 package ygame.extension.program;
 
+import ygame.domain.YDomainView;
 import ygame.framework.R;
 import ygame.framework.core.YSystem;
 import ygame.framework.domain.YReadBundle;
@@ -30,14 +31,28 @@ import android.content.res.Resources;
  * @author yunzhong
  * 
  */
-public class YTileProgram extends YABlankProgram
+public final class YTileProgram extends YABlankProgram
 {
 	private static final int FTP = 2;// FrameTexParam
 	private static final int TEX = 3;
 
-	public YTileProgram(Resources resources, int iDrawMode)
+//	private static YTileProgram instance;
+
+	public static YTileProgram getInstance(Resources resources)
 	{
-		super(resources, iDrawMode);
+//		if (null == instance)
+//			synchronized (YTileMapProgram.class)
+//			{
+//				if (null == instance)
+//					instance = new YTileProgram(resources);
+//			}
+//		return instance;
+		return new YTileProgram(resources);
+	}
+
+	private YTileProgram(Resources resources)
+	{
+		super(resources);
 		fillCodeAndParam(YTextFileUtils.getStringFromResRaw(
 				R.raw.frame_vsh, resources),
 				YTextFileUtils.getStringFromResRaw(
@@ -47,14 +62,14 @@ public class YTileProgram extends YABlankProgram
 
 	@Override
 	protected void applyParams(int iProgramHandle, YReadBundle bundle,
-			YSystem system)
+			YSystem system, YDomainView domainView)
 	{
 		float[] ftp = bundle.readFloatArray(FTP);
 		setUniformf("uFrameTexParam", ftp[0], ftp[1], ftp[2], ftp[3]);
 
 		setUniformTexture("sTexture",
 				(YTexture) bundle.readObject(TEX), 0);
-		super.applyParams(iProgramHandle, bundle, system);
+		super.applyParams(iProgramHandle, bundle, system, domainView);
 	}
 
 	public static class YTileAdapter extends YABlankAdapter<YTileAdapter>

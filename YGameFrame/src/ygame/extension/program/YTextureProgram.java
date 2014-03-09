@@ -1,5 +1,6 @@
 package ygame.extension.program;
 
+import ygame.domain.YDomainView;
 import ygame.framework.R;
 import ygame.framework.core.YSystem;
 import ygame.framework.domain.YReadBundle;
@@ -29,13 +30,27 @@ import android.content.res.Resources;
  * @author yunzhong
  * 
  */
-public class YTextureProgram extends YABlankProgram
+public final class YTextureProgram extends YABlankProgram
 {
 	private static final int TEX = 2;
 
-	public YTextureProgram(Resources resources, int iDrawMode)
+	//private static YTextureProgram instance;
+
+	public static YTextureProgram getInstance(Resources resources)
 	{
-		super(resources, iDrawMode);
+//		if (null == instance)
+//			synchronized (YTextureProgram.class)
+//			{
+//				if (null == instance)
+//					instance = new YTextureProgram(resources);
+//			}
+//		return instance;
+		return new YTextureProgram(resources);
+	}
+
+	private YTextureProgram(Resources resources)
+	{
+		super(resources);
 		fillCodeAndParam(YTextFileUtils.getStringFromResRaw(
 				R.raw.texture_vsh, resources),
 				YTextFileUtils.getStringFromResRaw(
@@ -45,10 +60,11 @@ public class YTextureProgram extends YABlankProgram
 
 	@Override
 	protected void applyParams(int iProgramHandle, YReadBundle bundle,
-			YSystem system)
+			YSystem system, YDomainView domainView)
 	{
-		setUniformTexture("sTexture", (YTexture) bundle.readObject(TEX) , 0);
-		super.applyParams(iProgramHandle, bundle, system);
+		setUniformTexture("sTexture",
+				(YTexture) bundle.readObject(TEX), 0);
+		super.applyParams(iProgramHandle, bundle, system, domainView);
 	}
 
 	public static class YTextureAdapter extends

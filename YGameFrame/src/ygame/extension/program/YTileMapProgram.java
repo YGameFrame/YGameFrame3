@@ -1,5 +1,6 @@
 package ygame.extension.program;
 
+import ygame.domain.YDomainView;
 import ygame.framework.R;
 import ygame.framework.core.YSystem;
 import ygame.framework.domain.YReadBundle;
@@ -30,24 +31,39 @@ import android.content.res.Resources;
  * @author yunzhong
  * 
  */
-public class YTileMapProgram extends YABlankProgram
+public final class YTileMapProgram extends YABlankProgram
 {
 	private static final int TEX_DATA = 2;
 	private static final int TILE_SHEET = 3;
 
-	public YTileMapProgram(Resources resources, int iDrawMode)
+	//private static YTileMapProgram instance;
+
+	public static YTileMapProgram getInstance(Resources resources)
 	{
-		super(resources, iDrawMode);
+//		if (null == instance)
+//			synchronized (YTileMapProgram.class)
+//			{
+//				if (null == instance)
+//					instance = new YTileMapProgram(resources);
+//			}
+//		return instance;
+		return new YTileMapProgram(resources);
+	}
+
+	private YTileMapProgram(Resources resources)
+	{
+		super(resources);
 		fillCodeAndParam(YTextFileUtils.getStringFromResRaw(
 				R.raw.texture_vsh, resources),
 				YTextFileUtils.getStringFromResRaw(
+				// R.raw.test_tilemap_fsh,
 						R.raw.tilemap_fsh, resources),
 				YTileMapAdapter.class);
 	}
 
 	@Override
 	protected void applyParams(int iProgramHandle, YReadBundle bundle,
-			YSystem system)
+			YSystem system, YDomainView domainView)
 	{
 		YTileSheet textureGraphic = (YTileSheet) bundle
 				.readObject(TILE_SHEET);
@@ -61,8 +77,54 @@ public class YTileMapProgram extends YABlankProgram
 		setUniformTexture("uTileData", textureData, 1);
 		setUniformf("uTileDataInfo", 1.0f / textureData.HEIGHT,
 				1.0f / textureData.WIDTH);
-		super.applyParams(iProgramHandle, bundle, system);
+		super.applyParams(iProgramHandle, bundle, system, domainView);
 	}
+
+	// public static Bitmap transformTiledJsonToBitmap(String strJson)
+	// {
+	// JSONTokener tokener = new JSONTokener(strJson);
+	// try
+	// {
+	// JSONObject jsonObj = (JSONObject) tokener.nextValue();
+	// JSONArray layers = jsonObj.getJSONArray("layers");
+	// JSONObject layer0 = layers.getJSONObject(0);
+	// int iHeight = layer0.getInt("height");
+	// int iWidth = layer0.getInt("width");
+	// int iDataLen = iHeight * iWidth;
+	// int[] dataColors = new int[iDataLen];
+	//
+	// JSONArray dataObj = layers.getJSONObject(1)
+	// .getJSONArray("data");
+	// JSONArray dataBkg = layer0.getJSONArray("data");
+	// for (int i = 0; i < iDataLen; i++)
+	// {
+	// if (0 == dataBkg.getInt(i)
+	// && 0 == dataObj.getInt(i))
+	// dataColors[i] = 0xff000000;
+	// else if (0 == dataBkg.getInt(i)
+	// && 0 != dataObj.getInt(i))
+	// dataColors[i] = (dataObj.getInt(i) - 1) * 256 + 0xff260000;
+	// // dataColors[i] = 0xff000000;
+	// else if (0 != dataBkg.getInt(i)
+	// && 0 == dataObj.getInt(i))
+	// dataColors[i] = dataBkg.getInt(i) - 1 + 0xff400000;
+	// else
+	// dataColors[i] = dataBkg.getInt(i)
+	// - 1
+	// + (dataObj.getInt(i) - 1)
+	// * 256 + 0xff5A0000;
+	// // dataColors[i] = 0xff000000;
+	// }
+	//
+	// return Bitmap.createBitmap(dataColors, iWidth, iHeight,
+	// Bitmap.Config.ARGB_8888);
+	//
+	// } catch (Exception e)
+	// {
+	// e.printStackTrace();
+	// return null;
+	// }
+	// }
 
 	public static class YTileMapAdapter extends
 			YABlankAdapter<YTileMapAdapter>

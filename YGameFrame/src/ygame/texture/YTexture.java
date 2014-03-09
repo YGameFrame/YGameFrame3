@@ -35,8 +35,10 @@ public class YTexture
 	/** <b>纹理高度</b>：以像素为单位 */
 	public final int HEIGHT;
 
+	private int iSampleType = GLES20.GL_NEAREST;
+
 	/**
-	 * 新建一个以指定位图为内容纹理
+	 * 新建一个以指定位图为内容纹理，默认抽样类型{@link GLES20#GL_NEAREST}
 	 * 
 	 * @param bitmap
 	 *                位图
@@ -49,7 +51,24 @@ public class YTexture
 	}
 
 	/**
-	 * 新建一个指定宽高的空纹理
+	 * 新建一个以指定位图为内容纹理
+	 * 
+	 * @param bitmap
+	 *                位图
+	 * @param iSampleType
+	 *                抽样类型——{@link GLES20#GL_LINEAR}或者
+	 *                {@link GLES20#GL_NEAREST}
+	 */
+	public YTexture(Bitmap bitmap, int iSampleType)
+	{
+		this.bitmap = bitmap;
+		this.WIDTH = bitmap.getWidth();
+		this.HEIGHT = bitmap.getHeight();
+		this.iSampleType = iSampleType;
+	}
+
+	/**
+	 * 新建一个指定宽高的空纹理，默认抽样类型{@link GLES20#GL_NEAREST}
 	 * 
 	 * @param iWidth
 	 *                高度
@@ -60,6 +79,24 @@ public class YTexture
 	{
 		this.WIDTH = iWidth;
 		this.HEIGHT = iHeight;
+	}
+
+	/**
+	 * 新建一个指定宽高的空纹理
+	 * 
+	 * @param iWidth
+	 *                高度
+	 * @param iHeight
+	 *                宽度
+	 * @param iSampleType
+	 *                抽样类型——{@link GLES20#GL_LINEAR}或者
+	 *                {@link GLES20#GL_NEAREST}
+	 */
+	public YTexture(int iWidth, int iHeight, int iSampleType)
+	{
+		this.WIDTH = iWidth;
+		this.HEIGHT = iHeight;
+		this.iSampleType = iSampleType;
 	}
 
 	/**
@@ -95,10 +132,10 @@ public class YTexture
 
 			GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D,
 					GLES20.GL_TEXTURE_MIN_FILTER,
-					GLES20.GL_NEAREST);
+					iSampleType);
 			GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D,
 					GLES20.GL_TEXTURE_MAG_FILTER,
-					GLES20.GL_NEAREST);
+					iSampleType);
 			GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D,
 					GLES20.GL_TEXTURE_WRAP_S,
 					GLES20.GL_CLAMP_TO_EDGE);
@@ -129,10 +166,10 @@ public class YTexture
 					GLES20.GL_CLAMP_TO_EDGE);
 			GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D,
 					GLES20.GL_TEXTURE_MAG_FILTER,
-					GLES20.GL_NEAREST);
+					iSampleType);
 			GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D,
 					GLES20.GL_TEXTURE_MIN_FILTER,
-					GLES20.GL_NEAREST);
+					iSampleType);
 		}
 		return iTexHandle;
 	}
