@@ -154,8 +154,8 @@ public class YTexture
 			// 确认位图对象
 			Bitmap bitmapFinal = confirmBitmap();
 			// // 记录高宽
-			// iWidth = bitmapFinal.getWidth();
-			// iHeight = bitmapFinal.getHeight();
+			iWidth = bitmapFinal.getWidth();
+			iHeight = bitmapFinal.getHeight();
 			// 设置参数
 			GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D,
 					GLES20.GL_TEXTURE_MIN_FILTER,
@@ -179,7 +179,10 @@ public class YTexture
 			bitmapFinal.recycle();
 		} else
 		{
-			confirmSize();
+			int[] confirmSize = confirmSize();
+			// 记录高宽
+			iWidth = confirmSize[0];
+			iHeight = confirmSize[1];
 			GLES20.glTexImage2D(GLES20.GL_TEXTURE_2D, 0,
 					GLES20.GL_RGB, iWidth, iHeight, 0,
 					GLES20.GL_RGB,
@@ -220,7 +223,11 @@ public class YTexture
 		return iHeight;
 	}
 
-	private void confirmSize()
+	/**
+	 * 0宽，	 * 
+	 * @return 宽高
+	 */
+	private int[] confirmSize()
 	{
 		// 定制的空纹理高宽满足要求，不做更改，直接返回
 		final float fHeight = iHeight;
@@ -231,7 +238,8 @@ public class YTexture
 		YGL_Configuration configuration = YGL_Configuration
 				.getInstanceInGL();
 		if (configuration.getMaxTextureSize() >= iMaxSideLen)
-			return;
+			return new int[]
+			{ iWidth, iHeight };
 
 		// 尺寸不合要求，更改后返回
 		int iOutWidth = 0;
@@ -247,11 +255,11 @@ public class YTexture
 			iOutWidth = (int) (fWidth / fHeight * configuration
 					.getMaxTextureSize());
 		}
-		YLog.w(getClass().getName(), "纹理位图被重新缩放，原高宽：" + iHeight + "_"
-				+ iWidth + "，现高宽：" + iOutHeight + "_"
+		YLog.w(getClass().getName(), "纹理位图被重新缩放，原高宽：" + fHeight + "_"
+				+ fWidth + "，现高宽：" + iOutHeight + "_"
 				+ iOutWidth);
-		iWidth = iOutWidth;
-		iHeight = iOutHeight;
+		return new int[]
+		{ iOutWidth, iOutHeight, };
 	}
 
 	/**
@@ -298,11 +306,9 @@ public class YTexture
 		Bitmap bitmapRes = Bitmap.createScaledBitmap(bitmap, iOutWidth,
 				iOutHeight, false);
 		bitmap.recycle();
-		YLog.w(getClass().getName(), "纹理位图被重新缩放，原高宽：" + iHeight + "_"
-				+ iWidth + "，现高宽：" + iOutHeight + "_"
+		YLog.w(getClass().getName(), "纹理位图被重新缩放，原高宽：" + fHeight + "_"
+				+ fWidth + "，现高宽：" + iOutHeight + "_"
 				+ iOutWidth);
-		iWidth = iOutWidth;
-		iHeight = iOutHeight;
 		return bitmapRes;
 	}
 
