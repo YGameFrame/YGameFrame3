@@ -35,6 +35,8 @@ public class YFrameBuffer
 	private int iHeight;
 
 	/**
+	 * 新建指定高宽的帧缓冲</br> <b>注：</b>如果高宽超出显卡限制将会依高宽比例重新计算大小
+	 * 
 	 * @param iWidth
 	 *                帧缓冲宽度
 	 * @param iHeight
@@ -44,7 +46,7 @@ public class YFrameBuffer
 	{
 		this.iWidth = iWidth;
 		this.iHeight = iHeight;
-		texture = new YTexture(iWidth, iHeight);
+		texture = new YTexture(iWidth, iHeight, GLES20.GL_LINEAR);
 	}
 
 	/**

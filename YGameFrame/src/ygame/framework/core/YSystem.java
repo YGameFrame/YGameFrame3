@@ -76,6 +76,8 @@ public final class YSystem extends YAStateMachineContext
 	private double mLastMeasuredFPS;
 	private static final boolean bDEBUG = true;
 
+	public static final String GLThreadName = "GLThread";
+
 	YSystem(YView yview)
 	{
 		YVIEW = yview;
@@ -167,6 +169,7 @@ public final class YSystem extends YAStateMachineContext
 		return sceneCurrent;
 	}
 
+	//XXX
 	public void testSetScene(YScene scene)
 	{
 		this.sceneCurrent = scene;
@@ -222,7 +225,7 @@ public final class YSystem extends YAStateMachineContext
 		// 通知逻辑周期到来
 		clockCycle();
 
-		// 队列发送分隔符
+		// 向队列发送分隔符
 		inputRequest(requestCOMMA_BeforeRendering);
 		inputRequest(requestCOMMA_Rendering_LogicThread);
 
@@ -275,6 +278,7 @@ public final class YSystem extends YAStateMachineContext
 	{
 		try
 		{
+			sceneCurrent.preDraw();
 			sceneCurrent.onDraw();
 		} catch (Exception e)
 		{
@@ -350,7 +354,7 @@ public final class YSystem extends YAStateMachineContext
 				.getSystemService(Context.WINDOW_SERVICE))
 				.getDefaultDisplay().getRefreshRate();
 	}
-	
+
 	private class YClockTask implements Runnable
 	{
 		@Override

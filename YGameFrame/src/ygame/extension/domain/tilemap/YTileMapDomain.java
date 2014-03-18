@@ -44,6 +44,7 @@ import android.graphics.Bitmap;
  * 
  * @author yunzhong
  * 
+ * 
  */
 // 采用了分块和程序纹理技术，利用少量顶点生成超大清晰的瓷砖地图
 public class YTileMapDomain extends YABaseDomain
@@ -62,10 +63,10 @@ public class YTileMapDomain extends YABaseDomain
 	private float fRealWorldToTileWorldRadio;
 
 	public YTileMapDomain(String KEY, Resources resources,
-			Bitmap bitmapIndexPic, YTiledJsonParser parser)
+			int iIndexPicResId, YTiledJsonParser parser)
 			throws JSONException
 	{
-		this(KEY, resources, bitmapIndexPic, parser, 1, 1);
+		this(KEY, resources, iIndexPicResId, parser, 1, 1);
 	}
 
 	/**
@@ -75,8 +76,8 @@ public class YTileMapDomain extends YABaseDomain
 	 *                实体标识
 	 * @param resources
 	 *                资源
-	 * @param bitmapIndexPic
-	 *                索引图
+	 * @param iIndexPicResId
+	 *                索引图资源标识
 	 * @param parser
 	 *                解析器
 	 * @param iDividedColumn
@@ -87,13 +88,13 @@ public class YTileMapDomain extends YABaseDomain
 	 *                 json异常
 	 */
 	public YTileMapDomain(String KEY, Resources resources,
-			Bitmap bitmapIndexPic, YTiledJsonParser parser,
+			int iIndexPicResId, YTiledJsonParser parser,
 			int iDividedColumn, int iDividedRow)
 			throws JSONException
 	{
 		super(KEY);
 		this.fRealWorldToTileWorldRadio = parser.fRealWorldToTileWorldRadio;
-		tileSheet = new YTileSheet(bitmapIndexPic,
+		tileSheet = new YTileSheet(iIndexPicResId, resources,
 				parser.parseIndexPicRowNum(),
 				parser.parseIndexPicColumnNum());
 		int[] dataArray = parser.parseGraphicLayersAsArray();
@@ -273,10 +274,11 @@ public class YTileMapDomain extends YABaseDomain
 	}
 
 	@Override
-	protected void inputRequest(YRequest request)
+	protected void onReceiveRequest(YRequest request, YSystem system,
+			YScene sceneCurrent)
 	{
 		for (YLargeMapComponentDomain domain : domainComponents)
-			domain.inputRequest(request);
+			domain.onReceiveRequest(request, system, sceneCurrent);
 	}
 
 	@Override

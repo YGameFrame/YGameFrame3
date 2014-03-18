@@ -104,7 +104,10 @@ public class YScene extends YAStateMachineContext
 	private void internalAddDomains(YABaseDomain[] domains)
 	{
 		for (YABaseDomain domain : domains)
+		{
 			mapDomains.put(domain.KEY, domain);
+			domain.attach(SYSTEM);
+		}
 	}
 
 	/**
@@ -181,16 +184,30 @@ public class YScene extends YAStateMachineContext
 					iHeight);
 	}
 
-	@SuppressLint("WrongCall")
-	protected void onDraw()
+	/**
+	 * 可在此处理场景每次绘制前的设置
+	 */
+	protected void preDraw()
 	{
 		int clearMask = GLES20.GL_COLOR_BUFFER_BIT;
 		clearMask |= GLES20.GL_DEPTH_BUFFER_BIT;
 		GLES20.glClear(clearMask);
+	}
 
+	@SuppressLint("WrongCall")
+	protected void onDraw()
+	{
 		Collection<YABaseDomain> domains = mapDomains.values();
 		for (YABaseDomain domain : domains)
-			domain.onDraw(SYSTEM);
+		{
+			try
+			{
+				domain.onDraw(SYSTEM);
+			} catch (Exception e)
+			{
+				e.printStackTrace();
+			}
+		}
 	}
 
 	private static class YSceneRequest extends YRequest

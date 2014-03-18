@@ -1,5 +1,6 @@
 package ygame.framework.core;
 
+import ygame.exception.YException;
 import android.opengl.GLES20;
 
 /**
@@ -31,13 +32,13 @@ public class YGL_Configuration
 
 	private boolean bSupportsUIntBuffers;
 
-	public YGL_Configuration()
+	YGL_Configuration()
 	{
 		initializeInGL();
 	}
 
-	// fei problem
-	static YGL_Configuration getInstanceInGL()
+	// XXX fei problem
+	public static YGL_Configuration getInstanceInGL()
 	{
 		if (instance == null)
 			instance = new YGL_Configuration();
@@ -46,6 +47,12 @@ public class YGL_Configuration
 
 	private void initializeInGL()
 	{
+		String strThreadName = Thread.currentThread().getName();
+		if (!strThreadName.contains(YSystem.GLThreadName))
+			throw new YException("该配置只能在GL线程中被初始化", getClass()
+					.getName(), "当前线程为：" + strThreadName
+					+ "，不是GL线程");
+
 		mParam = new int[1];
 
 		mMaxCombinedTextureImageUnits = getInt(GLES20.GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS);
@@ -91,8 +98,7 @@ public class YGL_Configuration
 	}
 
 	/**
-	 * A rough estimate of the largest texture
-	 * that OpenGL can handle.
+	 * A rough estimate of the largest texture that OpenGL can handle.
 	 * 
 	 * @return
 	 */
@@ -102,14 +108,11 @@ public class YGL_Configuration
 	}
 
 	/**
-	 * The maximum supported texture image units
-	 * that can be used to access texture maps
-	 * from the vertex shader and the fragment
-	 * processor combined. If both the vertex
-	 * shader and the fragment processing stage
-	 * access the same texture image unit, then
-	 * that counts as using two texture image
-	 * units against this limit.
+	 * The maximum supported texture image units that can be used to access
+	 * texture maps from the vertex shader and the fragment processor
+	 * combined. If both the vertex shader and the fragment processing stage
+	 * access the same texture image unit, then that counts as using two
+	 * texture image units against this limit.
 	 * 
 	 * @return
 	 */
@@ -119,9 +122,8 @@ public class YGL_Configuration
 	}
 
 	/**
-	 * The value gives a rough estimate of the
-	 * largest cube-map texture that the GL can
-	 * handle. The value must be at least 1024.
+	 * The value gives a rough estimate of the largest cube-map texture that
+	 * the GL can handle. The value must be at least 1024.
 	 * 
 	 * @return
 	 */
@@ -131,10 +133,9 @@ public class YGL_Configuration
 	}
 
 	/**
-	 * The maximum number of individual 4-vectors
-	 * of floating-point, integer, or boolean
-	 * values that can be held in uniform
-	 * variable storage for a fragment shader.
+	 * The maximum number of individual 4-vectors of floating-point,
+	 * integer, or boolean values that can be held in uniform variable
+	 * storage for a fragment shader.
 	 * 
 	 * @return
 	 */
@@ -144,8 +145,7 @@ public class YGL_Configuration
 	}
 
 	/**
-	 * Indicates the maximum supported size for
-	 * renderbuffers.
+	 * Indicates the maximum supported size for renderbuffers.
 	 * 
 	 * @return
 	 */
@@ -155,9 +155,8 @@ public class YGL_Configuration
 	}
 
 	/**
-	 * The maximum supported texture image units
-	 * that can be used to access texture maps
-	 * from the fragment shader.
+	 * The maximum supported texture image units that can be used to access
+	 * texture maps from the fragment shader.
 	 * 
 	 * @return
 	 */
@@ -167,8 +166,7 @@ public class YGL_Configuration
 	}
 
 	/**
-	 * The maximum number of 4-vectors for
-	 * varying variables.
+	 * The maximum number of 4-vectors for varying variables.
 	 * 
 	 * @return
 	 */
@@ -178,9 +176,8 @@ public class YGL_Configuration
 	}
 
 	/**
-	 * The maximum number of 4-component generic
-	 * vertex attributes accessible to a vertex
-	 * shader.
+	 * The maximum number of 4-component generic vertex attributes
+	 * accessible to a vertex shader.
 	 * 
 	 * @return
 	 */
@@ -190,9 +187,8 @@ public class YGL_Configuration
 	}
 
 	/**
-	 * The maximum supported texture image units
-	 * that can be used to access texture maps
-	 * from the vertex shader.
+	 * The maximum supported texture image units that can be used to access
+	 * texture maps from the vertex shader.
 	 * 
 	 * @return
 	 */
@@ -202,9 +198,8 @@ public class YGL_Configuration
 	}
 
 	/**
-	 * The maximum number of 4-vectors that may
-	 * be held in uniform variable storage for
-	 * the vertex shader.
+	 * The maximum number of 4-vectors that may be held in uniform variable
+	 * storage for the vertex shader.
 	 * 
 	 * @return
 	 */
@@ -234,8 +229,7 @@ public class YGL_Configuration
 	}
 
 	/**
-	 * Indicates the minimum width supported for
-	 * aliased lines
+	 * Indicates the minimum width supported for aliased lines
 	 * 
 	 * @return
 	 */
@@ -245,8 +239,7 @@ public class YGL_Configuration
 	}
 
 	/**
-	 * Indicates the maximum width supported for
-	 * aliased lines
+	 * Indicates the maximum width supported for aliased lines
 	 * 
 	 * @return
 	 */
@@ -256,8 +249,7 @@ public class YGL_Configuration
 	}
 
 	/**
-	 * Indicates the minimum size supported for
-	 * aliased points
+	 * Indicates the minimum size supported for aliased points
 	 * 
 	 * @return
 	 */
@@ -267,8 +259,7 @@ public class YGL_Configuration
 	}
 
 	/**
-	 * Indicates the maximum size supported for
-	 * aliased points
+	 * Indicates the maximum size supported for aliased points
 	 * 
 	 * @return
 	 */

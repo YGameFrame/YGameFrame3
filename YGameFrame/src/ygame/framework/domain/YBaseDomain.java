@@ -12,10 +12,9 @@ import android.annotation.SuppressLint;
  * <b>实体</b>
  * 
  * <p>
- * <b>概述</b>： <b>基础实体</b>{@link YABaseDomain}
- * 的一个实现：将计算与渲染分别交给 <b>实体逻辑</b>
- * {@link YABaseDomainLogic} 与<b>实体视图</b>
- * {@link YABaseDomainView}进行。即该对象实现了一种分工模型。
+ * <b>概述</b>： <b>基础实体</b>{@link YABaseDomain} 的一个实现：将计算与渲染分别交给 <b>实体逻辑</b>
+ * {@link YABaseDomainLogic} 与<b>实体视图</b> {@link YABaseDomainView}
+ * 进行。即该对象实现了一种分工模型。
  * 
  * <p>
  * <b>建议</b>： TODO
@@ -89,7 +88,7 @@ public class YBaseDomain extends YABaseDomain
 	@Override
 	protected void onDraw(YSystem system)
 	{
-		view.onDraw(this , system);
+		view.onDraw(this, system);
 	}
 
 	@Override
@@ -102,9 +101,10 @@ public class YBaseDomain extends YABaseDomain
 	}
 
 	@Override
-	protected void inputRequest(YRequest request)
+	protected void onReceiveRequest(YRequest request, YSystem system,
+			YScene sceneCurrent)
 	{
-		logic.inputRequest(request);
+		logic.onDealRequest(request, system, sceneCurrent);
 	}
 
 	@Override
@@ -113,6 +113,12 @@ public class YBaseDomain extends YABaseDomain
 			int iHeight)
 	{
 		view.onGL_Initialize(system, configurationGL, iWidth, iHeight);
+	}
+
+	@Override
+	protected void onAttach(YSystem system)
+	{
+		logic.onAttach(system, this);
 	}
 
 }

@@ -46,10 +46,12 @@ class YLargeMapComponentDomainLogic extends YADomainLogic
 	}
 
 	@Override
-	protected void onDealRequest(YRequest request)
+	protected void onDealRequest(YRequest request, YSystem system,
+			YScene sceneCurrent)
 	{
 		// TODO Auto-generated method stub
-
+		
 	}
+
 
 }

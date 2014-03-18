@@ -42,7 +42,6 @@ public abstract class YABaseShaderProgram
 
 	protected YABaseShaderProgram()
 	{
-		// TODO Auto-generated constructor stub
 	}
 
 	/**
@@ -63,7 +62,7 @@ public abstract class YABaseShaderProgram
 
 	void startRendering()
 	{
-		if (-1 == iProgramHandle)
+		if (!GLES20.glIsProgram(iProgramHandle))
 			initialize();
 		GLES20.glUseProgram(iProgramHandle);
 	}
@@ -71,8 +70,9 @@ public abstract class YABaseShaderProgram
 	void initialize()
 	{
 		System.out.println("初始化，当前句柄： " + iProgramHandle);
-		if (-1 != iProgramHandle)
-			return;
+		// if (-1 == iProgramHandle||
+		// !GLES20.glIsProgram(iProgramHandle))
+		// return;
 		// 创建程序，更新程序句柄
 		iProgramHandle = YShaderUtils.createProgram(
 				strVertexShaderCode, strFragmentShaderCode);
@@ -172,7 +172,7 @@ public abstract class YABaseShaderProgram
 	 * <b>概述</b>：这是<b>渲染程序</b>的参数适配器。</br>
 	 * <li>作为使用者，您应该依次填写适配器中所声明的参数；
 	 * <li>如果您开发了一个<b> 渲染程序</b> ，您应该再开发本类 {@link YABaseParametersAdapter}
-	 * 的一个子类， 用来向外界声明使用此<b>渲染程序</b>时应该向其传递怎样的参数。
+	 * 的一个子类， 用来向外界声明使用此<b>渲染程序</b>时应该向其传递怎样的参数。同时注意该类只应有无参构造函数。
 	 * 
 	 * <p>
 	 * <b>建议</b>： TODO
@@ -181,8 +181,9 @@ public abstract class YABaseShaderProgram
 	 * <b>详细</b>： TODO
 	 * 
 	 * <p>
-	 * <b>注</b>： 作为使用者，为了确保数据的正确，您每次都应该对<b>适配器</b >中声明的参数<b>全部重新</b>填写一遍。
-	 * 
+	 * <b>注</b>：
+	 * <li>作为使用者，为了确保数据的正确，您每次都应该对<b>适配器</b >中声明的参数<b>全部重新</b>填写一遍。
+	 * <li>该类的子类只能有<b>无参构造函数</b>
 	 * <p>
 	 * <b>例</b>： TODO
 	 * 

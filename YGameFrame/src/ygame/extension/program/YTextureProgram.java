@@ -34,18 +34,18 @@ public final class YTextureProgram extends YABlankProgram
 {
 	private static final int TEX = 2;
 
-	//private static YTextureProgram instance;
+	private static YTextureProgram instance;
 
 	public static YTextureProgram getInstance(Resources resources)
 	{
-//		if (null == instance)
-//			synchronized (YTextureProgram.class)
-//			{
-//				if (null == instance)
-//					instance = new YTextureProgram(resources);
-//			}
-//		return instance;
-		return new YTextureProgram(resources);
+		if (null == instance)
+			synchronized (YTextureProgram.class)
+			{
+				if (null == instance)
+					instance = new YTextureProgram(resources);
+			}
+		return instance;
+//		return new YTextureProgram(resources);
 	}
 
 	private YTextureProgram(Resources resources)

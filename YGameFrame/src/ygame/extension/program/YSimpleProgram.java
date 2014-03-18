@@ -42,18 +42,18 @@ public final class YSimpleProgram extends YAShaderProgram
 
 	// private YAttributeValue aPosition;
 	// private YAttributeValue aColor;
-	//private static YSimpleProgram instance;
+	private static YSimpleProgram instance;
 
 	public static YSimpleProgram getInstance(Resources resources)
 	{
-//		if (null == instance)
-//			synchronized (YSimpleProgram.class)
-//			{
-//				if (null == instance)
-//					instance = new YSimpleProgram(resources);
-//			}
-//		return instance;
-		return new YSimpleProgram(resources);
+		if (null == instance)
+			synchronized (YSimpleProgram.class)
+			{
+				if (null == instance)
+					instance = new YSimpleProgram(resources);
+			}
+		return instance;
+//		return new YSimpleProgram(resources);
 	}
 
 	private YSimpleProgram(Resources resources)

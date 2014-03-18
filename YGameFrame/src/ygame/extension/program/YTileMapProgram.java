@@ -36,18 +36,18 @@ public final class YTileMapProgram extends YABlankProgram
 	private static final int TEX_DATA = 2;
 	private static final int TILE_SHEET = 3;
 
-	//private static YTileMapProgram instance;
+	private static YTileMapProgram instance;
 
 	public static YTileMapProgram getInstance(Resources resources)
 	{
-//		if (null == instance)
-//			synchronized (YTileMapProgram.class)
-//			{
-//				if (null == instance)
-//					instance = new YTileMapProgram(resources);
-//			}
-//		return instance;
-		return new YTileMapProgram(resources);
+		if (null == instance)
+			synchronized (YTileMapProgram.class)
+			{
+				if (null == instance)
+					instance = new YTileMapProgram(resources);
+			}
+		return instance;
+//		return new YTileMapProgram(resources);
 	}
 
 	private YTileMapProgram(Resources resources)
@@ -75,8 +75,8 @@ public final class YTileMapProgram extends YABlankProgram
 
 		YTexture textureData = (YTexture) bundle.readObject(TEX_DATA);
 		setUniformTexture("uTileData", textureData, 1);
-		setUniformf("uTileDataInfo", 1.0f / textureData.HEIGHT,
-				1.0f / textureData.WIDTH);
+		setUniformf("uTileDataInfo", 1.0f / textureData.getHeight(),
+				1.0f / textureData.getWidth());
 		super.applyParams(iProgramHandle, bundle, system, domainView);
 	}
 

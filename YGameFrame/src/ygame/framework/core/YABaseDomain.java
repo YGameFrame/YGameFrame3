@@ -30,6 +30,8 @@ public abstract class YABaseDomain extends YAStateMachineContext
 	/** <b>实体标识</b> */
 	public final String KEY;
 
+	private YSystem system;
+
 	/**
 	 * @param KEY
 	 *                参阅{@link #KEY}
@@ -39,11 +41,32 @@ public abstract class YABaseDomain extends YAStateMachineContext
 		this.KEY = KEY;
 	}
 
+	@Override
+	final protected void inputRequest(YRequest request)
+	{
+		onReceiveRequest(request, system, system.getCurrentScene());
+	}
+
+	// 实体被添入场景时，被调用
+	void attach(YSystem system)
+	{
+		this.system = system;
+		onAttach(system);
+	}
+
 	/**
-	 * 每帧开始绘制前回调此函数，即在此时只有逻辑线程运行，绘图线程完成任务处于等待状态，
-	 * 在此之后逻辑线程与绘图线程开始并发运行
-	 * ，为了保证线程安全，它们之间不可再有任何交互！您可以通过复写该方法，在逻辑线程与
-	 * 绘图线程“分道扬镳”之前做一些设置。
+	 * 当实体被添入场景时该函数被回调
+	 * 
+	 * @param system
+	 *                系统
+	 */
+	protected void onAttach(YSystem system)
+	{
+	}
+
+	/**
+	 * 每帧开始绘制前回调此函数，即在此时只有逻辑线程运行，绘图线程完成任务处于等待状态， 在此之后逻辑线程与绘图线程开始并发运行
+	 * ，为了保证线程安全，它们之间不可再有任何交互！您可以通过复写该方法，在逻辑线程与 绘图线程“分道扬镳”之前做一些设置。
 	 * 
 	 */
 	protected abstract void onPreframe();
@@ -56,8 +79,18 @@ public abstract class YABaseDomain extends YAStateMachineContext
 	 */
 	protected abstract void onDraw(YSystem system);
 
-	@Override
-	protected abstract void inputRequest(YRequest request);
+	/**
+	 * 当实体接受到该请求时，该函数被回调
+	 * 
+	 * @param request
+	 *                请求
+	 * @param system
+	 *                系统
+	 * @param sceneCurrent
+	 *                实体当前所处的场景
+	 */
+	protected abstract void onReceiveRequest(YRequest request,
+			YSystem system, YScene sceneCurrent);
 
 	/**
 	 * @param dbElapseTime_s
@@ -85,11 +118,9 @@ public abstract class YABaseDomain extends YAStateMachineContext
 	 * @param configurationGL
 	 *                开放图库（OpenGL）配置信息
 	 * @param iWidth
-	 *                <b>渲染视图</b>{@link YView}
-	 *                的宽度，像素为单位
+	 *                <b>渲染视图</b>{@link YView} 的宽度，像素为单位
 	 * @param iHeight
-	 *                <b>渲染视图</b>{@link YView}
-	 *                的高度，像素为单位
+	 *                <b>渲染视图</b>{@link YView} 的高度，像素为单位
 	 */
 	protected abstract void onGL_Initialize(YSystem system,
 			YGL_Configuration configurationGL, int iWidth,

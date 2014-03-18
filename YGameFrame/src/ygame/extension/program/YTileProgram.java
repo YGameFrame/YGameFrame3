@@ -36,18 +36,18 @@ public final class YTileProgram extends YABlankProgram
 	private static final int FTP = 2;// FrameTexParam
 	private static final int TEX = 3;
 
-//	private static YTileProgram instance;
+	private static YTileProgram instance;
 
 	public static YTileProgram getInstance(Resources resources)
 	{
-//		if (null == instance)
-//			synchronized (YTileMapProgram.class)
-//			{
-//				if (null == instance)
-//					instance = new YTileProgram(resources);
-//			}
-//		return instance;
-		return new YTileProgram(resources);
+		if (null == instance)
+			synchronized (YTileMapProgram.class)
+			{
+				if (null == instance)
+					instance = new YTileProgram(resources);
+			}
+		return instance;
+//		return new YTileProgram(resources);
 	}
 
 	private YTileProgram(Resources resources)

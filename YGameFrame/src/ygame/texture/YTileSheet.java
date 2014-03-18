@@ -1,5 +1,6 @@
 package ygame.texture;
 
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 
 /**
@@ -34,6 +35,27 @@ public class YTileSheet extends YTexture
 	public final float GRID_WIDTH;
 	/** <b>单格高度</b>：总高为1.0 */
 	public final float GRID_HEIGHT;
+
+	/**
+	 * @param iResId
+	 *                位图资源标识
+	 * @param resources
+	 *                资源
+	 * @param iRowNums
+	 *                行数
+	 * @param iColumnNums
+	 *                列数
+	 */
+	public YTileSheet(int iResId, Resources resources, int iRowNums,
+			int iColumnNums)
+	{
+		super(iResId, resources);
+		this.COLUMN_NUM = iColumnNums;
+		this.ROW_NUM = iRowNums;
+
+		this.GRID_WIDTH = 1.0f / COLUMN_NUM;
+		this.GRID_HEIGHT = 1.0f / ROW_NUM;
+	}
 
 	public YTileSheet(Bitmap bitmap, int iRowNums, int iColumnNums)
 	{
