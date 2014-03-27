@@ -20,7 +20,8 @@ abstract class AbstractTransitionModel<S, R, C> implements
 	protected final Class<S> classState;
 	protected final Class<R> classRequest;
 
-	protected AbstractTransitionModel(Class<S> classState, Class<R> classRequest)
+	protected AbstractTransitionModel(Class<S> classState,
+			Class<R> classRequest)
 	{
 		this.classState = classState;
 		this.classRequest = classRequest;
@@ -41,58 +42,74 @@ abstract class AbstractTransitionModel<S, R, C> implements
 	}
 
 	@Override
-	public boolean inputRequest(StateMachine<S, R, C> stateMachine, R request, C context)
+	public boolean inputRequest(StateMachine<S, R, C> stateMachine,
+			R request, C context)
 	{
 		S from = stateMachine.getCurrentState();
-		return inputRequest(stateMachine, request, transitionMap.get(from), from, context)
-				|| inputRequest(stateMachine, request, fromAllTransitions, from, context);
+		return inputRequest(stateMachine, request,
+				transitionMap.get(from), from, context)
+				|| inputRequest(stateMachine, request,
+						fromAllTransitions, from,
+						context);
 	}
 
 	@Override
-	public boolean forceSetState(StateMachine<S, R, C> stateMachine, S forcedState)
+	public boolean forceSetState(StateMachine<S, R, C> stateMachine,
+			S forcedState, C context)
 	{
 		S from = stateMachine.getCurrentState();
 		if (from.equals(forcedState))
 			return false;
-		forceSetState(stateMachine, from, forcedState, null, null, null);
+		forceSetState(stateMachine, from, forcedState, null, null,
+				context);
 		return true;
 	}
 
-	private void forceSetState(StateMachine<S, R, C> stateMachine, S from, S to,
-			Transition<S, R, C> transition, R request, C context)
+	private void forceSetState(StateMachine<S, R, C> stateMachine, S from,
+			S to, Transition<S, R, C> transition, R request,
+			C context)
 	{
-		invoke(exitActions.get(from), from, to, request, context, stateMachine);
+		invoke(exitActions.get(from), from, to, request, context,
+				stateMachine);
 		stateMachine.rawSetState(to);
 		if (transition != null)
-			transition.onTransition(from, to, request, context, stateMachine);
-		invoke(enterActions.get(to), from, to, request, context, stateMachine);
+			transition.onTransition(from, to, request, context,
+					stateMachine);
+		invoke(enterActions.get(to), from, to, request, context,
+				stateMachine);
 	}
 
-	private boolean inputRequest(StateMachine<S, R, C> stateMachine, R request,
-			Map<R, Collection<Transition<S, R, C>>> transitionMap, S from, C context)
+	private boolean inputRequest(StateMachine<S, R, C> stateMachine,
+			R request,
+			Map<R, Collection<Transition<S, R, C>>> transitionMap,
+			S from, C context)
 	{
 		if (transitionMap == null)
 			return false;
-		Collection<Transition<S, R, C>> transitions = transitionMap.get(request);
+		Collection<Transition<S, R, C>> transitions = transitionMap
+				.get(request);
 		if (transitions == null)
 			return false;
 		for (Transition<S, R, C> transition : transitions)
 			if (transition.isSatisfied(context))
 			{
-				forceSetState(stateMachine, from, transition.getTo(), transition,
+				forceSetState(stateMachine, from,
+						transition.getTo(), transition,
 						request, context);
 				return true;
 			}
 		return false;
 	}
 
-	private void invoke(Collection<YIAction<S, R, C>> actions, S from, S to, R request,
-			C context, StateMachine<S, R, C> stateMachine)
+	private void invoke(Collection<YIAction<S, R, C>> actions, S from,
+			S to, R request, C context,
+			StateMachine<S, R, C> stateMachine)
 	{
 		if (actions == null)
 			return;
 		for (YIAction<S, R, C> action : actions)
-			action.onTransition(from, to, request, context, stateMachine);
+			action.onTransition(from, to, request, context,
+					stateMachine);
 	}
 
 	public Map<S, Map<R, Collection<Transition<S, R, C>>>> getStateTransitions()

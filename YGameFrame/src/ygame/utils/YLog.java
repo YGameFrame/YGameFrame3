@@ -12,4 +12,9 @@ public final class YLog
 	{
 		Log.w(tag, msg);
 	}
+
+	public static void i(String tag, String msg)
+	{
+		Log.i(tag, msg);
+	}
 }

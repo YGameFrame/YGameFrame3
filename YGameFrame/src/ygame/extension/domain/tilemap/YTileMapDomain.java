@@ -274,11 +274,14 @@ public class YTileMapDomain extends YABaseDomain
 	}
 
 	@Override
-	protected void onReceiveRequest(YRequest request, YSystem system,
+	protected boolean onReceiveRequest(YRequest request, YSystem system,
 			YScene sceneCurrent)
 	{
+		boolean bRes = false;
 		for (YLargeMapComponentDomain domain : domainComponents)
-			domain.onReceiveRequest(request, system, sceneCurrent);
+			bRes |= domain.onReceiveRequest(request, system,
+					sceneCurrent);
+		return bRes;
 	}
 
 	@Override

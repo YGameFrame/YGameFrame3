@@ -51,10 +51,9 @@ class YLargeMapComponentDomain extends YDomain
 	}
 
 	@Override
-	protected void onReceiveRequest(YRequest request, YSystem system,
+	protected boolean onReceiveRequest(YRequest request, YSystem system,
 			YScene sceneCurrent)
 	{
-		// TODO Auto-generated method stub
-		super.onReceiveRequest(request, system, sceneCurrent);
+		return super.onReceiveRequest(request, system, sceneCurrent);
 	}
 }

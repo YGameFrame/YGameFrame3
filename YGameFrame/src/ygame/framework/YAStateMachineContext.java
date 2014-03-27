@@ -30,8 +30,9 @@ public abstract class YAStateMachineContext
 	 * 
 	 * @param request
 	 *                请求
+	 * @return 真为接收请求，反之拒绝
 	 */
-	abstract protected void inputRequest(YRequest request);
+	abstract protected boolean inputRequest(YRequest request);
 
 	// abstract protected void
 	// onClockCycle(double dbElapseTime_s);

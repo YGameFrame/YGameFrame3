@@ -45,6 +45,7 @@ vec2 getLocationInTexGraphic(in float index)
 }
 
 //抽取非透明点并将其值交付渲染管线返回真，抽取到透明点返回假
+//索引自0开始计算
 bool sampleTexGraphicAsFinalColor(float index)
 {
 		vec2 location = getLocationInTexGraphic(index);

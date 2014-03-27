@@ -32,6 +32,8 @@ public abstract class YABaseDomain extends YAStateMachineContext
 
 	private YSystem system;
 
+	private boolean bAttached;
+
 	/**
 	 * @param KEY
 	 *                参阅{@link #KEY}
@@ -42,20 +44,24 @@ public abstract class YABaseDomain extends YAStateMachineContext
 	}
 
 	@Override
-	final protected void inputRequest(YRequest request)
+	final protected boolean inputRequest(YRequest request)
 	{
-		onReceiveRequest(request, system, system.getCurrentScene());
+		return onReceiveRequest(request, system,
+				system.getCurrentScene());
 	}
 
 	// 实体被添入场景时，被调用
 	void attach(YSystem system)
 	{
+		if (bAttached)
+			return;
+		bAttached = true;
 		this.system = system;
 		onAttach(system);
 	}
 
 	/**
-	 * 当实体被添入场景时该函数被回调
+	 * 当实体被第一次关联到系统时该函数被回调
 	 * 
 	 * @param system
 	 *                系统
@@ -64,6 +70,16 @@ public abstract class YABaseDomain extends YAStateMachineContext
 	{
 	}
 
+	/**
+	 * 当实体被添入相应场景时该函数被回调
+	 * 
+	 * @param scene
+	 *                实体被添入的的场景
+	 */
+	protected void onEnterScene(YScene scene)
+	{
+	}
+	
 	/**
 	 * 每帧开始绘制前回调此函数，即在此时只有逻辑线程运行，绘图线程完成任务处于等待状态， 在此之后逻辑线程与绘图线程开始并发运行
 	 * ，为了保证线程安全，它们之间不可再有任何交互！您可以通过复写该方法，在逻辑线程与 绘图线程“分道扬镳”之前做一些设置。
@@ -88,8 +104,9 @@ public abstract class YABaseDomain extends YAStateMachineContext
 	 *                系统
 	 * @param sceneCurrent
 	 *                实体当前所处的场景
+	 * @return 真为处理了该请求，反之忽略该请求
 	 */
-	protected abstract void onReceiveRequest(YRequest request,
+	protected abstract boolean onReceiveRequest(YRequest request,
 			YSystem system, YScene sceneCurrent);
 
 	/**

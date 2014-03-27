@@ -34,7 +34,7 @@ public class YCamera implements YIMover
 	private float bottom;
 	private float top;
 	private float near = 0.1f;
-	private float far = 100;
+	private float far = 1000;
 	private boolean bDirtyProj = false;
 
 	private YMatrix matrixView = new YMatrix();

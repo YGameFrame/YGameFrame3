@@ -35,8 +35,8 @@ public class YTiledJsonParser
 	private static final String DECORATION_BKG = "decoration_bkg";
 	private static final String BASE_BKG = "base_bkg";
 	final protected JSONObject jsonTree;
-	private int iRowNum;
-	private int iColumnNum;
+	final private int iRowNum;
+	final private int iColumnNum;
 
 	private JSONObject jsonIndexPic;
 
@@ -59,6 +59,21 @@ public class YTiledJsonParser
 		iColumnNum = jsonTree.getInt("width");
 		jsonIndexPic = jsonTree.getJSONArray("tilesets").getJSONObject(
 				0);
+
+		int num = getIndexPicTileTypeNum();
+		if (num > 255)
+			throw new YException("索引图砖块种类数目超出限制！", getClass()
+					.getName(),
+					"索引图砖块种类不可超过256种，该索引图砖块数目为：" + num);
+	}
+
+	private int getIndexPicTileTypeNum() throws JSONException
+	{
+		int row = jsonIndexPic.getInt("imageheight")
+				/ jsonIndexPic.getInt("tileheight");
+		int column = jsonIndexPic.getInt("imagewidth")
+				/ jsonIndexPic.getInt("tilewidth");
+		return row * column;
 	}
 
 	/**

@@ -11,6 +11,7 @@ import java.util.concurrent.TimeUnit;
 import javax.microedition.khronos.opengles.GL10;
 
 import ygame.framework.YAStateMachineContext;
+import ygame.framework.YIResultCallback;
 import ygame.framework.request.YRequest;
 import ygame.framework.request.YRequest.YWhen;
 import android.annotation.SuppressLint;
@@ -56,6 +57,7 @@ public final class YSystem extends YAStateMachineContext
 	private final YIConcurrentQueue<YRequest> queueBeforeRendering = new YConcurrentQueue<YRequest>();
 
 	private final List<YScene> scenes = new ArrayList<YScene>();
+	// 绝不能被设置为空，任何时候必有一场景，如果被设置为null，则被视为设置为缺损场景。
 	private YScene sceneCurrent;
 
 	public final YView YVIEW;
@@ -74,9 +76,13 @@ public final class YSystem extends YAStateMachineContext
 	private int mFrameCount;
 	private long mStartTime;
 	private double mLastMeasuredFPS;
+
+	final private YScene sceneDEFAULT;
 	private static final boolean bDEBUG = true;
 
 	public static final String GLThreadName = "GLThread";
+
+	private boolean bSceneLocked;
 
 	YSystem(YView yview)
 	{
@@ -84,9 +90,10 @@ public final class YSystem extends YAStateMachineContext
 		dbFrameRate_fps = getRefreshRate(YVIEW.getContext());
 		context = YVIEW.getContext();
 
-		YScene sceneDefault = new YScene(this);
-		scenes.add(sceneDefault);
-		sceneCurrent = sceneDefault;
+		sceneDEFAULT = new YScene(this, "DEFAULT");
+		scenes.add(sceneDEFAULT);
+		sceneCurrent = sceneDEFAULT;
+		sceneCurrent.forceRun();
 	}
 
 	/**
@@ -169,11 +176,141 @@ public final class YSystem extends YAStateMachineContext
 		return sceneCurrent;
 	}
 
-	//XXX
-	public void testSetScene(YScene scene)
+	/**
+	 * 切换场景，如果您需要得知场景是否切换成功，参见{@link #switchScene(YScene, YIResultCallback)}
+	 * 
+	 * @param sceneTo
+	 *                场景
+	 */
+	public void switchScene(YScene sceneTo)
 	{
-		this.sceneCurrent = scene;
-		scenes.add(scene);
+		switchScene(sceneTo, null);
+	}
+
+	/**
+	 * 切换场景<br>
+	 * <b>注：</b>切换场景时一个异步过程，不会立即返回，如果您需要知道切换的结果，可以通过传入一个<b>回调</b>
+	 * {@link YIResultCallback}，通过将
+	 * {@link YIResultCallback#onResultReceived(Object)}
+	 * 中的参数objResult强制类型转为Boolean对象得到切换结果：真为切换成功，反之失败。<br>
+	 * <b>示例：</b>
+	 * 
+	 * <pre class="prettyprint">
+	 * system.switchScene(mainScene, new YICallback()
+	 * {
+	 * 	public void run(Object objResult)
+	 * 	{
+	 * 		if((Boolean)objResult)
+	 * 			//如果场景切换成功，如此这般……
+	 * 		else
+	 * 			//如果失败，如此这般……
+	 * 	}
+	 * });
+	 * </pre>
+	 * 
+	 * @param sceneTo
+	 *                场景
+	 * @param switchResultCallBack
+	 *                切换结果回调
+	 */
+	public void switchScene(YScene sceneTo,
+			YIResultCallback switchResultCallBack)
+	{
+		YSystemRequest request = new YSystemRequest(
+				YSystemRequest.iSWITCH_SCENE,
+				YWhen.BEFORE_RENDER);
+		request.scene = sceneTo;
+		request.callback = switchResultCallBack;
+		inputRequest(request);
+	}
+
+	private void handleSwitchScene(final YScene sceneNext,
+			final YIResultCallback switchResultCallBack)
+	{// 切换前检查系统是否正在执行场景切换，正在则返回、否则切换之
+		if (bSceneLocked)
+		{
+			if (null != switchResultCallBack)
+				switchResultCallBack.onResultReceived(false);
+			return;
+		}
+		bSceneLocked = true;
+
+		sceneCurrent.requestQuit(new YIResultCallback()
+		{
+			public void onResultReceived(Object objResult)
+			{
+				if ((Boolean) objResult)
+				{// 该时机为：退出动作完成（即退出状态结束）进入卸载状态，时钟开始之初、绘图线程停滞，
+					// 逻辑线程作每帧绘前设置之前。
+					// sceneCurrent = sceneNext;
+					sceneNext.requestEnter(new YIResultCallback()
+					{
+						public void onResultReceived(
+								Object objResult)
+						{
+							if (null != switchResultCallBack)
+								switchResultCallBack
+										.onResultReceived(objResult);
+							bSceneLocked = false;
+						}
+					});
+				} else
+				{
+					if (null != switchResultCallBack)
+						switchResultCallBack
+								.onResultReceived(false);
+					bSceneLocked = false;
+				}
+			}
+		});
+	}
+
+	/**
+	 * 强制将当前场景设置为指定场景 <br>
+	 * <b>注：</b><li>当前场景将会直接进入“卸载状态”，而新场景则直接进入“运行状态” <li>该方法是异步的，不是立即执行！
+	 * 
+	 * @param scene
+	 *                要设置的场景
+	 */
+	public void forceSetCurrentScene(YScene scene)
+	{
+		YSystemRequest request = new YSystemRequest(
+				YSystemRequest.iFORCE_SET_SCENE,
+				YWhen.BEFORE_RENDER);
+		request.scene = scene;
+		inputRequest(request);
+		// this.sceneCurrent = scene;
+	}
+
+	private void handleForceSetCurrentScene(YScene scene)
+	{
+		// 1.卸载当前场景
+		// 强行改变当前场景状态为卸载，
+		// 并执行“将卸载”回调、回调时通知了系统当前场景已改变为null
+		sceneCurrent.forceUnmount();
+
+		// 2.添入新场景
+		// 强行改变新场景状态为运行，
+		// 并执行“将运行”回调、回调时通知了系统当前场景已改变为scene
+		scene.forceRun();
+	}
+
+	private void dealRequest(YSystemRequest requestDeal)
+	{
+		switch (requestDeal.iKEY)
+		{
+		case YSystemRequest.iSWITCH_SCENE:
+			handleSwitchScene(requestDeal.scene,
+					requestDeal.callback);
+			break;
+
+		case YSystemRequest.iFORCE_SET_SCENE:
+			handleForceSetCurrentScene(requestDeal.scene);
+			break;
+
+		default:
+			break;
+		}
 	}
 
 	private void clockCycle()
@@ -213,7 +350,7 @@ public final class YSystem extends YAStateMachineContext
 		// 轮询渲染前队列
 		pollRequestQueue(queueBeforeRendering);
 
-		// // 交换内存块
+		// 交换内存块
 		preFrame();
 
 		// 通知视图渲染
@@ -245,12 +382,6 @@ public final class YSystem extends YAStateMachineContext
 			else
 				sceneCurrent.inputRequest(request);
 		}
-	}
-
-	private void dealRequest(YSystemRequest requestDeal)
-	{
-		// TODO Auto-generated method stub
-
 	}
 
 	void notifyGL_Ready(GL10 gl10, int iWidth, int iHeight)
@@ -298,29 +429,40 @@ public final class YSystem extends YAStateMachineContext
 		}
 	}
 
+	void notifyCurrentSceneChanged(YScene scene)
+	{
+		if (scene == sceneCurrent)
+			return;
+		sceneCurrent.forceUnmount();
+
+		if (null == scene)
+			this.sceneCurrent = sceneDEFAULT;
+		else
+			this.sceneCurrent = scene;
+	}
+
 	/**
 	 * 向系统输入请求
 	 * 
 	 * @param request
 	 *                请求
+	 * @return
 	 * 
 	 * @see ygame.framework.YAStateMachineContext#inputRequest(ygame.framework.request.YRequest)
 	 */
 	@Override
-	public void inputRequest(YRequest request)
+	public boolean inputRequest(YRequest request)
 	{
 		switch (request.WHEN)
 		{
 		case BEFORE_RENDER:
-			queueBeforeRendering.enqueue(request);
-			break;
+			return queueBeforeRendering.enqueue(request);
 
 		case RENDERING_EXE_IN_LOGIC_THREAD:
-			queueRendering.enqueue(request);
-			break;
+			return queueRendering.enqueue(request);
 
 		default:
-			break;
+			return false;
 		}
 	}
 
@@ -385,7 +527,13 @@ public final class YSystem extends YAStateMachineContext
 
 	private static class YSystemRequest extends YRequest
 	{
-		public YSystemRequest(int iKEY, YWhen when)
+		private static final int iSWITCH_SCENE = 0;
+		private static final int iFORCE_SET_SCENE = 1;
+
+		private YScene scene;
+		private YIResultCallback callback;
+
+		private YSystemRequest(int iKEY, YWhen when)
 		{
 			super(iKEY, when);
 		}

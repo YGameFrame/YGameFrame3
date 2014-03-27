@@ -1,0 +1,203 @@
+//实验废品
+precision mediump float;
+
+varying vec2 vTextureCoord; //接收从顶点着色器过来的参数
+
+uniform sampler2D sTexture;//纹理内容数据
+
+uniform float time;
+const float Pi = 3.14159;
+
+void main()                         
+{
+		/*vec2 offset;
+		float i = 0.0;
+		float counts = 4.0;
+		for(i = 0.0 ; i < counts ; i ++)
+				offset = offset + sin(vTextureCoord.x * 2.0 * Pi * i / counts+ radians(time + 360.0 * i / counts));
+		vec2 newTexCoord= mix(vTextureCoord , offset , 0.08);*/
+		vec2 newTexCoord=vTextureCoord;
+		//给此片元从纹理中采样出颜色值
+		vec4 color = texture2D(sTexture, newTexCoord); 
+		if(color.a < 0.1)
+				discard;
+		else
+				gl_FragColor = color;
+}
+
+// water turbulence effect by joltz0r 2013-07-04, improved 2013-07-07
+// Altered
+/*#ifdef GL_ES
+precision mediump float;
+#endif
+
+uniform sampler2D sTexture;//纹理内容数据
+uniform float time;
+vec2 resolution = vec2(1024.0 , 680.0);
+varying vec2 vTextureCoord;
+
+#define MAX_ITER 10
+void main( void ) {
+	vec2 p = vTextureCoord*8.0- vec2(20.0);
+	vec2 i = p;
+	float c = 1.0;
+	float inten = .05;
+
+	for (int n = 0; n < MAX_ITER; n++) 
+	{
+		float t = time * (1.0 - (3.0 / float(n+1)));
+		i = p + vec2(cos(t - i.x) + sin(t + i.y), sin(t - i.y) + cos(t + i.x));
+		c += 1.0/length(vec2(p.x / (sin(i.x+t)/inten),p.y / (cos(i.y+t)/inten)));
+	}
+	c /= float(MAX_ITER);
+	c = 1.5-sqrt(c);
+	
+	vec4 color = vec4(vec3(c*c*c*c), 0.0) + texture2D(sTexture, vTextureCoord); 
+	//vec4 color = texture2D(sTexture, vec2(c * c)); 
+	if(color.a < 0.1)
+			discard;
+	else
+			gl_FragColor = color;
+}*/
+
+/*#ifdef GL_ES
+precision mediump float;
+#endif
+
+uniform sampler2D sTexture;//纹理内容数据
+uniform float time;
+vec2 resolution = vec2(1024.0 , 680.0);
+varying vec2 vTextureCoord;
+
+void main( void ) {
+
+	vec2 position = ( gl_FragCoord.xy / resolution.xy );
+	vec2 splines = vec2(pow(1.0-abs(position.y-cos(position.x*9.0+(time*0.12))/10.0-0.55),20.0),
+			    pow(1.0-abs(position.y+cos(position.x*7.0+(time*0.34))/10.0-0.45),20.0));
+	
+	splines += pow(splines.x+splines.y, 2.0);
+	
+	vec3 color1 = vec3(0.15 * splines.x * splines.y,
+			  0.15 * splines.x * splines.y,
+			  0.8 * splines.x * splines.y);
+	//vec4 color = vec4(color1 , 0.0) + texture2D(sTexture, mix(vTextureCoord , splines , 0.05)); 
+	//vec4 color = mix(vec4(color1 , 0.0)  ,texture2D(sTexture, vTextureCoord ),0.8); 
+	vec4 color = texture2D(sTexture, mix(vTextureCoord , color1.rb , 0.05) );
+	if(color.a < 0.1)
+			discard;
+	else
+			gl_FragColor = color;
+}*/
+
+
+/*#ifdef GL_ES
+precision mediump float;
+#endif
+
+uniform sampler2D sTexture;//纹理内容数据
+uniform float time;
+vec2 resolution = vec2(1024.0 , 680.0);
+varying vec2 vTextureCoord;
+
+float map(vec3 p)
+{
+	return 2.0 - length(p.xy) + (sin(p.x * 3.0) + sin(p.y * 7.0) + sin(p.z * 5.0)) * 0.1;
+}
+
+void main( void )
+{
+	vec2 uv = -1.0 + 2.0 * ( gl_FragCoord.xy / resolution.xy );
+	vec3 dir = normalize(vec3(uv, 1.0));
+	vec3 pos = vec3(sin(time),cos(time),time * 5.0);
+	float t = 0.0;
+	for(int i = 0 ; i < 76; i++)
+	{
+		float k = map(pos + dir * t);
+		if(k < 0.001) break;
+		t += k * 0.95;
+	}
+	vec4 color = max((0.741 * vec4(0.05 * t + map( (t * dir + pos) + 0.15) ) * vec4(1,2,3,4).zxyw), 1.0) * texture2D(sTexture, vTextureCoord); 
+	if(color.a < 0.1)
+			discard;
+	else
+			gl_FragColor = color;
+}*/
+
+/*#ifdef GL_ES
+precision mediump float;
+#endif
+
+uniform sampler2D sTexture;//纹理内容数据
+uniform float time;
+vec2 resolution = vec2(1024.0 , 680.0);
+varying vec2 vTextureCoord;
+
+// drip test --joltz0r
+
+float check (vec2 p, float size) {
+	float c = float(int(floor(cos(p.x/size)*10000.0)*ceil(cos(p.y/size)*10000.0)))*0.0001;
+	return clamp(c, 0.3, 0.7);
+}
+void main( void ) {
+
+	vec2 p = (( gl_FragCoord.xy / resolution.xy ) - 0.5) * 2.5;
+	p.x *= resolution.x/resolution.y;
+	vec2 i = p;
+	
+	float c = 0.0;
+        vec2 sc = vec2(sin(time*0.54), cos(time*0.56));
+		
+	float d = length(p)*1.0;
+	float r = atan(p.x, p.y);
+	float len = (1.0-length(p*0.5));
+	float dist = (1.0-sin(pow(d,1.25)+(cos(d-time*2.5)*4.0)));
+	float pc = check(p, 0.125);
+        i += vec2(dist*0.05);
+	float ic = check(i, 0.125);
+
+	c = 1.0/((length(p+sc)*pc)+((length(i+sc)*ic*8.0)));
+	vec4 color = vec4( vec3(c), 0.0 ) + texture2D(sTexture, vTextureCoord); 
+	if(color.a < 0.1)
+			discard;
+	else
+			gl_FragColor = color;
+}*/
+/*
+#ifdef GL_ES
+precision mediump float;
+#endif
+
+uniform sampler2D sTexture;//纹理内容数据
+uniform float time;
+vec2 resolution = vec2(1024.0 , 680.0);
+varying vec2 vTextureCoord;
+
+
+void main( void )
+{
+
+	vec2 uPos = ( gl_FragCoord.xy / resolution.xy );//normalize wrt y axis
+	//suPos -= vec2((resolution.x/resolution.y)/2.0, 0.0);//shift origin to center
+	
+	uPos.x -= 0.5;
+	uPos.y -= 0.5;
+	
+	vec3 color = vec3(0.0);
+	float vertColor = 0.0;
+	for( float i = 0.0; i < 10.0; ++i )
+	{
+		float t = time * (0.9);
+	
+		uPos.y += sin( uPos.x*(i+1.0) + t+i/5.0 ) * 0.1;
+		float fTemp = abs(1.0 / uPos.y / 190.0);
+		vertColor += fTemp;
+		color += vec3( fTemp*(15.0-i)/10.0, fTemp*i/10.0, pow(fTemp,0.99)*1.9 );
+	}
+	
+	vec4 color11 = mix(vec4(color, 1.0) , texture2D(sTexture, vTextureCoord) , 0.9);
+	if(color11.a < 0.1)
+			discard;
+	else
+			gl_FragColor = color11;
+
+}*/

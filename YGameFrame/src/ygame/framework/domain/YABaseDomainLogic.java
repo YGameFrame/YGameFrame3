@@ -74,9 +74,10 @@ public abstract class YABaseDomainLogic
 	 *                系统
 	 * @param sceneCurrent
 	 *                当前所处场景
+	 * @return 处理了该请求返回真，忽略该请求返回假
 	 */
-	abstract protected void onDealRequest(YRequest request, YSystem system,
-			YScene sceneCurrent);
+	abstract protected boolean onDealRequest(YRequest request,
+			YSystem system, YScene sceneCurrent);
 
 	/**
 	 * 参见{@link YBaseDomain#onPreframe()}

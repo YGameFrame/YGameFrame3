@@ -4,10 +4,23 @@ varying vec2 vTextureCoord; //接收从顶点着色器过来的参数
 
 uniform sampler2D sTexture;//纹理内容数据
 
+/*uniform float time;
+const float color_intensity = 0.45;
+const float Pi = 3.14159;*/
+
 void main()                         
 {
+		/*vec2 offset;
+		float i = 0.0;
+		float counts = 8.0;
+		for(i = 0.0 ; i < counts ; i ++)
+		{
+			offset = offset + sin(vTextureCoord.x * 2.0 * Pi * i / counts+ radians(time + 360.0 * i / counts));
+		}
+		vec2 newTexCoord= mix(vTextureCoord , offset , 0.05);*/
+		vec2 newTexCoord = vTextureCoord;
 		//给此片元从纹理中采样出颜色值
-		vec4 color = texture2D(sTexture, vTextureCoord); 
+		vec4 color = texture2D(sTexture, newTexCoord); 
 		if(color.a < 0.1)
 				discard;
 		else

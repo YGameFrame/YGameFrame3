@@ -68,11 +68,12 @@ public class YFrameBuffer
 	 */
 	public void begin()
 	{
-		if (-1 == iHandle)
+		if (!GLES20.glIsFramebuffer(iHandle))
 			initialize();
 		GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, iHandle);
 		GLES20.glViewport(0, 0, iWidth, iHeight);
 		GLES20.glClearColor(0, .5f, .3f, 1);
+		// GLES20.glClearColor(1f, 1f, 0.8f, 1f);
 	}
 
 	/**
@@ -101,9 +102,6 @@ public class YFrameBuffer
 
 	private void initialize()
 	{
-		if (-1 != iHandle)
-			return;
-
 		// 1.创建深度缓冲
 		int[] depthRenderbuffer = new int[1];
 		GLES20.glGenRenderbuffers(1, depthRenderbuffer, 0);
@@ -138,5 +136,14 @@ public class YFrameBuffer
 			throw new YException("帧缓冲不完全",
 					YFrameBuffer.class.getName(), "错误代号："
 							+ status);
+	}
+
+	public void destroy()
+	{
+		if (GLES20.glIsFramebuffer(iHandle))
+			GLES20.glDeleteFramebuffers(1,
+					new int[]
+					{ iHandle }, 0);
+		texture.destroy();
 	}
 }

@@ -224,7 +224,8 @@ public class YTexture
 	}
 
 	/**
-	 * 0宽，	 * 
+	 * 0宽， *
+	 * 
 	 * @return 宽高
 	 */
 	private int[] confirmSize()
@@ -310,6 +311,13 @@ public class YTexture
 				+ fWidth + "，现高宽：" + iOutHeight + "_"
 				+ iOutWidth);
 		return bitmapRes;
+	}
+
+	public void destroy()
+	{
+		if (GLES20.glIsTexture(iTexHandle))
+			GLES20.glDeleteTextures(1, new int[]
+			{ iTexHandle }, 0);
 	}
 
 }

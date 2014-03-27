@@ -42,6 +42,6 @@ class TemplateBasedStateMachine<S, R, C> implements StateMachine<S, R, C>
 	@Override
 	public boolean forceSetState(S forcedState)
 	{
-		return model.forceSetState(this, forcedState);
+		return model.forceSetState(this, forcedState , context);
 	}
 }

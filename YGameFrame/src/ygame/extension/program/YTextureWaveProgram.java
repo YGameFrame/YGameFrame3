@@ -1,3 +1,4 @@
+//实验废品
 package ygame.extension.program;
 
 import ygame.domain.YDomainView;
@@ -30,35 +31,36 @@ import android.content.res.Resources;
  * @author yunzhong
  * 
  */
-public final class YTextureProgram extends YABlankProgram
+public final class YTextureWaveProgram extends YABlankProgram
 {
 	private static final int TEX = 2;
 
-	private static YTextureProgram instance;
+	private static YTextureWaveProgram instance;
 
-	public static YTextureProgram getInstance(Resources resources)
+	public static YTextureWaveProgram getInstance(Resources resources)
 	{
 		if (null == instance)
-			synchronized (YTextureProgram.class)
+			synchronized (YTextureWaveProgram.class)
 			{
 				if (null == instance)
-					instance = new YTextureProgram(resources);
+					instance = new YTextureWaveProgram(
+							resources);
 			}
 		return instance;
-//		return new YTextureProgram(resources);
+		// return new YTextureProgram(resources);
 	}
 
-//	private float time;
-
-	private YTextureProgram(Resources resources)
+	private YTextureWaveProgram(Resources resources)
 	{
 		super(resources);
 		fillCodeAndParam(YTextFileUtils.getStringFromResRaw(
 				R.raw.texture_vsh, resources),
 				YTextFileUtils.getStringFromResRaw(
-						R.raw.texture_fsh, resources),
-				YTextureAdapter.class);
+						R.raw.texture_wave_fsh, resources),
+						YTextureWaveAdapter.class);
 	}
+
+//	private float time;
 
 	@Override
 	protected void applyParams(int iProgramHandle, YReadBundle bundle,
@@ -66,16 +68,17 @@ public final class YTextureProgram extends YABlankProgram
 	{
 		setUniformTexture("sTexture",
 				(YTexture) bundle.readObject(TEX), 0);
-//		setUniformf("time", time ++ % 360);
+//		setUniformf("time", time++ % 360);
+//		setUniformf("time", time+=0.02f );
 		super.applyParams(iProgramHandle, bundle, system, domainView);
 	}
 
-	public static class YTextureAdapter extends
-			YABlankProgram.YABlankAdapter<YTextureAdapter>
+	public static class YTextureWaveAdapter extends
+			YABlankProgram.YABlankAdapter<YTextureWaveAdapter>
 	{
 		private YTexture texture;
 
-		public YTextureAdapter paramTexture(YTexture texture)
+		public YTextureWaveAdapter paramTexture(YTexture texture)
 		{
 			this.texture = texture;
 			return this;

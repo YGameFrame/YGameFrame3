@@ -101,10 +101,10 @@ public class YBaseDomain extends YABaseDomain
 	}
 
 	@Override
-	protected void onReceiveRequest(YRequest request, YSystem system,
+	protected boolean onReceiveRequest(YRequest request, YSystem system,
 			YScene sceneCurrent)
 	{
-		logic.onDealRequest(request, system, sceneCurrent);
+		return logic.onDealRequest(request, system, sceneCurrent);
 	}
 
 	@Override
