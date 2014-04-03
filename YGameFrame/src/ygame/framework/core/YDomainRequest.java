@@ -25,7 +25,7 @@ import ygame.framework.request.YRequest;
  */
 public class YDomainRequest extends YRequest
 {
-	final String WHO;
+	final YABaseDomain WHO;
 	private final int iHashCode;
 
 	/**
@@ -34,7 +34,7 @@ public class YDomainRequest extends YRequest
 	 * @param WHO
 	 *                请求接收者的标识 {@link YABaseDomain#KEY}
 	 */
-	public YDomainRequest(int KEY, String WHO, YWhen when)
+	public YDomainRequest(int KEY, YABaseDomain WHO, YWhen when)
 	{
 		super(KEY, when);
 		this.WHO = WHO;

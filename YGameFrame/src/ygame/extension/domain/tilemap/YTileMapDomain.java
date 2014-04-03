@@ -1,26 +1,24 @@
 package ygame.extension.domain.tilemap;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.json.JSONException;
 
 import ygame.domain.YABaseShaderProgram;
+import ygame.domain.YDomain;
 import ygame.domain.YDomainView;
 import ygame.extension.YTiledJsonParser;
 import ygame.extension.primitives.YRectangle;
 import ygame.extension.program.YTileMapProgram;
 import ygame.framework.core.YABaseDomain;
-import ygame.framework.core.YGL_Configuration;
-import ygame.framework.core.YScene;
+import ygame.framework.core.YClusterDomain;
 import ygame.framework.core.YSystem;
-import ygame.framework.request.YRequest;
-import ygame.math.YMatrix;
 import ygame.math.vector.Vector2;
 import ygame.skeleton.YSkeleton;
 import ygame.texture.YTexture;
 import ygame.texture.YTileSheet;
-import android.annotation.SuppressLint;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 
@@ -47,7 +45,7 @@ import android.graphics.Bitmap;
  * 
  */
 // 采用了分块和程序纹理技术，利用少量顶点生成超大清晰的瓷砖地图
-public class YTileMapDomain extends YABaseDomain
+public class YTileMapDomain extends YClusterDomain
 {
 	private static final int SKE_NORMAL = 0;
 	private static final int SKE_RIGHT = 1;
@@ -56,11 +54,8 @@ public class YTileMapDomain extends YABaseDomain
 
 	private YSkeleton skeletons[] = new YSkeleton[4];
 
-	private List<YLargeMapComponentDomain> domainComponents = new ArrayList<YLargeMapComponentDomain>();
-
-	private YTileSheet tileSheet;
-
-	private float fRealWorldToTileWorldRadio;
+	private final float fRealWorldToTileWorldRadio;
+	private Collection<YABaseDomain> componentDomains;
 
 	public YTileMapDomain(String KEY, Resources resources,
 			int iIndexPicResId, YTiledJsonParser parser)
@@ -94,8 +89,18 @@ public class YTileMapDomain extends YABaseDomain
 	{
 		super(KEY);
 		this.fRealWorldToTileWorldRadio = parser.fRealWorldToTileWorldRadio;
-		tileSheet = new YTileSheet(iIndexPicResId, resources,
-				parser.parseIndexPicRowNum(),
+		componentDomains = createComponentDomains(resources,
+				iIndexPicResId, parser, iDividedColumn,
+				iDividedRow);
+	}
+
+	private Collection<YABaseDomain> createComponentDomains(
+			Resources resources, int iIndexPicResId,
+			YTiledJsonParser parser, int iDividedColumn,
+			int iDividedRow) throws JSONException
+	{
+		YTileSheet tileSheet = new YTileSheet(iIndexPicResId,
+				resources, parser.parseIndexPicRowNum(),
 				parser.parseIndexPicColumnNum());
 		int[] dataArray = parser.parseGraphicLayersAsArray();
 		YMapComponentMetaData[] componentMetaDatas = divide(dataArray,
@@ -104,12 +109,13 @@ public class YTileMapDomain extends YABaseDomain
 				iDividedRow);
 		YABaseShaderProgram program = YTileMapProgram
 				.getInstance(resources);
+		List<YABaseDomain> domainComponents = new ArrayList<YABaseDomain>();
 		for (YMapComponentMetaData metaData : componentMetaDatas)
 		{
 			YMapComponentData data = createComponentData(metaData,
 					parser.parseFinalMapColumnNum(),
-					parser.parseFinalMapRowNum());
-			YLargeMapComponentDomain componentDomain = new YLargeMapComponentDomain(
+					parser.parseFinalMapRowNum(), tileSheet);
+			YDomain componentDomain = new YDomain(
 					metaData.iIndex + "",
 					new YLargeMapComponentDomainLogic(data),
 					new YDomainView(program));
@@ -117,11 +123,20 @@ public class YTileMapDomain extends YABaseDomain
 			// if(domainComponents.size() == 4)
 			// return;
 		}
+		return domainComponents;
+	}
+
+	@Override
+	protected void onAttach(YSystem system)
+	{
+		super.onAttach(system);
+		addComponentDomains(componentDomains, system);
+		componentDomains = null;
 	}
 
 	private YMapComponentData createComponentData(
 			YMapComponentMetaData metaData, float fFinalMapColumn,
-			float fFinalMapRow)
+			float fFinalMapRow, YTileSheet tileSheet)
 	{
 		YMapComponentData data = new YMapComponentData();
 		data.skeleton = getSkeleton(metaData);
@@ -256,53 +271,6 @@ public class YTileMapDomain extends YABaseDomain
 		metaData.iRowIndex = iRowIndex;
 		metaData.data = new int[metaData.iWidth * metaData.iHeight];
 		return metaData;
-	}
-
-	@Override
-	protected void onPreframe()
-	{
-		for (YLargeMapComponentDomain domain : domainComponents)
-			domain.onPreframe();
-	}
-
-	@SuppressLint("WrongCall")
-	@Override
-	protected void onDraw(YSystem system)
-	{
-		for (YLargeMapComponentDomain domain : domainComponents)
-			domain.onDraw(system);
-	}
-
-	@Override
-	protected boolean onReceiveRequest(YRequest request, YSystem system,
-			YScene sceneCurrent)
-	{
-		boolean bRes = false;
-		for (YLargeMapComponentDomain domain : domainComponents)
-			bRes |= domain.onReceiveRequest(request, system,
-					sceneCurrent);
-		return bRes;
-	}
-
-	@Override
-	protected void onClockCycle(double dbElapseTime_s, YSystem system,
-			YScene sceneCurrent, YMatrix matrix4pv,
-			YMatrix matrix4Projection, YMatrix matrix4View)
-	{
-		for (YLargeMapComponentDomain domain : domainComponents)
-			domain.onClockCycle(dbElapseTime_s, system,
-					sceneCurrent, matrix4pv,
-					matrix4Projection, matrix4View);
-	}
-
-	@Override
-	protected void onGL_Initialize(YSystem system,
-			YGL_Configuration configurationGL, int iWidth,
-			int iHeight)
-	{
-		for (YLargeMapComponentDomain domain : domainComponents)
-			domain.onGL_Initialize(system, configurationGL, iWidth,
-					iHeight);
 	}
 
 	private static class YMapComponentMetaData

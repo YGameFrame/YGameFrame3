@@ -24,5 +24,11 @@ package ygame.framework;
  */
 public interface YIResultCallback
 {
+	/**
+	 * 参见{@link YIResultCallback}
+	 * 
+	 * @param objResult
+	 *                异步返回的结果，您可以根据具体情况将之强制类型转换，进而获取异步返回的信息
+	 */
 	void onResultReceived(Object objResult);
 }

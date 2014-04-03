@@ -97,8 +97,7 @@ public class YScene extends YAStateMachineContext
 		if (request instanceof YDomainRequest)
 		{
 			YDomainRequest domainRequest = (YDomainRequest) request;
-			return mapDomains.get(domainRequest.WHO).inputRequest(
-					domainRequest);
+			return domainRequest.WHO.inputRequest(domainRequest);
 		}
 		Log.e(strTAG, "系统收到了不能解析的请求" + request.getClass().getName());
 		throw new RuntimeException("系统收到不能解析的请求");
@@ -205,6 +204,16 @@ public class YScene extends YAStateMachineContext
 		return camera;
 	}
 
+	/**
+	 * 获取场景当前所处<b>状态</b>{@link YSceneState}
+	 * 
+	 * @return 当前状态
+	 */
+	public YSceneState getCurrentState()
+	{
+		return stateMachine.getCurrentState();
+	}
+
 	protected void onClockCycle(double dbDeltaTime_s)
 	{
 		YMatrix.multiplyMM(matrixPV, camera.getProjectMatrix(),
@@ -291,9 +300,43 @@ public class YScene extends YAStateMachineContext
 		}
 	}
 
-	private enum YSceneState
+	/**
+	 * <b>场景状态</b>
+	 * 
+	 * <p>
+	 * <b>概述</b>： 场景有四种状态：
+	 * <li>{@link YSceneState#UNMOUNT}；
+	 * <li>{@link YSceneState#ENTERING}；
+	 * <li>{@link YSceneState#RUN}；
+	 * <li>{@link YSceneState#QUITING}；
+	 * 
+	 * 
+	 * <p>
+	 * <b>建议</b>： TODO
+	 * 
+	 * <p>
+	 * <b>详细</b>： TODO
+	 * 
+	 * <p>
+	 * <b>注</b>： TODO
+	 * 
+	 * <p>
+	 * <b>例</b>： TODO
+	 * 
+	 * @author yunzhong
+	 * 
+	 */
+	public enum YSceneState
 	{
-		QUITING("正在退出"), ENTERING("正在进入"), RUN("运行"), UNMOUNT("卸载");
+		/** <b>正在退出</b> */
+		QUITING("正在退出"),
+		/** <b>正在进入</b> */
+		ENTERING("正在进入"),
+		/** <b>运行</b> */
+		RUN("运行"),
+		/** <b>卸载</b> */
+		UNMOUNT("卸载");
+
 		private String strName;
 
 		private YSceneState(String strName)
@@ -350,7 +393,7 @@ public class YScene extends YAStateMachineContext
 							YScene context,
 							StateMachine<YSceneState, YSceneRequest, YScene> stateMachine)
 					{
-//						SYSTEM.notifyCurrentSceneChanged(context);
+						// SYSTEM.notifyCurrentSceneChanged(context);
 						context.willRun();
 					}
 				});
@@ -367,7 +410,7 @@ public class YScene extends YAStateMachineContext
 							YScene context,
 							StateMachine<YSceneState, YSceneRequest, YScene> stateMachine)
 					{
-//						SYSTEM.notifyCurrentSceneChanged(context);
+						// SYSTEM.notifyCurrentSceneChanged(context);
 						context.willQuit();
 					}
 				});

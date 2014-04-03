@@ -267,7 +267,8 @@ public final class YSystem extends YAStateMachineContext
 
 	/**
 	 * 强制将当前场景设置为指定场景 <br>
-	 * <b>注：</b><li>当前场景将会直接进入“卸载状态”，而新场景则直接进入“运行状态” <li>该方法是异步的，不是立即执行！
+	 * <b>注：</b><li>当前场景将会直接进入“卸载状态”，而新场景则直接进入“运行状态” <li>该方法是异步的，不是立即执行！<li>
+	 * 如果您传入空值null的话，则将场景改为系统默认场景
 	 * 
 	 * @param scene
 	 *                要设置的场景
@@ -284,15 +285,27 @@ public final class YSystem extends YAStateMachineContext
 
 	private void handleForceSetCurrentScene(YScene scene)
 	{
+		if (scene == sceneCurrent)
+		{
+			sceneCurrent.forceRun();
+			return;
+		}
+
 		// 1.卸载当前场景
 		// 强行改变当前场景状态为卸载，
 		// 并执行“将卸载”回调、回调时通知了系统当前场景已改变为null
 		sceneCurrent.forceUnmount();
 
-		// 2.添入新场景
+		// 2.将当前场景置为要替换的场景
+		if (null == scene)
+			sceneCurrent = sceneDEFAULT;
+		else
+			sceneCurrent = scene;
+
+		// 3.添入新场景
 		// 强行改变新场景状态为运行，
-		// 并执行“将运行”回调、回调时通知了系统当前场景已改变为scene
-		scene.forceRun();
+		// 并执行“将运行”回调
+		sceneCurrent.forceRun();
 	}
 
 	private void dealRequest(YSystemRequest requestDeal)
@@ -446,7 +459,7 @@ public final class YSystem extends YAStateMachineContext
 	 * 
 	 * @param request
 	 *                请求
-	 * @return
+	 * @return 真表示系统接收该请求，反之该请求被忽略
 	 * 
 	 * @see ygame.framework.YAStateMachineContext#inputRequest(ygame.framework.request.YRequest)
 	 */
