@@ -13,6 +13,7 @@ import ygame.framework.request.YRequest.YWhen;
 import ygame.math.YMatrix;
 import ygame.state_machine.StateMachine;
 import ygame.state_machine.YIAction;
+import ygame.state_machine.YStateMachineTemplate;
 import ygame.state_machine.builder.YStateMachineBuilder;
 import ygame.utils.YLog;
 import android.annotation.SuppressLint;
@@ -43,6 +44,9 @@ import android.util.Log;
 public class YScene extends YAStateMachineContext
 {
 	private static final String strTAG = "YScene";
+
+	private static YStateMachineTemplate<YSceneState, YSceneRequest, YScene> stateMachineModel;
+
 	final private String strName;
 
 	@SuppressLint("UseSparseArrays")
@@ -50,11 +54,6 @@ public class YScene extends YAStateMachineContext
 
 	private YCamera camera = new YCamera();
 	private final YMatrix matrixPV = new YMatrix();
-
-	private final YSceneRequest requestTO_ENTER;
-	private final YSceneRequest requestTO_RUN;
-	private final YSceneRequest requestTO_QUIT;
-	private final YSceneRequest requestTO_UNMOUNT;
 
 	protected final YSystem SYSTEM;
 
@@ -71,19 +70,8 @@ public class YScene extends YAStateMachineContext
 	{
 		this.SYSTEM = system;
 		this.strName = strName;
-		this.requestTO_ENTER = new YSceneRequest(
-				YSceneRequest.KEY.iTO_ENTER,
-				YWhen.BEFORE_RENDER, this);
-		this.requestTO_RUN = new YSceneRequest(
-				YSceneRequest.KEY.iTO_RUN, YWhen.BEFORE_RENDER,
-				this);
-		this.requestTO_QUIT = new YSceneRequest(
-				YSceneRequest.KEY.iTO_QUIT,
-				YWhen.BEFORE_RENDER, this);
-		this.requestTO_UNMOUNT = new YSceneRequest(
-				YSceneRequest.KEY.iTO_UNMOUNT,
-				YWhen.BEFORE_RENDER, this);
-		stateMachine = designStateMachine();
+		stateMachine = getStateMachineModel(SYSTEM).newStateMachine(
+				YSceneState.UNMOUNT, this);
 	}
 
 	@Override
@@ -351,8 +339,41 @@ public class YScene extends YAStateMachineContext
 		}
 	}
 
-	private StateMachine<YSceneState, YSceneRequest, YScene> designStateMachine()
+	// XXX 暂且解决安卓静态变量不回收问题
+	static void reloadStateMachineModel()
 	{
+		stateMachineModel = null;
+	}
+
+	// 单例，所有场景的状态机模型一样，皆为卸载->启动->运行->退出->卸载，故无需重复之
+	private static YStateMachineTemplate<YSceneState, YSceneRequest, YScene> getStateMachineModel(
+			YSystem SYSTEM)
+	{
+		if (null == stateMachineModel)
+			synchronized (YScene.class)
+			{
+				if (null == stateMachineModel)
+					stateMachineModel = designStateMachineModel(SYSTEM);
+			}
+		return stateMachineModel;
+	}
+
+	private static YStateMachineTemplate<YSceneState, YSceneRequest, YScene> designStateMachineModel(
+			final YSystem SYSTEM)
+	{
+		final YSceneRequest requestTO_ENTER = new YSceneRequest(
+				YSceneRequest.KEY.iTO_ENTER,
+				YWhen.BEFORE_RENDER, null);
+		final YSceneRequest requestTO_RUN = new YSceneRequest(
+				YSceneRequest.KEY.iTO_RUN, YWhen.BEFORE_RENDER,
+				null);
+		final YSceneRequest requestTO_QUIT = new YSceneRequest(
+				YSceneRequest.KEY.iTO_QUIT,
+				YWhen.BEFORE_RENDER, null);
+		final YSceneRequest requestTO_UNMOUNT = new YSceneRequest(
+				YSceneRequest.KEY.iTO_UNMOUNT,
+				YWhen.BEFORE_RENDER, null);
+
 		YStateMachineBuilder<YSceneState, YSceneRequest, YScene> builder = YStateMachineBuilder
 				.create(YSceneState.class, YSceneRequest.class);
 		builder.newTransition().from(YSceneState.ENTERING)
@@ -431,8 +452,7 @@ public class YScene extends YAStateMachineContext
 						SYSTEM.notifyCurrentSceneChanged(null);
 					}
 				});
-		return builder.buildTransitionTemplate().newStateMachine(
-				YSceneState.UNMOUNT, this);
+		return builder.buildTransitionTemplate();
 	}
 
 	void forceUnmount()

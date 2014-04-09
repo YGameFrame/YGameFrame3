@@ -87,6 +87,9 @@ public final class YSystem extends YAStateMachineContext
 	YSystem(YView yview)
 	{
 		YVIEW = yview;
+
+		YScene.reloadStateMachineModel();
+
 		dbFrameRate_fps = getRefreshRate(YVIEW.getContext());
 		context = YVIEW.getContext();
 

@@ -41,20 +41,18 @@ public class YRequest
 	{
 		final int prime = 31;
 		int result = 1;
-		result = prime * result
-				+ ((WHEN == null) ? 0 : WHEN.hashCode());
 		result = prime * result + iKEY;
 		return result;
 	}
 
 	@Override
-	public int hashCode()
+	final public int hashCode()
 	{
 		return iHashCode;
 	}
 
 	@Override
-	public boolean equals(Object obj)
+	final public boolean equals(Object obj)
 	{
 		if (this == obj)
 			return true;
@@ -63,8 +61,6 @@ public class YRequest
 		if (getClass() != obj.getClass())
 			return false;
 		YRequest other = (YRequest) obj;
-		if (WHEN != other.WHEN)
-			return false;
 		if (iKEY != other.iKEY)
 			return false;
 		return true;
