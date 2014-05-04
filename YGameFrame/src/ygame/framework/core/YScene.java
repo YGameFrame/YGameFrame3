@@ -6,10 +6,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import ygame.framework.YAStateMachineContext;
 import ygame.framework.YIResultCallback;
-import ygame.framework.request.YRequest;
-import ygame.framework.request.YRequest.YWhen;
+import ygame.framework.core.YRequest.YWhen;
+import ygame.framework.core.YSystem.YAStateMachineContext;
 import ygame.math.YMatrix;
 import ygame.state_machine.StateMachine;
 import ygame.state_machine.YIAction;
@@ -18,7 +17,6 @@ import ygame.state_machine.builder.YStateMachineBuilder;
 import ygame.utils.YLog;
 import android.annotation.SuppressLint;
 import android.opengl.GLES20;
-import android.util.Log;
 
 /**
  * <b>场景</b>
@@ -43,8 +41,6 @@ import android.util.Log;
  */
 public class YScene extends YAStateMachineContext
 {
-	private static final String strTAG = "YScene";
-
 	private static YStateMachineTemplate<YSceneState, YSceneRequest, YScene> stateMachineModel;
 
 	final private String strName;
@@ -75,20 +71,9 @@ public class YScene extends YAStateMachineContext
 	}
 
 	@Override
-	protected boolean inputRequest(YRequest request)
+	protected boolean onReceiveRequest(YRequest request)
 	{
-		if (request instanceof YSceneRequest)
-		{
-			return ((YSceneRequest) request).scene
-					.dealRequest((YSceneRequest) request);
-		}
-		if (request instanceof YDomainRequest)
-		{
-			YDomainRequest domainRequest = (YDomainRequest) request;
-			return domainRequest.WHO.inputRequest(domainRequest);
-		}
-		Log.e(strTAG, "系统收到了不能解析的请求" + request.getClass().getName());
-		throw new RuntimeException("系统收到不能解析的请求");
+		return dealRequest((YSceneRequest) request);
 	}
 
 	private boolean dealRequest(YSceneRequest request)
@@ -131,9 +116,9 @@ public class YScene extends YAStateMachineContext
 	{
 		YSceneRequest request = new YSceneRequest(
 				YSceneRequest.KEY.iADD_DOMAINS,
-				YWhen.BEFORE_RENDER, this);
+				YWhen.BEFORE_RENDER);
 		request.domains = domains;
-		SYSTEM.inputRequest(request);
+		sendRequest(request, SYSTEM);
 	}
 
 	private void handleAddDomains(YABaseDomain[] domains)
@@ -156,9 +141,9 @@ public class YScene extends YAStateMachineContext
 	{
 		YSceneRequest request = new YSceneRequest(
 				YSceneRequest.KEY.iREMOVE_DOMAINS,
-				YWhen.BEFORE_RENDER, this);
+				YWhen.BEFORE_RENDER);
 		request.domains = domains;
-		SYSTEM.inputRequest(request);
+		sendRequest(request, SYSTEM);
 	}
 
 	/**
@@ -278,13 +263,11 @@ public class YScene extends YAStateMachineContext
 		}
 
 		private YABaseDomain[] domains;
-		final private YScene scene;
 		private YIResultCallback callback;
 
-		private YSceneRequest(int iKEY, YWhen when, YScene scene)
+		private YSceneRequest(int iKEY, YWhen when)
 		{
 			super(iKEY, when);
-			this.scene = scene;
 		}
 	}
 
@@ -363,16 +346,14 @@ public class YScene extends YAStateMachineContext
 	{
 		final YSceneRequest requestTO_ENTER = new YSceneRequest(
 				YSceneRequest.KEY.iTO_ENTER,
-				YWhen.BEFORE_RENDER, null);
+				YWhen.BEFORE_RENDER);
 		final YSceneRequest requestTO_RUN = new YSceneRequest(
-				YSceneRequest.KEY.iTO_RUN, YWhen.BEFORE_RENDER,
-				null);
+				YSceneRequest.KEY.iTO_RUN, YWhen.BEFORE_RENDER);
 		final YSceneRequest requestTO_QUIT = new YSceneRequest(
-				YSceneRequest.KEY.iTO_QUIT,
-				YWhen.BEFORE_RENDER, null);
+				YSceneRequest.KEY.iTO_QUIT, YWhen.BEFORE_RENDER);
 		final YSceneRequest requestTO_UNMOUNT = new YSceneRequest(
 				YSceneRequest.KEY.iTO_UNMOUNT,
-				YWhen.BEFORE_RENDER, null);
+				YWhen.BEFORE_RENDER);
 
 		YStateMachineBuilder<YSceneState, YSceneRequest, YScene> builder = YStateMachineBuilder
 				.create(YSceneState.class, YSceneRequest.class);
@@ -506,40 +487,38 @@ public class YScene extends YAStateMachineContext
 	 * @param callBackWhenQuited
 	 *                退出完成情况之回调
 	 */
-	public void requestQuit(YIResultCallback callBackWhenQuited)
+	public final void requestQuit(YIResultCallback callBackWhenQuited)
 	{
 		YSceneRequest request = new YSceneRequest(
-				YSceneRequest.KEY.iTO_QUIT,
-				YWhen.BEFORE_RENDER, this);
+				YSceneRequest.KEY.iTO_QUIT, YWhen.BEFORE_RENDER);
 		request.callback = callBackWhenQuited;
-		SYSTEM.inputRequest(request);
+		sendRequest(request, SYSTEM);
 	}
 
-	public void requestEnter(YIResultCallback callBackWhenEntered)
+	public final void requestEnter(YIResultCallback callBackWhenEntered)
 	{
 		YSceneRequest request = new YSceneRequest(
 				YSceneRequest.KEY.iTO_ENTER,
-				YWhen.BEFORE_RENDER, this);
+				YWhen.BEFORE_RENDER);
 		request.callback = callBackWhenEntered;
-		SYSTEM.inputRequest(request);
+		sendRequest(request, SYSTEM);
 	}
 
-	public void requestUnmount(YIResultCallback callBackWhenUnmounted)
+	public final void requestUnmount(YIResultCallback callBackWhenUnmounted)
 	{
 		YSceneRequest request = new YSceneRequest(
 				YSceneRequest.KEY.iTO_UNMOUNT,
-				YWhen.BEFORE_RENDER, this);
+				YWhen.BEFORE_RENDER);
 		request.callback = callBackWhenUnmounted;
-		SYSTEM.inputRequest(request);
+		sendRequest(request, SYSTEM);
 	}
 
-	public void requestRun(YIResultCallback callBackWhenRunned)
+	public final void requestRun(YIResultCallback callBackWhenRunned)
 	{
 		YSceneRequest request = new YSceneRequest(
-				YSceneRequest.KEY.iTO_RUN, YWhen.BEFORE_RENDER,
-				this);
+				YSceneRequest.KEY.iTO_RUN, YWhen.BEFORE_RENDER);
 		request.callback = callBackWhenRunned;
-		SYSTEM.inputRequest(request);
+		sendRequest(request, SYSTEM);
 	}
 
 	private boolean handleStateTransition(YSceneRequest request,

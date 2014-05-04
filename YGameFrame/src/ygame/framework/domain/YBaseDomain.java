@@ -2,9 +2,9 @@ package ygame.framework.domain;
 
 import ygame.framework.core.YABaseDomain;
 import ygame.framework.core.YGL_Configuration;
+import ygame.framework.core.YRequest;
 import ygame.framework.core.YScene;
 import ygame.framework.core.YSystem;
-import ygame.framework.request.YRequest;
 import ygame.math.YMatrix;
 import android.annotation.SuppressLint;
 

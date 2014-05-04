@@ -10,10 +10,9 @@ import java.util.concurrent.TimeUnit;
 
 import javax.microedition.khronos.opengles.GL10;
 
-import ygame.framework.YAStateMachineContext;
+import ygame.exception.YException;
 import ygame.framework.YIResultCallback;
-import ygame.framework.request.YRequest;
-import ygame.framework.request.YRequest.YWhen;
+import ygame.framework.core.YRequest.YWhen;
 import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.content.Context;
@@ -44,7 +43,7 @@ import android.view.WindowManager;
  * @author yunzhong
  * 
  */
-public final class YSystem extends YAStateMachineContext
+public final class YSystem
 {
 	private static final String strTAG = "YSystem";
 
@@ -57,7 +56,7 @@ public final class YSystem extends YAStateMachineContext
 	private final YIConcurrentQueue<YRequest> queueBeforeRendering = new YConcurrentQueue<YRequest>();
 
 	private final List<YScene> scenes = new ArrayList<YScene>();
-	// 绝不能被设置为空，任何时候必有一场景，如果被设置为null，则被视为设置为缺损场景。
+	/** 绝不能被设置为空，任何时候必有一场景，如果被设置为null，则被视为设置为缺损场景。 */
 	private YScene sceneCurrent;
 
 	public final YView YVIEW;
@@ -311,22 +310,22 @@ public final class YSystem extends YAStateMachineContext
 		sceneCurrent.forceRun();
 	}
 
-	private void dealRequest(YSystemRequest requestDeal)
+	boolean dealSystemRequest(YSystemRequest request)
 	{
-		switch (requestDeal.iKEY)
+		switch (request.iKEY)
 		{
 		case YSystemRequest.iSWITCH_SCENE:
-			handleSwitchScene(requestDeal.scene,
-					requestDeal.callback);
+			handleSwitchScene(request.scene, request.callback);
 			break;
 
 		case YSystemRequest.iFORCE_SET_SCENE:
-			handleForceSetCurrentScene(requestDeal.scene);
+			handleForceSetCurrentScene(request.scene);
 			break;
 
 		default:
 			break;
 		}
+		return true;
 	}
 
 	private void clockCycle()
@@ -394,9 +393,19 @@ public final class YSystem extends YAStateMachineContext
 			if (iCOMMA == request.iKEY)
 				return;
 			if (request instanceof YSystemRequest)
-				dealRequest((YSystemRequest) request);
-			else
-				sceneCurrent.inputRequest(request);
+			{
+				dealSystemRequest((YSystemRequest) request);
+				return;
+			}
+
+			if (null == request.target)
+				throw new YException("系统受到没有接受目标的请求！",
+						getClass().getName(), "错误");
+			request.target.onReceiveRequest(request);
+			// if (request instanceof YSystemRequest)
+			// dealRequest((YSystemRequest) request);
+			// else
+			// sceneCurrent.onReceiveRequest(request);
 		}
 	}
 
@@ -464,12 +473,11 @@ public final class YSystem extends YAStateMachineContext
 	 *                请求
 	 * @return 真表示系统接收该请求，反之该请求被忽略
 	 * 
-	 * @see ygame.framework.YAStateMachineContext#inputRequest(ygame.framework.request.YRequest)
+	 * @see ygame.framework.core.YAStateMachineContext#dealSystemRequest(ygame.framework.core.YRequest)
 	 */
-	@Override
-	public boolean inputRequest(YRequest request)
+	private boolean inputRequest(YRequest request)
 	{
-		switch (request.WHEN)
+		switch (request.WHEN_TO_DEAL)
 		{
 		case BEFORE_RENDER:
 			return queueBeforeRendering.enqueue(request);
@@ -553,6 +561,48 @@ public final class YSystem extends YAStateMachineContext
 		{
 			super(iKEY, when);
 		}
+	}
+
+	/**
+	 * <b>状态机上下文</b>
+	 * 
+	 * <p>
+	 * <b>概述</b>： TODO
+	 * 
+	 * <p>
+	 * <b>建议</b>： TODO
+	 * 
+	 * <p>
+	 * <b>详细</b>： TODO
+	 * 
+	 * <p>
+	 * <b>注</b>： TODO
+	 * 
+	 * <p>
+	 * <b>例</b>： TODO
+	 * 
+	 * @author yunzhong
+	 * 
+	 */
+	static abstract class YAStateMachineContext
+	{
+		/**
+		 * 向状态机输入<b>请求</b>{@link YRequest}
+		 * 
+		 * @param request
+		 *                请求
+		 * @return 真为接收请求，反之拒绝
+		 */
+		// 由系统分发请求时输入，客户不可干涉
+		abstract boolean onReceiveRequest(YRequest request);
+
+		void sendRequest(YRequest request, YSystem system)
+		{
+			request.target = this;
+			system.inputRequest(request);
+		}
+		// abstract protected void
+		// onClockCycle(double dbElapseTime_s);
 	}
 
 }

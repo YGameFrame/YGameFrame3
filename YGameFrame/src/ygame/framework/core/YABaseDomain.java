@@ -1,7 +1,6 @@
 package ygame.framework.core;
 
-import ygame.framework.YAStateMachineContext;
-import ygame.framework.request.YRequest;
+import ygame.framework.core.YSystem.YAStateMachineContext;
 import ygame.math.YMatrix;
 
 /**
@@ -44,7 +43,7 @@ public abstract class YABaseDomain extends YAStateMachineContext
 	}
 
 	@Override
-	final protected boolean inputRequest(YRequest request)
+	final boolean onReceiveRequest(YRequest request)
 	{
 		return onReceiveRequest(request, system,
 				system.getCurrentScene());
@@ -61,11 +60,12 @@ public abstract class YABaseDomain extends YAStateMachineContext
 	}
 
 	/**
-	 * 当实体被第一次关联到系统时该函数被回调
+	 * 当实体被关联到系统时该函数被回调
 	 * 
 	 * @param system
 	 *                系统
 	 */
+	// 此时yview已经有大小！！！
 	protected void onAttach(YSystem system)
 	{
 	}
@@ -79,7 +79,7 @@ public abstract class YABaseDomain extends YAStateMachineContext
 	protected void onEnterScene(YScene scene)
 	{
 	}
-	
+
 	/**
 	 * 每帧开始绘制前回调此函数，即在此时只有逻辑线程运行，绘图线程完成任务处于等待状态， 在此之后逻辑线程与绘图线程开始并发运行
 	 * ，为了保证线程安全，它们之间不可再有任何交互！您可以通过复写该方法，在逻辑线程与 绘图线程“分道扬镳”之前做一些设置。
@@ -142,4 +142,15 @@ public abstract class YABaseDomain extends YAStateMachineContext
 	protected abstract void onGL_Initialize(YSystem system,
 			YGL_Configuration configurationGL, int iWidth,
 			int iHeight);
+
+	/**
+	 * 向实体对象发送请求
+	 * 
+	 * @param request
+	 *                发送的请求
+	 */
+	protected void sendRequest(YRequest request)
+	{
+		sendRequest(request, system);
+	}
 }

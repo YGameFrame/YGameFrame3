@@ -4,8 +4,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
-import ygame.framework.request.YRequest;
-import ygame.framework.request.YRequest.YWhen;
+import ygame.framework.core.YRequest.YWhen;
 import ygame.math.YMatrix;
 import android.annotation.SuppressLint;
 
@@ -77,7 +76,7 @@ public class YClusterDomain extends YABaseDomain
 				YClusterDomainRequest.iADD_COMPONENTS, this,
 				YWhen.BEFORE_RENDER);
 		request.domains = domains;
-		system.inputRequest(request);
+		sendRequest(request);
 	}
 
 	@Override
@@ -101,19 +100,18 @@ public class YClusterDomain extends YABaseDomain
 					iHeight);
 	}
 
-	private static class YClusterDomainRequest extends YDomainRequest
+	private static class YClusterDomainRequest extends YRequest
 	{
 		public YClusterDomainRequest(int KEY, YABaseDomain WHO,
 				YWhen when)
 		{
-			super(KEY, WHO, when);
+			super(KEY, when);
 		}
 
 		private static final int iADD_COMPONENTS = 0;
 
 		private Collection<YABaseDomain> domains;
 
-		
 	}
 
 }

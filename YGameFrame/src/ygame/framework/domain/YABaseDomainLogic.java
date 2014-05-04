@@ -1,8 +1,8 @@
 package ygame.framework.domain;
 
+import ygame.framework.core.YRequest;
 import ygame.framework.core.YScene;
 import ygame.framework.core.YSystem;
-import ygame.framework.request.YRequest;
 import ygame.math.YMatrix;
 
 /**
@@ -90,7 +90,7 @@ public abstract class YABaseDomainLogic
 	}
 
 	/**
-	 * 当实体被添加进场景时该函数被回调
+	 * 实体与系统关联时，该方法被回调
 	 * 
 	 * @param system
 	 *                系统

@@ -1,4 +1,6 @@
-package ygame.framework.request;
+package ygame.framework.core;
+
+import ygame.framework.core.YSystem.YAStateMachineContext;
 
 /**
  * <b>请求</b>
@@ -26,15 +28,29 @@ public class YRequest
 	/** <b>请求标识</b>：区分不同的请求 */
 	public final int iKEY;
 	/** <b>请求处理时段</b>：指定请求在何时被处理，详见{@link YWhen} */
-	public final YWhen WHEN;
+	final YWhen WHEN_TO_DEAL;
 
 	private final int iHashCode;
 
-	public YRequest(int iKEY, YWhen when)
+	/** <b>必须对该变量赋值！！！</b> */
+	YAStateMachineContext target;
+
+	public YRequest(int iKEY, YWhen whenToDeal)
 	{
 		this.iKEY = iKEY;
-		this.WHEN = when;
+		this.WHEN_TO_DEAL = whenToDeal;
 		iHashCode = calculateHashCode();
+	}
+
+	/**
+	 * 此构造子构造的请求将在渲染时进行处理
+	 * 
+	 * @param iKEY
+	 *                请求键值
+	 */
+	public YRequest(int iKEY)
+	{
+		this(iKEY, YWhen.RENDERING_EXE_IN_LOGIC_THREAD);
 	}
 
 	private int calculateHashCode()
