@@ -62,6 +62,8 @@ public class YScene extends YAStateMachineContext
 	private List<YIResultCallback> callBackWhenRunneds = new ArrayList<YIResultCallback>();
 	private List<YIResultCallback> callBackWhenUnmounteds = new ArrayList<YIResultCallback>();
 
+	private List<YISceneClockerPlugin> clockerPlugins = new ArrayList<YISceneClockerPlugin>();
+
 	public YScene(YSystem system, String strName)
 	{
 		this.SYSTEM = system;
@@ -196,6 +198,15 @@ public class YScene extends YAStateMachineContext
 			domain.onClockCycle(dbDeltaTime_s, SYSTEM, this,
 					matrixPV, camera.getProjectMatrix(),
 					camera.getViewMatrix());
+
+		for (YISceneClockerPlugin plugin : clockerPlugins)
+			plugin.onClock(dbDeltaTime_s);
+	}
+
+	public final void addClockerPlugin(YISceneClockerPlugin... clockerPlugin)
+	{
+		for (YISceneClockerPlugin plugin : clockerPlugin)
+			this.clockerPlugins.add(plugin);
 	}
 
 	protected void onPreframe()

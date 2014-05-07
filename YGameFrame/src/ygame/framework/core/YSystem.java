@@ -83,6 +83,8 @@ public final class YSystem
 
 	private boolean bSceneLocked;
 
+	public boolean bFPS_Debug;
+
 	YSystem(YView yview)
 	{
 		YVIEW = yview;
@@ -310,7 +312,7 @@ public final class YSystem
 		sceneCurrent.forceRun();
 	}
 
-	boolean dealSystemRequest(YSystemRequest request)
+	private boolean dealSystemRequest(YSystemRequest request)
 	{
 		switch (request.iKEY)
 		{
@@ -351,7 +353,8 @@ public final class YSystem
 
 			mFrameCount = 0;
 			mStartTime = now;
-			System.out.println("fps=" + mLastMeasuredFPS);
+			if (bFPS_Debug)
+				System.out.println("fps=" + mLastMeasuredFPS);
 		}
 	}
 
