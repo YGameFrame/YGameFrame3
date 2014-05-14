@@ -1,4 +1,4 @@
-﻿package ygame.extension.primitives;
+package ygame.extension.primitives;
 
 
 /**

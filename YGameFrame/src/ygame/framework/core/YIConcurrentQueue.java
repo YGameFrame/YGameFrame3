@@ -1,4 +1,4 @@
-﻿package ygame.framework.core;
+package ygame.framework.core;
 
 /**
  * <b>无锁同步队列</b>

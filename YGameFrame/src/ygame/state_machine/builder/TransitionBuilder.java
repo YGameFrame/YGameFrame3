@@ -1,4 +1,4 @@
-﻿package ygame.state_machine.builder;
+package ygame.state_machine.builder;
 
 import ygame.state_machine.BasicConditions;
 import ygame.state_machine.MutableTransitionModel;

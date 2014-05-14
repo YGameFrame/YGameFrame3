@@ -1,4 +1,4 @@
-﻿package ygame.utils;
+package ygame.utils;
 
 import java.nio.Buffer;
 import java.nio.ByteBuffer;

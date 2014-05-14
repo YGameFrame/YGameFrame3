@@ -1,4 +1,4 @@
-﻿package ygame.domain;
+package ygame.domain;
 
 import ygame.framework.core.YSystem;
 import ygame.framework.domain.YReadBundle;

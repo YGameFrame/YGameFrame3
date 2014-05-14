@@ -1,4 +1,4 @@
-﻿package ygame.state_machine;
+package ygame.state_machine;
 
 /**
  * 向用户提供的一个状态机调用界面，此状态机已被定制完毕，不可再行设置

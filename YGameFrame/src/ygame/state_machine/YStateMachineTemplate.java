@@ -1,4 +1,4 @@
-﻿package ygame.state_machine;
+package ygame.state_machine;
 
 public interface YStateMachineTemplate<S, R, C>
 {

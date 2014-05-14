@@ -1,4 +1,4 @@
-﻿package ygame.state_machine.builder;
+package ygame.state_machine.builder;
 
 public interface YIFrom<S, R, C>
 {

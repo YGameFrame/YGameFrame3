@@ -1,4 +1,4 @@
-﻿package ygame.skeleton;
+package ygame.skeleton;
 
 import java.nio.Buffer;
 import java.util.Random;

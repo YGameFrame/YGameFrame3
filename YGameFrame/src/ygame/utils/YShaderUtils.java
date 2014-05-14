@@ -1,4 +1,4 @@
-﻿package ygame.utils;
+package ygame.utils;
 
 import ygame.exception.YException;
 import android.opengl.GLES20;
