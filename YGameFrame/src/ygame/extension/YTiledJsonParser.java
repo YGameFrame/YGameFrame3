@@ -190,6 +190,16 @@ public class YTiledJsonParser
 
 		return dataColors;
 	}
+	
+	public final int parseTileWidthInPixel() throws JSONException
+	{
+		return jsonTree.getInt("tilewidth");
+	}
+	
+	public final int parseTileHeightInPixel() throws JSONException
+	{
+		return jsonTree.getInt("tileheight");
+	}
 
 	/**
 	 * 将基础背景层（base_bkg）及修饰背景层（decoration_bkg）直接解析为数据纹理</br>

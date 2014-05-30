@@ -44,10 +44,11 @@ public final class YTileMapProgram extends YABlankProgram
 			synchronized (YTileMapProgram.class)
 			{
 				if (null == instance)
-					instance = new YTileMapProgram(resources);
+					instance = new YTileMapProgram(
+							resources);
 			}
 		return instance;
-//		return new YTileMapProgram(resources);
+		// return new YTileMapProgram(resources);
 	}
 
 	private YTileMapProgram(Resources resources)
@@ -77,6 +78,18 @@ public final class YTileMapProgram extends YABlankProgram
 		setUniformTexture("uTileData", textureData, 1);
 		setUniformf("uTileDataInfo", 1.0f / textureData.getHeight(),
 				1.0f / textureData.getWidth());
+
+		// uOpt.x = 1.0 / uTileDataInfo[1] - 1.0
+		// uOpt.y = 1.0 / uTileDataInfo[0] - 1.0
+		// uOpt.z = uTileGraphicInfo[3] / uTileDataInfo[1]
+		// uOpt.w = uTileGraphicInfo[2] / uTileDataInfo[0]
+		setUniformf("uOpt",
+				textureData.getWidth() ,
+				textureData.getHeight() ,
+				textureGraphic.GRID_WIDTH
+						* textureData.getWidth(),
+				textureGraphic.GRID_HEIGHT
+						* textureData.getHeight());
 		super.applyParams(iProgramHandle, bundle, system, domainView);
 	}
 

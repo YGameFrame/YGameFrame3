@@ -13,11 +13,13 @@ import javax.microedition.khronos.opengles.GL10;
 import ygame.exception.YException;
 import ygame.framework.YIResultCallback;
 import ygame.framework.core.YRequest.YWhen;
+import ygame.utils.YLog;
 import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.pm.ConfigurationInfo;
 import android.opengl.GLES20;
+import android.os.Handler;
 import android.os.SystemClock;
 import android.util.Log;
 import android.view.WindowManager;
@@ -77,13 +79,15 @@ public final class YSystem
 	private double mLastMeasuredFPS;
 
 	final private YScene sceneDEFAULT;
-	private static final boolean bDEBUG = true;
+	// private static final boolean bDEBUG = true;
 
 	public static final String GLThreadName = "GLThread";
 
 	private boolean bSceneLocked;
 
-	public boolean bFPS_Debug;
+	public volatile boolean bFPS_Debug;
+
+	final private Handler handler;
 
 	YSystem(YView yview)
 	{
@@ -93,6 +97,8 @@ public final class YSystem
 
 		dbFrameRate_fps = getRefreshRate(YVIEW.getContext());
 		context = YVIEW.getContext();
+
+		handler = new Handler();
 
 		sceneDEFAULT = new YScene(this, "DEFAULT");
 		scenes.add(sceneDEFAULT);
@@ -337,7 +343,7 @@ public final class YSystem
 		dbLastClockTime_ms = dbCurrentClockCycle_ms;
 		// 通知下属
 		sceneCurrent.onClockCycle(dbDeltaTime_s);
-		if (bDEBUG)
+		if (bFPS_Debug || null != fpsLsn)
 			calculateFPS();
 	}
 
@@ -355,6 +361,17 @@ public final class YSystem
 			mStartTime = now;
 			if (bFPS_Debug)
 				System.out.println("fps=" + mLastMeasuredFPS);
+			if (null != fpsLsn)
+			{
+				handler.post(new Runnable()
+				{
+					@Override
+					public void run()
+					{
+						fpsLsn.onFPSUpdated(mLastMeasuredFPS);
+					}
+				});
+			}
 		}
 	}
 
@@ -402,7 +419,7 @@ public final class YSystem
 			}
 
 			if (null == request.target)
-				throw new YException("系统受到没有接受目标的请求！",
+				throw new YException("系统收到没有接受目标的请求！",
 						getClass().getName(), "错误");
 			request.target.onReceiveRequest(request);
 			// if (request instanceof YSystemRequest)
@@ -417,6 +434,7 @@ public final class YSystem
 		GLES20.glViewport(0, 0, iWidth, iHeight);
 
 		configurationGL = YGL_Configuration.getInstanceInGL();
+		YLog.i("显卡配置", configurationGL.toString());
 
 		dbLastClockTime_ms = SystemClock.elapsedRealtime();
 
@@ -606,6 +624,18 @@ public final class YSystem
 		}
 		// abstract protected void
 		// onClockCycle(double dbElapseTime_s);
+	}
+
+	private YIOnFPSUpdatedListener fpsLsn;
+
+	public void setOnFPSUpdatedListener(YIOnFPSUpdatedListener fpsLsn)
+	{
+		this.fpsLsn = fpsLsn;
+	}
+
+	public static interface YIOnFPSUpdatedListener
+	{
+		void onFPSUpdated(double fps);
 	}
 
 }

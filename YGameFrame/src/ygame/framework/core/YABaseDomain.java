@@ -149,7 +149,7 @@ public abstract class YABaseDomain extends YAStateMachineContext
 	 * @param request
 	 *                发送的请求
 	 */
-	protected void sendRequest(YRequest request)
+	public final void sendRequest(YRequest request)
 	{
 		sendRequest(request, system);
 	}
