@@ -27,8 +27,10 @@ import android.content.res.Resources;
  * <b>例</b>： TODO
  * 
  * @author yunzhong
+ * @deprecated 实现和接口有待进一步优化，建议当前不要正式使用。
  * 
  */
+@Deprecated
 public final class YSandboxProgram extends YABlankProgram
 {
 	private float time;

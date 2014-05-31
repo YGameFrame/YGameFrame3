@@ -62,7 +62,7 @@ public final class YSimpleProgram extends YAShaderProgram
 				R.raw.simple_vsh, resources),
 				YTextFileUtils.getStringFromResRaw(
 						R.raw.simple_fsh, resources),
-				YSimpleParamAdapter.class);
+				YAdapter.class);
 	}
 
 	// @Override
@@ -90,12 +90,12 @@ public final class YSimpleProgram extends YAShaderProgram
 			YSystem system, YDomainView domainView)
 	{
 		YSkeleton skeleton = (YSkeleton) bundle
-				.readObject(YSimpleParamAdapter.SKELETON);
+				.readObject(YAdapter.SKELETON);
 		setAttribute("aPosition", skeleton.getPositionDataSource());
 		setAttribute("aColor", skeleton.getColorDataSource());
 		setUniformMatrix(
 				"uPVMMatrix",
-				bundle.readFloatArray(YSimpleParamAdapter.MATRIX_PVM));
+				bundle.readFloatArray(YAdapter.MATRIX_PVM));
 
 		// setAttribute(aColor,
 		// skeleton.getColorData());
@@ -142,7 +142,7 @@ public final class YSimpleProgram extends YAShaderProgram
 	 * @author yunzhong
 	 * 
 	 */
-	public static class YSimpleParamAdapter extends
+	public static class YAdapter extends
 			YABaseShaderProgram.YABaseParametersAdapter
 	{
 		private static final int SKELETON = 0;
@@ -159,7 +159,7 @@ public final class YSimpleProgram extends YAShaderProgram
 		 *                移动子
 		 * @return 参数适配器
 		 */
-		public YSimpleParamAdapter paramMover(YMover mover)
+		public YAdapter paramMover(YMover mover)
 		{
 			this.mover = mover;
 			return this;
@@ -170,7 +170,7 @@ public final class YSimpleProgram extends YAShaderProgram
 		 *                投影-视图矩阵
 		 * @return 参数适配器
 		 */
-		public YSimpleParamAdapter paramMatrixPV(YMatrix matrixPV)
+		public YAdapter paramMatrixPV(YMatrix matrixPV)
 		{
 			this.matrixPV = matrixPV;
 			return this;
@@ -181,7 +181,7 @@ public final class YSimpleProgram extends YAShaderProgram
 		 *                渲染的骨架
 		 * @return 参数适配器
 		 */
-		public YSimpleParamAdapter paramSkeleton(YSkeleton skeleton)
+		public YAdapter paramSkeleton(YSkeleton skeleton)
 		{
 			this.skeleton = skeleton;
 			return this;

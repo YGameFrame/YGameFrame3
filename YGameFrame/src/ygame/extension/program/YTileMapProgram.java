@@ -59,7 +59,7 @@ public final class YTileMapProgram extends YABlankProgram
 				YTextFileUtils.getStringFromResRaw(
 				// R.raw.test_tilemap_fsh,
 						R.raw.tilemap_fsh, resources),
-				YTileMapAdapter.class);
+				YAdapter.class);
 	}
 
 	@Override
@@ -139,8 +139,8 @@ public final class YTileMapProgram extends YABlankProgram
 	// }
 	// }
 
-	public static class YTileMapAdapter extends
-			YABlankAdapter<YTileMapAdapter>
+	public static class YAdapter extends
+			YABlankAdapter<YAdapter>
 	{
 		private YTexture textureData;
 		private YTileSheet tileSheetGraphics;
@@ -150,7 +150,7 @@ public final class YTileMapProgram extends YABlankProgram
 		 *                存储地图矩阵数据的纹理
 		 * @return 适配器
 		 */
-		public YTileMapAdapter paramTileMapData(YTexture textureData)
+		public YAdapter paramTileMapData(YTexture textureData)
 		{
 			this.textureData = textureData;
 			return this;
@@ -161,7 +161,7 @@ public final class YTileMapProgram extends YABlankProgram
 		 *                索引图
 		 * @return 适配器
 		 */
-		public YTileMapAdapter paramTileMapGraphics(
+		public YAdapter paramTileMapGraphics(
 				YTileSheet tileSheetGraphics)
 		{
 			this.tileSheetGraphics = tileSheetGraphics;

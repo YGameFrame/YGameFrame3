@@ -57,7 +57,7 @@ public final class YTextureProgram extends YABlankProgram
 				R.raw.texture_vsh, resources),
 				YTextFileUtils.getStringFromResRaw(
 						R.raw.texture_fsh, resources),
-				YTextureAdapter.class);
+				YAdapter.class);
 	}
 
 	@Override
@@ -70,12 +70,12 @@ public final class YTextureProgram extends YABlankProgram
 		super.applyParams(iProgramHandle, bundle, system, domainView);
 	}
 
-	public static class YTextureAdapter extends
-			YABlankProgram.YABlankAdapter<YTextureAdapter>
+	public static class YAdapter extends
+			YABlankProgram.YABlankAdapter<YAdapter>
 	{
 		private YTexture texture;
 
-		public YTextureAdapter paramTexture(YTexture texture)
+		public YAdapter paramTexture(YTexture texture)
 		{
 			this.texture = texture;
 			return this;

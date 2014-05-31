@@ -3,7 +3,7 @@ package ygame.extension.domain.tilemap;
 import ygame.domain.YADomainLogic;
 import ygame.domain.YDomain;
 import ygame.extension.domain.tilemap.YTileMapDomain.YMapComponentData;
-import ygame.extension.program.YTileMapProgram.YTileMapAdapter;
+import ygame.extension.program.YTileMapProgram.YAdapter;
 import ygame.framework.core.YRequest;
 import ygame.framework.core.YScene;
 import ygame.framework.core.YSystem;
@@ -37,7 +37,7 @@ class YLargeMapComponentDomainLogic extends YADomainLogic
 			YScene sceneCurrent, YMatrix matrix4pv,
 			YMatrix matrix4Projection, YMatrix matrix4View)
 	{
-		YTileMapAdapter adapter = (YTileMapAdapter) domainContext
+		YAdapter adapter = (YAdapter) domainContext
 				.getParametersAdapter();
 		adapter.paramMatrixPV(matrix4pv).paramMover(mover)
 				.paramSkeleton(skeleton)

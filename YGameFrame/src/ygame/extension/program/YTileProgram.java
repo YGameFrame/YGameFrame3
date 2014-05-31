@@ -57,7 +57,7 @@ public final class YTileProgram extends YABlankProgram
 				R.raw.frame_vsh, resources),
 				YTextFileUtils.getStringFromResRaw(
 						R.raw.texture_fsh, resources),
-				YTileAdapter.class);
+				YAdapter.class);
 	}
 
 	@Override
@@ -72,7 +72,7 @@ public final class YTileProgram extends YABlankProgram
 		super.applyParams(iProgramHandle, bundle, system, domainView);
 	}
 
-	public static class YTileAdapter extends YABlankAdapter<YTileAdapter>
+	public static class YAdapter extends YABlankAdapter<YAdapter>
 	{
 		// 元素为：[行索引(0开始计)、列索引(0开始计)、小格宽度、小格高度]
 		private final float[] f_arrFrameTexParam = new float[4];
@@ -88,7 +88,7 @@ public final class YTileProgram extends YABlankProgram
 		 *                列数（以0开始计）
 		 * @return 适配器
 		 */
-		public YTileAdapter paramFramePosition(int iRowIndex,
+		public YAdapter paramFramePosition(int iRowIndex,
 				int iColumnIndex)
 		{
 			f_arrFrameTexParam[0] = iRowIndex;
@@ -103,7 +103,7 @@ public final class YTileProgram extends YABlankProgram
 		 *                瓷砖图
 		 * @return 适配器
 		 */
-		public YTileAdapter paramFrameSheet(YTileSheet tileSheet)
+		public YAdapter paramFrameSheet(YTileSheet tileSheet)
 		{
 			this.frameSheet = tileSheet;
 			f_arrFrameTexParam[2] = tileSheet.GRID_WIDTH;

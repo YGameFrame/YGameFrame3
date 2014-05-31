@@ -29,8 +29,9 @@ import android.content.res.Resources;
  * <b>例</b>： TODO
  * 
  * @author yunzhong
- * 
+ * @deprecated 这个只是一个实验的类，建议<b>不要使用！！！</b>
  */
+@Deprecated
 public final class YTextureWaveProgram extends YABlankProgram
 {
 	private static final int TEX = 2;
