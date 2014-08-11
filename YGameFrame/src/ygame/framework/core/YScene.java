@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import ygame.exception.YException;
 import ygame.framework.YIResultCallback;
 import ygame.framework.core.YRequest.YWhen;
 import ygame.framework.core.YSystem.YAStateMachineContext;
@@ -127,6 +128,9 @@ public class YScene extends YAStateMachineContext
 	{
 		for (YABaseDomain domain : domains)
 		{
+			if(mapDomains.containsKey(domain.KEY))
+				throw new YException("重复添加实体或实体键冲突", getClass().getSimpleName(), 
+						"1.不同实体应该拥有不同的键；2.同一实体不应多次被添加");
 			mapDomains.put(domain.KEY, domain);
 			domain.attach(SYSTEM);
 			domain.onEnterScene(this);
@@ -207,6 +211,18 @@ public class YScene extends YAStateMachineContext
 	{
 		for (YISceneClockerPlugin plugin : clockerPlugin)
 			this.clockerPlugins.add(plugin);
+	}
+	
+	/**
+	 * 在该场景中查找指定实体对象
+	 * 
+	 * @param domainKey
+	 *                实体键
+	 * @return 查找成功返回实体引用，查找失败返回空值
+	 */
+	public final YABaseDomain queryDomainByKey(String domainKey)
+	{
+		return mapDomains.get(domainKey);
 	}
 
 	protected void onPreframe()

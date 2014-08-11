@@ -175,6 +175,29 @@ public final class YSystem
 			// 以新速率重启
 			start();
 	}
+	
+	/**
+	 * 在系统里全局查找指定的实体对象
+	 * 
+	 * @param domainKey
+	 *                实体键
+	 * @return 查找成功返回实体引用，查找失败返回空值
+	 */
+	public YABaseDomain queryDomainByKey(String domainKey)
+	{
+		YABaseDomain domain = sceneCurrent.queryDomainByKey(domainKey);
+
+		if (null != domain)
+			return domain;
+
+		for (YScene scene : scenes)
+		{
+			domain = scene.queryDomainByKey(domainKey);
+			if (null != domain)
+				return domain;
+		}
+		return null;
+	}
 
 	/**
 	 * 获取当前场景
