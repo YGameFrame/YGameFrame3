@@ -1,0 +1,11 @@
+!src
+!res/raw
+!.gitignore
+
+YGameFrame/.classpath
+YGameFrame/.project
+YGameFrame/.settings/
+YGameFrame/AndroidManifest.xml
+YGameFrame/bin/
+YGameFrame/libs/
+YGameFrame/project.properties
