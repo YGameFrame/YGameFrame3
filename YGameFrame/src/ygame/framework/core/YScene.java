@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import ygame.framework.YIResultCallback;
+import ygame.framework.core.YABaseDomain.YDomainRequest;
 import ygame.framework.core.YRequest.YWhen;
 import ygame.framework.core.YSystem.YAStateMachineContext;
 import ygame.math.YMatrix;
@@ -75,7 +76,34 @@ public class YScene extends YAStateMachineContext
 	@Override
 	protected boolean onReceiveRequest(YRequest request)
 	{
-		return dealRequest((YSceneRequest) request);
+		if (request instanceof YDomainRequest)
+			return dealRequest((YDomainRequest) request);
+		
+		if (request instanceof YSceneRequest)
+		{
+			YSceneRequest sceneReq = (YSceneRequest) request;
+			sceneReq.target.dealRequest(sceneReq);
+			return true;
+		}
+		
+		return false;
+	}
+
+	private void sendRequest(YSceneRequest request, YSystem system)
+	{
+		request.target = this;
+		system.sendRequest(request);
+	}
+
+	private boolean dealRequest(YDomainRequest request)
+	{
+		YABaseDomain domain = mapDomains.get(request.WHO);
+		if(null != domain)
+		{
+			domain.onReceiveRequest(request);
+			return true;
+		}
+		return false;
 	}
 
 	private boolean dealRequest(YSceneRequest request)
@@ -117,7 +145,7 @@ public class YScene extends YAStateMachineContext
 	public void addDomains(YABaseDomain... domains)
 	{
 		YSceneRequest request = new YSceneRequest(
-				YSceneRequest.KEY.iADD_DOMAINS,
+				YSceneRequest.KEY.iADD_DOMAINS , 
 				YWhen.BEFORE_RENDER);
 		request.domains = domains;
 		sendRequest(request, SYSTEM);
@@ -275,6 +303,7 @@ public class YScene extends YAStateMachineContext
 
 		private YABaseDomain[] domains;
 		private YIResultCallback callback;
+		private YScene target;
 
 		private YSceneRequest(int iKEY, YWhen when)
 		{

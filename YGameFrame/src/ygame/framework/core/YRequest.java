@@ -1,6 +1,5 @@
 package ygame.framework.core;
 
-import ygame.framework.core.YSystem.YAStateMachineContext;
 
 /**
  * <b>请求</b>
@@ -32,8 +31,8 @@ public class YRequest
 
 	private final int iHashCode;
 
-	/** <b>必须对该变量赋值！！！</b> */
-	YAStateMachineContext target;
+//	/** <b>必须对该变量赋值！！！</b> */
+//	YAStateMachineContext target;
 
 	public YRequest(int iKEY, YWhen whenToDeal)
 	{
@@ -105,8 +104,11 @@ public class YRequest
 	 */
 	public static enum YWhen
 	{
+		//@formatter:off
 		/** <b>渲染前于逻辑线程中</b> */
-		BEFORE_RENDER, /** <b>渲染时于逻辑线程</b> */
+		BEFORE_RENDER, 
+		/** <b>渲染时于逻辑线程</b> */
 		RENDERING_EXE_IN_LOGIC_THREAD;
+		//@formatter:on
 	}
 }

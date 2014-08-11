@@ -10,7 +10,6 @@ import java.util.concurrent.TimeUnit;
 
 import javax.microedition.khronos.opengles.GL10;
 
-import ygame.exception.YException;
 import ygame.framework.YIResultCallback;
 import ygame.framework.core.YRequest.YWhen;
 import ygame.utils.YLog;
@@ -408,20 +407,30 @@ public final class YSystem
 		for (;;)
 		{
 			YRequest request = queue.dequeue();
+			
 			if (null == request)
 				return;
 			if (iCOMMA == request.iKEY)
 				return;
+			
 			if (request instanceof YSystemRequest)
 			{
 				dealSystemRequest((YSystemRequest) request);
 				return;
 			}
 
-			if (null == request.target)
-				throw new YException("系统收到没有接受目标的请求！",
-						getClass().getName(), "错误");
-			request.target.onReceiveRequest(request);
+			if (sceneCurrent.onReceiveRequest(request))
+				return ;
+			for (YScene scene : scenes)
+			{
+				if(scene.onReceiveRequest(request))
+					return;
+			}
+
+//			if (null == request.target)
+//				throw new YException("系统收到没有接受目标的请求！",
+//						getClass().getName(), "错误");
+//			request.target.onReceiveRequest(request);
 			// if (request instanceof YSystemRequest)
 			// dealRequest((YSystemRequest) request);
 			// else
@@ -509,6 +518,11 @@ public final class YSystem
 		default:
 			return false;
 		}
+	}
+
+	public boolean sendRequest(YRequest request)
+	{
+		return inputRequest(request);
 	}
 
 	/**
@@ -617,11 +631,11 @@ public final class YSystem
 		// 由系统分发请求时输入，客户不可干涉
 		abstract boolean onReceiveRequest(YRequest request);
 
-		void sendRequest(YRequest request, YSystem system)
-		{
-			request.target = this;
-			system.inputRequest(request);
-		}
+//		void sendRequest(YRequest request, YSystem system)
+//		{
+//			request.target = this;
+//			system.inputRequest(request);
+//		}
 		// abstract protected void
 		// onClockCycle(double dbElapseTime_s);
 	}

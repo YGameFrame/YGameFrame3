@@ -143,14 +143,32 @@ public abstract class YABaseDomain extends YAStateMachineContext
 			YGL_Configuration configurationGL, int iWidth,
 			int iHeight);
 
-	/**
-	 * 向实体对象发送请求
-	 * 
-	 * @param request
-	 *                发送的请求
-	 */
-	public final void sendRequest(YRequest request)
+//	/**
+//	 * 向实体对象发送请求
+//	 * 
+//	 * @param request
+//	 *                发送的请求
+//	 */
+//	public final void sendRequest(YRequest request)
+//	{
+//		sendRequest(request, system);
+//	}
+
+	public static class YDomainRequest extends YRequest
 	{
-		sendRequest(request, system);
+		final String WHO;
+		
+		public YDomainRequest(int iKEY , String who)
+		{
+			super(iKEY);
+			this.WHO = who;
+		}
+
+		public YDomainRequest(int iKEY, YWhen whenToDeal , String who)
+		{
+			super(iKEY, whenToDeal);
+			this.WHO = who;
+		}
+
 	}
 }
