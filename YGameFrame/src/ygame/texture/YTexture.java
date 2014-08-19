@@ -47,6 +47,8 @@ public class YTexture
 	private Bitmap bitmap;
 
 	final private boolean bNoBitmap;
+	
+	final String id;
 
 	/**
 	 * 新建一个以指定位图为内容的纹理，默认抽样类型{@link GLES20#GL_NEAREST}
@@ -61,6 +63,8 @@ public class YTexture
 		this.iResId = iResId;
 		this.resources = resources;
 		this.bNoBitmap = false;
+		this.id = iResId + "";
+		YTextureManager.INSTANCE.add(this);
 	}
 
 	/**
@@ -80,6 +84,8 @@ public class YTexture
 		this.resources = resources;
 		this.iSampleType = iSampleType;
 		this.bNoBitmap = false;
+		this.id = iResId + "";
+		YTextureManager.INSTANCE.add(this);
 	}
 
 	/**
@@ -94,6 +100,7 @@ public class YTexture
 		this.bitmap = bitmap;
 		this.bNoBitmap = false;
 		this.iResId = -1;
+		this.id = null;
 	}
 
 	/**
@@ -111,6 +118,7 @@ public class YTexture
 		this.iHeight = iHeight;
 		this.bNoBitmap = true;
 		this.iResId = -1;
+		this.id = null;
 	}
 
 	/**
@@ -131,6 +139,7 @@ public class YTexture
 		this.iSampleType = iSampleType;
 		this.bNoBitmap = true;
 		this.iResId = -1;
+		this.id = null;
 	}
 
 	/**
@@ -142,6 +151,10 @@ public class YTexture
 	{
 		if (GLES20.glIsTexture(iTexHandle))
 			return iTexHandle;
+		
+		YTexture textureCache = YTextureManager.INSTANCE.get(id);
+		if(null != textureCache && GLES20.glIsTexture(textureCache.iTexHandle))
+			return textureCache.iTexHandle;
 
 		// 生成标识
 		int[] iTexHandles = new int[1];

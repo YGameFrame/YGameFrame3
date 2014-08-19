@@ -104,7 +104,7 @@ public class YBaseDomain extends YABaseDomain
 	protected boolean onReceiveRequest(YRequest request, YSystem system,
 			YScene sceneCurrent)
 	{
-		return logic.onDealRequest(request, system, sceneCurrent);
+		return logic.onDealRequest(request, system, sceneCurrent , this);
 	}
 
 	@Override

@@ -34,6 +34,7 @@ public class YRequest
 
 	/** <b>必须对该变量赋值！！！</b> */
 	YAStateMachineContext target;
+	private String name = toString();
 
 	public YRequest(int iKEY, YWhen whenToDeal)
 	{
@@ -51,6 +52,11 @@ public class YRequest
 	public YRequest(int iKEY)
 	{
 		this(iKEY, YWhen.RENDERING_EXE_IN_LOGIC_THREAD);
+	}
+	
+	public void setName(String name)
+	{
+		this.name = name;
 	}
 
 	private int calculateHashCode()
@@ -81,6 +87,12 @@ public class YRequest
 			return false;
 		return true;
 	}
+	
+	@Override
+	public String toString()
+	{
+		return name;
+	}
 
 	/**
 	 * <b>请求处理时机</b>
@@ -105,8 +117,11 @@ public class YRequest
 	 */
 	public static enum YWhen
 	{
+		//@formatter:off
 		/** <b>渲染前于逻辑线程中</b> */
-		BEFORE_RENDER, /** <b>渲染时于逻辑线程</b> */
+		BEFORE_RENDER, 
+		/** <b>渲染时于逻辑线程</b> */
 		RENDERING_EXE_IN_LOGIC_THREAD;
+		//@formatter:on
 	}
 }
