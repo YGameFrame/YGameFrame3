@@ -88,6 +88,8 @@ public abstract class YABaseShaderProgram
 	private YABaseParametersAdapter createDataAdapter(
 			Class<?> clazzDataAdapter)
 	{
+		if (null == clazzDataAdapter)
+			return null;
 		try
 		{
 			return (YABaseParametersAdapter) clazzDataAdapter
