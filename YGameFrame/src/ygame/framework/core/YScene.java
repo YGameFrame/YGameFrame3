@@ -88,7 +88,7 @@ public class YScene extends YAStateMachineContext
 			return true;
 
 		case YSceneRequest.KEY.iREMOVE_DOMAINS:
-			handleRemoveDomains(request.domains);
+			handleRemoveDomains(request.domains , request.domainKeys);
 			return true;
 
 		case YSceneRequest.KEY.iTO_QUIT:
@@ -160,17 +160,27 @@ public class YScene extends YAStateMachineContext
 	 */
 	public void removeDomains(String... domainKEYs)
 	{
-		YABaseDomain[] domains = new YABaseDomain[domainKEYs.length];
-		for (int i = 0; i < domainKEYs.length; i++)
-			domains[i] = mapDomains.get(domainKEYs[i]);
-
-		removeDomains(domains);
+//		YABaseDomain[] domains = new YABaseDomain[domainKEYs.length];
+//		for (int i = 0; i < domainKEYs.length; i++)
+//			domains[i] = mapDomains.get(domainKEYs[i]);
+//
+//		removeDomains(domains);
+		YSceneRequest request = new YSceneRequest(
+				YSceneRequest.KEY.iREMOVE_DOMAINS,
+				YWhen.BEFORE_RENDER);
+		request.domainKeys = domainKEYs;
+		sendRequest(request, SYSTEM);
 	}
 
-	private void handleRemoveDomains(YABaseDomain[] domains)
+	private void handleRemoveDomains(YABaseDomain[] domains, String[] domainKeys)
 	{
-		for (YABaseDomain domain : domains)
-			mapDomains.remove(domain.KEY);
+		if (null != domains)
+			for (YABaseDomain domain : domains)
+				mapDomains.remove(domain.KEY);
+		
+		if (null != domainKeys)
+			for (String key : domainKeys)
+				mapDomains.remove(key);
 	}
 
 	/**
@@ -290,6 +300,7 @@ public class YScene extends YAStateMachineContext
 		}
 
 		private YABaseDomain[] domains;
+		private String[] domainKeys;
 		private YIResultCallback callback;
 
 		private YSceneRequest(int iKEY, YWhen when)
