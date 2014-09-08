@@ -26,7 +26,7 @@ import ygame.state_machine.builder.YStateMachineBuilder;
 import ygame.texture.YTileSheet;
 import ygame.transformable.YMover;
 
-public abstract class YASpriteDomainLogic<D extends YDomain> extends
+public abstract class YASpriteDomainLogic extends
 		YADomainLogic
 {
 	private static final float RAD2DEG = 180 / MathUtils.PI;
@@ -43,9 +43,8 @@ public abstract class YASpriteDomainLogic<D extends YDomain> extends
 	final protected float fSkeletonSideLen;
 	final protected YMover mover = new YMover();
 
-	protected StateMachine<YIStateClocker, YRequest, YASpriteDomainLogic<?>> stateMachine;
+	protected StateMachine<YIStateClocker, YRequest, YASpriteDomainLogic> stateMachine;
 	protected Body body;
-	protected D domainContext;
 
 	protected float fInitX_M;
 	protected float fInitY_M;
@@ -68,14 +67,12 @@ public abstract class YASpriteDomainLogic<D extends YDomain> extends
 		mover.setZ(1);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	protected void onAttach(YSystem system, YBaseDomain domainContext)
 	{
-		this.domainContext = (D) domainContext;
 		super.onAttach(system, domainContext);
 		// 设计状态机
-		YStateMachineBuilder<YIStateClocker, YRequest, YASpriteDomainLogic<?>> builder = YStateMachineBuilder
+		YStateMachineBuilder<YIStateClocker, YRequest, YASpriteDomainLogic> builder = YStateMachineBuilder
 				.create(YIStateClocker.class, YRequest.class);
 		YIStateClocker stateInit = designStateMachine(builder);
 		this.stateMachine = builder.buildTransitionTemplate()
@@ -109,14 +106,17 @@ public abstract class YASpriteDomainLogic<D extends YDomain> extends
 	 * @return 状态机初始状态
 	 */
 	protected abstract YIStateClocker designStateMachine(
-			YStateMachineBuilder<YIStateClocker, YRequest, YASpriteDomainLogic<?>> builder);
+			YStateMachineBuilder<YIStateClocker, YRequest, YASpriteDomainLogic> builder);
 
 	/**
 	 * 确认当前朝向，根据输入，实时更新朝向是左还是右，如果返回null表示默认朝向，即不更改当前朝向 </br>
 	 * <b>目前只支持左右朝向</b>{@link Orientation#LEFT}和 {@link Orientation#RIGHT}
 	 * 
 	 */
-	protected abstract Orientation updateCurrentOrientation();
+	protected Orientation updateCurrentOrientation()
+	{
+		return null;
+	}
 
 	/************************** 处理系统回调 *******************************/
 	@Override
