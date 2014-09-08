@@ -65,7 +65,7 @@ public final class YAttributeDataSource
 	 */
 	public int getHandle()
 	{
-		if (-1 == handle)
+		if (!GLES20.glIsBuffer(handle))
 			handle = YBufferUtils.upload(buffer,
 					GLES20.GL_ARRAY_BUFFER,
 					type.bytesPerComponent,

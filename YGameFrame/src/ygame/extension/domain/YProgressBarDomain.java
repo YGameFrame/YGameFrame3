@@ -118,7 +118,7 @@ public final class YProgressBarDomain extends YBaseDomain
 	{
 		private YSkeleton skeleton;
 
-		public YProgressBarProg(Resources resources, float fWidth,
+		private YProgressBarProg(Resources resources, float fWidth,
 				float fHeight)
 		{
 			fWidth = fWidth > 0 ? fWidth : 0;

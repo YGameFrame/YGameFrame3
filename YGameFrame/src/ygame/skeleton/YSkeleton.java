@@ -164,7 +164,7 @@ public abstract class YSkeleton
 	 */
 	final public int getIndexHandle()
 	{
-		if (-1 == iIndexHandle)
+		if (!GLES20.glIsBuffer(iIndexHandle))
 			iIndexHandle = YBufferUtils.upload(bufferIndex,
 					GLES20.GL_ELEMENT_ARRAY_BUFFER, 2,
 					GLES20.GL_STATIC_DRAW);
