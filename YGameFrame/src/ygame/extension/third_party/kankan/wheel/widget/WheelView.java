@@ -21,6 +21,7 @@ package ygame.extension.third_party.kankan.wheel.widget;
 
 import java.util.LinkedList;
 import java.util.List;
+
 import ygame.extension.third_party.kankan.wheel.widget.adapters.WheelViewAdapter;
 import ygame.framework.R;
 import android.annotation.SuppressLint;
@@ -473,7 +474,7 @@ public class WheelView extends View {
 
 		invalidate();
 	}
-
+	
 	/**
 	 * Initializes resources
 	 */
