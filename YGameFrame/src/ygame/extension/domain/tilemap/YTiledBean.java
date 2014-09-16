@@ -1,9 +1,11 @@
 package ygame.extension.domain.tilemap;
 
-import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 
 import ygame.exception.YException;
+import android.content.res.Resources;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -251,6 +253,10 @@ public final class YTiledBean
 			return name;
 		}
 
+		/**
+		 * @param name
+		 *                必须是放置在res/drawableXXX下的文件名！
+		 */
 		void setName(String name)
 		{
 			this.name = name;
@@ -322,21 +328,40 @@ public final class YTiledBean
 		return sb.toString();
 	}
 
-	public static YTiledBean parseFromTiledJson(String fileNameInAsset)
+	/**
+	 * 解析利用Tiled工具生成的json文件
+	 * 
+	 * @param fileNameInAsset
+	 *                放在asset文件夹里的json文件名
+	 * @return
+	 */
+	public static YTiledBean parseFromTiledJson(String fileNameInAsset,
+			Resources resources)
 	{
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.configure(
 				DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,
 				false);
-
+		InputStream input = null;
 		try
 		{
-			return mapper.readValue(new File(
-					"src/example.json"), YTiledBean.class);
+			input = resources.getAssets().open(fileNameInAsset);
+			return mapper.readValue(input, YTiledBean.class);
 		} catch (Exception e)
 		{
 			e.printStackTrace();
 			throw new YException("解析tiled_json文件失败", TAG, "");
-		} 
+		} finally
+		{
+			if (null != input)
+				try
+				{
+					input.close();
+				} catch (IOException e)
+				{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+		}
 	}
 }
