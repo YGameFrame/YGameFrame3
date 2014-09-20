@@ -74,8 +74,13 @@ abstract class YABlankProgram extends
 
 		setUniformMatrix("uPVMMatrix", bundle.readFloatArray(PVM));
 
-		drawWithIBO(skeleton.getIndexHandle(), skeleton.getVertexNum(),
-				domainView.iDrawMode);
+		if (skeleton.hasIBO())
+			drawWithIBO(skeleton.getIndexHandle(),
+					skeleton.getVertexNum(),
+					domainView.iDrawMode);
+		else
+			drawWithVBO(skeleton.getVertexNum(),
+					domainView.iDrawMode);
 	}
 
 	/**

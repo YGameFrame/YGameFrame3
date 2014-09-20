@@ -167,6 +167,14 @@ public abstract class YABaseShaderProgram
 				GLES20.GL_UNSIGNED_SHORT, 0);
 	}
 
+	public static void drawWithVBO(int iVertexNum, int iDrawMode)
+	{
+		// Clear the currently bound buffer (so future OpenGL calls do
+		// not use this buffer).
+		GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, 0);
+		GLES20.glDrawArrays(iDrawMode, 0, iVertexNum);
+	}
+
 	/**
 	 * <b>参数适配器</b>
 	 * 
@@ -199,6 +207,10 @@ public abstract class YABaseShaderProgram
 	// 自己匹配键值即可，从而不用向外界声明这些繁琐的键值。
 	public static abstract class YABaseParametersAdapter
 	{
+		protected YABaseParametersAdapter()
+		{
+		}
+
 		/**
 		 * 将<b>适配器</b>中的属性依次映射进<b>可写包裹</b> {@link YWriteBundle}
 		 * 

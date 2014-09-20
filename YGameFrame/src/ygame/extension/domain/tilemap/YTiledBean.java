@@ -25,6 +25,10 @@ public final class YTiledBean
 	private YTileSet[] tilesets;
 	private YProperties properties;
 
+	YTiledBean()
+	{
+	}
+
 	public int getWidth()
 	{
 		return width;
@@ -121,6 +125,10 @@ public final class YTiledBean
 		// 暂未使用，此字段意义尚不清楚，似乎只有对象层才有？
 		// private String draworder;
 
+		YLayer()
+		{
+		}
+
 		public int getHeight()
 		{
 			return height;
@@ -187,9 +195,9 @@ public final class YTiledBean
 			//@formatter:off
 			StringBuilder sb = new StringBuilder();
 			sb.append("\nname:").append(name).append('\n')
-			.append("height:").append(height).append(' ').append("width:").append(width).append("\n")
-			.append("x:").append(x).append(' ').append("y:").append(y).append('\n')
-			.append("data:").append(Arrays.toString(data)).append('\n');
+				.append("height:").append(height).append(' ').append("width:").append(width).append("\n")
+				.append("x:").append(x).append(' ').append("y:").append(y).append('\n')
+				.append("data:").append(Arrays.toString(data)).append('\n');
 			//@formatter:on
 			return sb.toString();
 		}
@@ -207,6 +215,10 @@ public final class YTiledBean
 		// 暂未使用
 		// private int spacing;
 		private int tileheight, tilewidth;
+
+		YTileSet()
+		{
+		}
 
 		public int getFirstgid()
 		{
@@ -310,6 +322,27 @@ public final class YTiledBean
 
 	public static class YProperties
 	{
+		private float unitlength;
+
+		YProperties()
+		{
+		}
+
+		public float getUnitlength()
+		{
+			return unitlength;
+		}
+
+		void setUnitlength(float unitlength)
+		{
+			this.unitlength = unitlength;
+		}
+
+		@Override
+		public String toString()
+		{
+			return "UnitLength:" + unitlength;
+		}
 
 	}
 
@@ -319,11 +352,11 @@ public final class YTiledBean
 		//@formatter:off
 		StringBuilder sb = new StringBuilder();
 		sb.append("version:").append(version).append('\n')
-		.append("height:").append(height).append(' ').append("width:").append(width).append("\n")
-		.append("tileheight:").append(tileheight).append(' ').append("tilewidth:").append(tilewidth).append('\n')
-		.append("properties:").append(properties.toString()).append('\n')
-		.append("-----------------layers-start----------------").append('\n').append(Arrays.toString(layers)).append("-----------------layers-end----------------\n")
-		.append("-----------------tilesets-start----------------").append('\n').append(Arrays.toString(tilesets)).append("-----------------tilesets-end----------------\n");
+			.append("height:").append(height).append(' ').append("width:").append(width).append("\n")
+			.append("tileheight:").append(tileheight).append(' ').append("tilewidth:").append(tilewidth).append('\n')
+			.append("properties:").append(properties.toString()).append('\n')
+			.append("-----------------layers-start----------------").append('\n').append(Arrays.toString(layers)).append("-----------------layers-end----------------\n")
+			.append("-----------------tilesets-start----------------").append('\n').append(Arrays.toString(tilesets)).append("-----------------tilesets-end----------------\n");
 		//@formatter:on
 		return sb.toString();
 	}
@@ -359,7 +392,6 @@ public final class YTiledBean
 					input.close();
 				} catch (IOException e)
 				{
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 		}

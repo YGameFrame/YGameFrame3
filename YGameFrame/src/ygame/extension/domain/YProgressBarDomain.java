@@ -145,9 +145,13 @@ public final class YProgressBarDomain extends YBaseDomain
 			setAttribute("aTexCoord",
 					skeleton.getTexCoordDataSource());
 
-			drawWithIBO(skeleton.getIndexHandle(),
-					skeleton.getVertexNum(),
-					domainView.iDrawMode);
+			if (skeleton.hasIBO())
+				drawWithIBO(skeleton.getIndexHandle(),
+						skeleton.getVertexNum(),
+						domainView.iDrawMode);
+			else
+				drawWithVBO(skeleton.getVertexNum(),
+						domainView.iDrawMode);;
 		}
 
 	}

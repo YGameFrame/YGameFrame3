@@ -113,8 +113,13 @@ public final class YSimpleProgram extends YAShaderProgram
 		// bundle.readFloatArray(YSimpleParamAdapter.MATRIX_PVM),
 		// 0);
 
-		drawWithIBO(skeleton.getIndexHandle(), skeleton.getVertexNum(),
-				domainView.iDrawMode);
+		if (skeleton.hasIBO())
+			drawWithIBO(skeleton.getIndexHandle(),
+					skeleton.getVertexNum(),
+					domainView.iDrawMode);
+		else
+			drawWithVBO(skeleton.getVertexNum(),
+					domainView.iDrawMode);
 	}
 
 	/**

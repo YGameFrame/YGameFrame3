@@ -4,6 +4,7 @@ import java.nio.Buffer;
 import java.util.Random;
 
 import android.opengl.GLES20;
+import ygame.exception.YException;
 import ygame.program.YAttributeType;
 import ygame.utils.YBufferUtils;
 
@@ -11,9 +12,8 @@ import ygame.utils.YBufferUtils;
  * <b>顶点骨架</b>
  * 
  * <p>
- * <b>概述</b>： 该对象封装了顶点具有四项基本属性：顶点的坐标（x , y ,
- * z）（浮点型）、顶点的颜色（r , g , b , a）（浮点型）、顶点的法向量（nx , ny ,
- * nz）（浮点型）、顶点的纹理坐标（s , t）（浮点型），以及这些顶点 的索引（短整型）。
+ * <b>概述</b>： 该对象封装了顶点具有四项基本属性：顶点的坐标（x , y , z）（浮点型）、顶点的颜色（r , g , b ,
+ * a）（浮点型）、顶点的法向量（nx , ny , nz）（浮点型）、顶点的纹理坐标（s , t）（浮点型），以及这些顶点 的索引（短整型）。
  * 
  * <p>
  * <b>建议</b>： TODO
@@ -42,9 +42,10 @@ public abstract class YSkeleton
 	private Buffer bufferIndex;
 	private int iIndexHandle = -1;
 
+	private boolean bHasIBO;
+
 	/**
-	 * 设置顶点位置坐标，默认其类型为<b>三维浮点向量</b>
-	 * {@link YAttributeType#VEC3}
+	 * 设置顶点位置坐标，默认其类型为<b>三维浮点向量</b> {@link YAttributeType#VEC3}
 	 * 
 	 * @param f_arrPosition
 	 *                顶点位置坐标数组
@@ -53,11 +54,11 @@ public abstract class YSkeleton
 	{
 		aPosition = new YAttributeDataSource(f_arrPosition,
 				YAttributeType.VEC3);
+		iVertexNum = f_arrPosition.length / 3;
 	}
 
 	/**
-	 * 设置顶点法向量，默认其类型为<b>三维浮点向量</b>
-	 * {@link YAttributeType#VEC3}
+	 * 设置顶点法向量，默认其类型为<b>三维浮点向量</b> {@link YAttributeType#VEC3}
 	 * 
 	 * @param f_arrNormals
 	 *                顶点法向量数组
@@ -69,8 +70,7 @@ public abstract class YSkeleton
 	}
 
 	/**
-	 * 设置顶点纹理坐标，默认其类型为<b>二维浮点向量</b>
-	 * {@link YAttributeType#VEC2}
+	 * 设置顶点纹理坐标，默认其类型为<b>二维浮点向量</b> {@link YAttributeType#VEC2}
 	 * 
 	 * @param f_arrTexCoords
 	 *                顶点纹理坐标数组
@@ -82,8 +82,7 @@ public abstract class YSkeleton
 	}
 
 	/**
-	 * 设置顶点颜色，默认其类型为<b>四维浮点向量</b>
-	 * {@link YAttributeType#VEC4}
+	 * 设置顶点颜色，默认其类型为<b>四维浮点向量</b> {@link YAttributeType#VEC4}
 	 * 
 	 * @param f_arrColors
 	 *                顶点颜色数组
@@ -102,9 +101,12 @@ public abstract class YSkeleton
 	 */
 	final protected void setIndices(short[] s_arrIndices)
 	{
+		if (null == s_arrIndices || 0 == s_arrIndices.length)
+			return;
 		bufferIndex = YBufferUtils
 				.transportArrayToNativeBuffer(s_arrIndices);
 		iVertexNum = s_arrIndices.length;
+		bHasIBO = true;
 	}
 
 	/**
@@ -164,6 +166,9 @@ public abstract class YSkeleton
 	 */
 	final public int getIndexHandle()
 	{
+		if (!bHasIBO)
+			throw new YException("该骨架没有索引缓冲区", getClass()
+					.getSimpleName(), "请使用顶点绘制");
 		if (!GLES20.glIsBuffer(iIndexHandle))
 			iIndexHandle = YBufferUtils.upload(bufferIndex,
 					GLES20.GL_ELEMENT_ARRAY_BUFFER, 2,
@@ -179,6 +184,11 @@ public abstract class YSkeleton
 	final public int getVertexNum()
 	{
 		return iVertexNum;
+	}
+
+	final public boolean hasIBO()
+	{
+		return bHasIBO;
 	}
 
 	private static Random random = new Random();

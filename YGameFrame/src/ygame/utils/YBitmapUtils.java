@@ -3,6 +3,7 @@ package ygame.utils;
 import java.util.ArrayList;
 
 import android.graphics.Bitmap;
+import android.graphics.Rect;
 
 public final class YBitmapUtils
 {
@@ -35,7 +36,6 @@ public final class YBitmapUtils
 		ArrayList<Bitmap> pieces = new ArrayList<Bitmap>(xPiece
 				* yPiece);
 		for (int i = 0; i < yPiece; i++)
-		{
 			for (int j = 0; j < xPiece; j++)
 			{
 				int xValue = j * pieceWidth;
@@ -45,11 +45,35 @@ public final class YBitmapUtils
 						pieceHeight);
 				pieces.add(piece);
 			}
-		}
 
 		if (bRecycleBigBmp)
 			bigBmp.recycle();
 
 		return pieces.toArray(new Bitmap[0]);
 	}
+
+	public static Rect[] splitBitmapOnlyForMetaData(Bitmap bigBmp,
+			int horizonTileNum, int verticalTileNum)
+	{
+		// xPiece 要分的行数 ，yPiece 要分得列数 pieceWidth每个图片的宽度
+		// pieceHeight每个图片的高度
+		final int xPiece = horizonTileNum;
+		final int yPiece = verticalTileNum;
+		final int pieceWidth = bigBmp.getWidth() / xPiece;
+		final int pieceHeight = bigBmp.getHeight() / yPiece;
+		ArrayList<Rect> pieces = new ArrayList<Rect>(xPiece * yPiece);
+		for (int i = 0; i < yPiece; i++)
+			for (int j = 0; j < xPiece; j++)
+			{
+				int xValue = j * pieceWidth;
+				int yValue = i * pieceHeight;
+				Rect piece = new Rect(xValue, yValue, xValue
+						+ pieceWidth, yValue
+						+ pieceHeight);
+				pieces.add(piece);
+			}
+
+		return pieces.toArray(new Rect[0]);
+	}
+
 }
