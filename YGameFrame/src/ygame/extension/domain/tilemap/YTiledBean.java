@@ -322,28 +322,27 @@ public final class YTiledBean
 
 	public static class YProperties
 	{
-		private float unitlength;
+		private int pixels_per_unit;
 
 		YProperties()
 		{
 		}
 
-		public float getUnitlength()
+		public int getPixels_per_unit()
 		{
-			return unitlength;
+			return pixels_per_unit;
 		}
 
-		void setUnitlength(float unitlength)
+		void setPixels_per_unit(int pixels_per_unit)
 		{
-			this.unitlength = unitlength;
+			this.pixels_per_unit = pixels_per_unit;
 		}
 
 		@Override
 		public String toString()
 		{
-			return "UnitLength:" + unitlength;
+			return "pixels_per_unit:" + getPixels_per_unit();
 		}
-
 	}
 
 	@Override
