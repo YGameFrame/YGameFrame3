@@ -31,12 +31,13 @@ public abstract class YATileMapDomain extends YClusterDomain
 			int i = drawableName.lastIndexOf('/');
 			drawableName = drawableName.substring(i + 1);
 			drawableName = drawableName.split("\\.")[0];
-			int resId = resources.getIdentifier(drawableName, "drawable",
-					context.getPackageName());
+			int resId = resources.getIdentifier(drawableName,
+					"drawable", context.getPackageName());
 			Options options = new Options();
 			options.inScaled = false;
-			bmpMap.put(drawableName, BitmapFactory.decodeResource(
-					resources, resId, options));
+			bmpMap.put(tileSet.getName(), BitmapFactory
+					.decodeResource(resources, resId,
+							options));
 		}
 	}
 
