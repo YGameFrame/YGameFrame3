@@ -80,7 +80,7 @@ final class YHierarchyTileMap extends YATileMapDomain
 					layers[i], layerDomainKey);
 			domains.add(domain);
 		}
-		addComponentDomains(domains, system);
+		addComponentDomains(domains);
 	}
 
 	private YDomain buildLayerDomain(float fPixelsPerUnit, YLayer layer,

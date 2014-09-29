@@ -130,7 +130,7 @@ public class YTileMapDomain extends YClusterDomain
 	protected void onAttach(YSystem system)
 	{
 		super.onAttach(system);
-		addComponentDomains(componentDomains, system);
+		addComponentDomains(componentDomains);
 		componentDomains = null;
 	}
 

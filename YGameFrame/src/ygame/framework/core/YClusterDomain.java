@@ -69,8 +69,7 @@ public class YClusterDomain extends YABaseDomain
 		return false;
 	}
 
-	public void addComponentDomains(Collection<YABaseDomain> domains,
-			YSystem system)
+	public void addComponentDomains(Collection<YABaseDomain> domains)
 	{
 		YClusterDomainRequest request = new YClusterDomainRequest(
 				YClusterDomainRequest.iADD_COMPONENTS, this,
