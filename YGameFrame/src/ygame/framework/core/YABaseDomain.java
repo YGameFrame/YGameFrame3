@@ -1,5 +1,7 @@
 package ygame.framework.core;
 
+import java.util.concurrent.ConcurrentLinkedQueue;
+
 import ygame.framework.core.YSystem.YAStateMachineContext;
 import ygame.math.YMatrix;
 
@@ -33,6 +35,8 @@ public abstract class YABaseDomain extends YAStateMachineContext
 
 	private boolean bAttached;
 
+	private ConcurrentLinkedQueue<YRequest> penddingReqs = new ConcurrentLinkedQueue<YRequest>();
+
 	/**
 	 * @param KEY
 	 *                参阅{@link #KEY}
@@ -56,6 +60,11 @@ public abstract class YABaseDomain extends YAStateMachineContext
 			return;
 		bAttached = true;
 		this.system = system;
+
+		YRequest req = null;
+		while (null != (req = penddingReqs.poll()))
+			sendRequest(req);
+
 		onAttach(system);
 	}
 
@@ -151,6 +160,12 @@ public abstract class YABaseDomain extends YAStateMachineContext
 	 */
 	public final void sendRequest(YRequest request)
 	{
+		// TODO thread may be unsafe
+		if (null == system)
+		{
+			penddingReqs.add(request);
+			return;
+		}
 		sendRequest(request, system);
 	}
 }
