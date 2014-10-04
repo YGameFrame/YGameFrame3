@@ -88,7 +88,7 @@ public class YScene extends YAStateMachineContext
 			return true;
 
 		case YSceneRequest.KEY.iREMOVE_DOMAINS:
-			handleRemoveDomains(request.domains , request.domainKeys);
+			handleRemoveDomains(request.domains, request.domainKeys);
 			return true;
 
 		case YSceneRequest.KEY.iTO_QUIT:
@@ -128,8 +128,9 @@ public class YScene extends YAStateMachineContext
 	{
 		for (YABaseDomain domain : domains)
 		{
-			if(mapDomains.containsKey(domain.KEY))
-				throw new YException("重复添加实体或实体键冲突", getClass().getSimpleName(), 
+			if (mapDomains.containsKey(domain.KEY))
+				throw new YException("重复添加实体或实体键冲突", getClass()
+						.getSimpleName(),
 						"1.不同实体应该拥有不同的键；2.同一实体不应多次被添加");
 			mapDomains.put(domain.KEY, domain);
 			domain.attach(SYSTEM);
@@ -160,11 +161,11 @@ public class YScene extends YAStateMachineContext
 	 */
 	public void removeDomains(String... domainKEYs)
 	{
-//		YABaseDomain[] domains = new YABaseDomain[domainKEYs.length];
-//		for (int i = 0; i < domainKEYs.length; i++)
-//			domains[i] = mapDomains.get(domainKEYs[i]);
-//
-//		removeDomains(domains);
+		// YABaseDomain[] domains = new YABaseDomain[domainKEYs.length];
+		// for (int i = 0; i < domainKEYs.length; i++)
+		// domains[i] = mapDomains.get(domainKEYs[i]);
+		//
+		// removeDomains(domains);
 		YSceneRequest request = new YSceneRequest(
 				YSceneRequest.KEY.iREMOVE_DOMAINS,
 				YWhen.BEFORE_RENDER);
@@ -172,12 +173,13 @@ public class YScene extends YAStateMachineContext
 		sendRequest(request, SYSTEM);
 	}
 
-	private void handleRemoveDomains(YABaseDomain[] domains, String[] domainKeys)
+	private void handleRemoveDomains(YABaseDomain[] domains,
+			String[] domainKeys)
 	{
 		if (null != domains)
 			for (YABaseDomain domain : domains)
 				mapDomains.remove(domain.KEY);
-		
+
 		if (null != domainKeys)
 			for (String key : domainKeys)
 				mapDomains.remove(key);
@@ -217,12 +219,13 @@ public class YScene extends YAStateMachineContext
 			plugin.onClock(dbDeltaTime_s);
 	}
 
-	public final void addClockerPlugin(YISceneClockerPlugin... clockerPlugin)
+	public final void addClockerPlugin(
+			YISceneClockerPlugin... clockerPlugin)
 	{
 		for (YISceneClockerPlugin plugin : clockerPlugin)
 			this.clockerPlugins.add(plugin);
 	}
-	
+
 	/**
 	 * 在该场景中查找指定实体对象
 	 * 
@@ -275,13 +278,13 @@ public class YScene extends YAStateMachineContext
 		Collection<YABaseDomain> domains = mapDomains.values();
 		for (YABaseDomain domain : domains)
 		{
-			try
-			{
+//			try
+//			{
 				domain.onDraw(SYSTEM);
-			} catch (Exception e)
-			{
-				e.printStackTrace();
-			}
+//			} catch (Exception e)
+//			{
+//				e.printStackTrace();
+//			}
 		}
 	}
 

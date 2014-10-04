@@ -175,7 +175,7 @@ public final class YSystem
 			// 以新速率重启
 			start();
 	}
-	
+
 	/**
 	 * 在系统里全局查找指定的实体对象
 	 * 
@@ -482,6 +482,8 @@ public final class YSystem
 			sceneCurrent.onDraw();
 		} catch (Exception e)
 		{
+			if (e instanceof YException)
+				throw new RuntimeException(e);
 			e.printStackTrace();
 		} finally
 		{
@@ -575,6 +577,8 @@ public final class YSystem
 				notifyClockCycle();
 			} catch (Exception e)
 			{
+				if (e instanceof YException)
+					throw new RuntimeException(e);
 				e.printStackTrace();
 			} finally
 			{
