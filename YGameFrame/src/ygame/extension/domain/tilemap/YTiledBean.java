@@ -117,11 +117,11 @@ public final class YTiledBean
 		// 暂未使用
 		// private boolean visible;
 		private int x, y;
-		// 暂未使用，此字段意义尚不清楚
-		// private String type;
+		private String type;
 		private String name;
 		private int[] data;
-
+		
+		private YObject[] objects;
 		// 暂未使用，此字段意义尚不清楚，似乎只有对象层才有？
 		// private String draworder;
 
@@ -189,6 +189,22 @@ public final class YTiledBean
 			this.data = data;
 		}
 
+		public String getType() {
+			return type;
+		}
+
+		void setType(String type) {
+			this.type = type;
+		}
+		
+		public YObject[] getObjects() {
+			return objects;
+		}
+
+		void setObjects(YObject[] objects) {
+			this.objects = objects;
+		}
+
 		@Override
 		public String toString()
 		{
@@ -197,12 +213,57 @@ public final class YTiledBean
 			sb.append("\nname:").append(name).append('\n')
 				.append("height:").append(height).append(' ').append("width:").append(width).append("\n")
 				.append("x:").append(x).append(' ').append("y:").append(y).append('\n')
-				.append("data:").append(Arrays.toString(data)).append('\n');
+				.append("data:").append(Arrays.toString(data)).append('\n')
+				.append("type:").append(type).append('\n');
 			//@formatter:on
 			return sb.toString();
 		}
+
 	}
 
+	public static class YObject{
+		private YPolygon[] polygon;
+		private int x, y;
+		public int getY() {
+			return y;
+		}
+		void setY(int y) {
+			this.y = y;
+		}
+		public int getX() {
+			return x;
+		}
+		void setX(int x) {
+			this.x = x;
+		}
+		public YPolygon[] getPolygon() {
+			return polygon;
+		}
+		void setPolygon(YPolygon[] polygon) {
+			this.polygon = polygon;
+		}
+	}
+	
+	public static class YPolygon{
+		private int x, y;
+
+		public int getX() {
+			return x;
+		}
+
+		void setX(int x) {
+			this.x = x;
+		}
+
+		public int getY() {
+			return y;
+		}
+
+		void setY(int y) {
+			this.y = y;
+		}
+	}
+	
 	public static class YTileSet
 	{
 		private int firstgid;

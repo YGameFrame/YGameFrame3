@@ -394,8 +394,8 @@ public class YTexture
 	 */
 	public void setBitmap(Bitmap bitmap, boolean recycleSourceBmp)
 	{
-		if (bitmap == this.bitmap)
-			return;
+//		if (bitmap == this.bitmap)
+//			return;
 
 		this.bitmap = bitmap;
 		this.bNoBitmap = false;
