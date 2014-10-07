@@ -200,6 +200,7 @@ public class YDestructibleTerrain extends YATileMapDomain {
 			// TODO Auto-generated constructor stub
 			this.skeleton = skeleton;
 			this.texture = texture;
+			mover.setZ(-1);
 		}
 
 		@Override
