@@ -278,13 +278,15 @@ public class YScene extends YAStateMachineContext
 		Collection<YABaseDomain> domains = mapDomains.values();
 		for (YABaseDomain domain : domains)
 		{
-//			try
-//			{
+			try
+			{
 				domain.onDraw(SYSTEM);
-//			} catch (Exception e)
-//			{
-//				e.printStackTrace();
-//			}
+			} catch (Exception e)
+			{
+				if (e instanceof YException)
+					throw new YException((YException) e);
+				e.printStackTrace();
+			}
 		}
 	}
 

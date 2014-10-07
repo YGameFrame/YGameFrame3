@@ -9,6 +9,10 @@ public class YException extends RuntimeException
 	 */
 	private static final long serialVersionUID = 1L;
 
+	private final String detailMsg;
+	private final String tag;
+	private final String suggest;
+
 	/**
 	 * @param strDetailMessage
 	 *                异常的详细信息
@@ -22,5 +26,13 @@ public class YException extends RuntimeException
 	{
 		super(strDetailMessage);
 		Log.e(strTag, strSuggest + "\n" + strDetailMessage);
+		this.detailMsg = strDetailMessage;
+		this.tag = strTag;
+		this.suggest = strSuggest;
+	}
+
+	public YException(YException e)
+	{
+		this(e.detailMsg , e.tag , e.suggest);
 	}
 }
