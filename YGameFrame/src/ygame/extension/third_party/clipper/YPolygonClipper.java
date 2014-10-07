@@ -50,6 +50,9 @@ public class YPolygonClipper {
 		createEdgeBody(world, domainContext);
 		Body oriBody = findBody("oriTerrain", world);
 		if (oriBody != null) {
+			while(world.isLocked()){
+				continue;
+			}
 			world.destroyBody(oriBody);
 		}
 	}
@@ -81,7 +84,6 @@ public class YPolygonClipper {
 		bodyDef.position.set(0, 0);
 		bodyDef.type = BodyType.STATIC;
 		while(world.isLocked()){
-			System.out.println(world.isLocked());
 			continue;
 		}
 		body = world.createBody(bodyDef);
@@ -122,6 +124,9 @@ public class YPolygonClipper {
 
 		shape.set(v1, v2);
 		fixtureDef.shape = shape;
+		while(world.isLocked()){
+			continue;
+		}
 		body.createFixture(fixtureDef);
 	}
 }
