@@ -1,4 +1,4 @@
-package ygame.extension.domain.tilemap;
+package ygame.extension.domain.tilemap.parse_plugin;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,6 +14,7 @@ import ygame.domain.YADomainLogic;
 import ygame.domain.YDomain;
 import ygame.domain.YDomainView;
 import ygame.exception.YException;
+import ygame.extension.domain.tilemap.YTiledBean;
 import ygame.extension.domain.tilemap.YTiledBean.YLayer;
 import ygame.extension.domain.tilemap.YTiledBean.YTileSet;
 import ygame.extension.program.YTextureProgram;
@@ -31,35 +32,33 @@ import ygame.transformable.YMover;
 import ygame.utils.YBitmapUtils;
 import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
 import android.graphics.Rect;
 import android.graphics.RectF;
 
-//支持1 tileset -> 多 layer，但不支持1 layer -> 多tileset
-//但目前支持1索引图对应1layer，一索引图对应多layer有bug，正在解决中
-@Deprecated
-final class YHierarchyTileMap extends YATileMapDomain
+public class YImageLayerParsePlugin implements YITileMapParsePlugin
 {
+
 	private static final int DEFAULT_PIXELS_PER_UNIT = 32;
 	private static final float MAP_DEEPTH = 0.01f;
 
-	private static final String TAG = YHierarchyTileMap.class
+	private static final String TAG = YImageLayerParsePlugin.class
 			.getSimpleName();
 
 	private Map<String, RectF[]> tileSetsCoords = new HashMap<String, RectF[]>();
 
 	private Resources resources;
-
-	protected YHierarchyTileMap(String KEY, String jsonFileNameInAsset,
-			Context context)
-	{
-		super(KEY, jsonFileNameInAsset, context);
-		this.resources = context.getResources();
-	}
+	private Map<String, Bitmap> indexPictures;
+	private YTiledBean tiledBean;
 
 	@Override
-	protected void onAttach(YSystem system)
+	public Collection<YABaseDomain> parse(YTiledBean tiledBean,
+			Map<String, Bitmap> indexPictures, String key,
+			Context context)
 	{
-		super.onAttach(system);
+		this.indexPictures = indexPictures;
+		this.tiledBean = tiledBean;
+		this.resources = context.getResources();
 
 		// 1.生成砖块集合（索引图集合）纹理信息
 		YTileSet[] tilesets = tiledBean.getTilesets();
@@ -78,15 +77,15 @@ final class YHierarchyTileMap extends YATileMapDomain
 		{
 			if (YLayer.TYPE_TILE_LAYER.equals(layers[i].getType()))
 			{
-				final String layerDomainKey = KEY + "_layer_"
-						+ i;
+				final String layerDomainKey = key
+						+ YLayer.TYPE_TILE_LAYER + i;
 				YDomain domain = buildLayerDomain(
 						fPixelsPerUnit, layers[i],
 						layerDomainKey);
 				domains.add(domain);
 			}
 		}
-		addComponentDomains(domains);
+		return domains;
 	}
 
 	private YDomain buildLayerDomain(float fPixelsPerUnit, YLayer layer,
@@ -110,6 +109,11 @@ final class YHierarchyTileMap extends YATileMapDomain
 				new YDomainView(YTextureProgram.getInstance(resources)));
 		//@formatter:on
 		return domain;
+	}
+
+	private Bitmap getBitmapByName(String name)
+	{
+		return indexPictures.get(name);
 	}
 
 	/**
@@ -188,7 +192,7 @@ final class YHierarchyTileMap extends YATileMapDomain
 		RectF[] textureCoords = tileSetsCoords.get(tileSet.getName());
 		int[] layerDatas = layer.getData();
 		final int firstgid = tileSet.getFirstgid();
-		Collection<YTileData> tileDatas = new ArrayList<YHierarchyTileMap.YTileData>();
+		Collection<YTileData> tileDatas = new ArrayList<YTileData>();
 		for (int data : layerDatas)
 		{
 			if (0 != data)

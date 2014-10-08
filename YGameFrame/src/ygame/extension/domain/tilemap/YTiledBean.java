@@ -111,6 +111,8 @@ public final class YTiledBean
 
 	public static class YLayer
 	{
+		public static final String TYPE_TILE_LAYER = "tilelayer";
+		
 		private int height, width;
 		// 暂未使用，此字段意义尚不清楚
 		// private int opacity;
