@@ -1,6 +1,7 @@
 package ygame.extension.domain.tilemap;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,6 +10,7 @@ import org.jbox2d.dynamics.World;
 
 import ygame.extension.domain.tilemap.YTiledBean.YTileSet;
 import ygame.extension.domain.tilemap.parse_plugin.YITileMapParsePlugin;
+import ygame.framework.core.YABaseDomain;
 import ygame.framework.core.YClusterDomain;
 import android.content.Context;
 import android.content.res.Resources;
@@ -77,10 +79,15 @@ public class YATileMapDomain extends YClusterDomain
 			YATileMapDomain domainMap = new YATileMapDomain(key,
 					jsonFileName, context);
 			for (YITileMapParsePlugin plugin : plugins)
-				domainMap.addComponentDomains(plugin.parse(
-						domainMap.tiledBean,
-						domainMap.bmpMap,
-						domainMap.KEY, context));
+			{
+				Collection<YABaseDomain> domains = plugin
+						.parse(domainMap.tiledBean,
+								domainMap.bmpMap,
+								domainMap.KEY,
+								context);
+				if (null != domains)
+					domainMap.addComponentDomains(domains);
+			}
 			return domainMap;
 		}
 	}
