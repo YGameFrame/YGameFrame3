@@ -123,7 +123,7 @@ public class YScene extends YAStateMachineContext
 		request.domains = domains;
 		sendRequest(request, SYSTEM);
 	}
-
+	
 	private void handleAddDomains(YABaseDomain[] domains)
 	{
 		for (YABaseDomain domain : domains)
