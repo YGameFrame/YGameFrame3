@@ -27,7 +27,6 @@ public final class YTiled
 
 	private static final String TAG = YTiled.class.getSimpleName();
 
-	private List<YITiledParsePlugin> parsePlugins = new ArrayList<YITiledParsePlugin>();
 	private YScene scene;
 	private Resources resources;
 
@@ -36,7 +35,7 @@ public final class YTiled
 
 	final private float fPixelsPerUnit;
 
-	public YTiled(YScene scene, String jsonFileNameInAssert, Context context)
+	YTiled(YScene scene, String jsonFileNameInAssert, Context context)
 	{
 		this.scene = scene;
 		this.resources = context.getResources();
@@ -47,19 +46,25 @@ public final class YTiled
 		fPixelsPerUnit = confirmPixelsPerUnit(tiledBean);
 	}
 
-	public YTiled append(YITiledParsePlugin plugin)
+	public void addToScene(YABaseDomain... domains)
 	{
-		parsePlugins.add(plugin);
-		return this;
+		scene.addDomains(domains);
+		bInvokeAddToScence = true;
 	}
 
-	public void parse()
+	private boolean bInvokeAddToScence;
+
+	void parse(Collection<YITiledParsePlugin> parsePlugins)
 	{
 		for (YITiledParsePlugin plugin : parsePlugins)
 		{
-			Collection<YABaseDomain> domains = plugin.parse(
-					this, fPixelsPerUnit , resources);
-			scene.addDomains(domains.toArray(new YABaseDomain[0]));
+			bInvokeAddToScence = false;
+			// 当plugin解析实体完成后，框架要求客户调用addToScene将之加入场景
+			plugin.parse(this, fPixelsPerUnit, resources);
+			if (!bInvokeAddToScence)// 检查客户是否调用addToScene，未调用则报异常提醒客户
+				throw new YException("您是否忘记调用addToScene(...)？",
+						TAG,
+						"实体解析完成后需要调用addToScene(...)将实体加入");
 		}
 	}
 
@@ -102,7 +107,11 @@ public final class YTiled
 	}
 
 	/**
-	 * 获取给定{@code YLayer}对应的索引位图对象
+	 * 获取给定{@code YLayer}对应的索引位图对象，
+	 * 引擎只支持<b>某个图层的索引图仅且仅来自于一个图层</b>，因此您可以通过该方法获取对应指定{@code layer}
+	 * 对应的唯一索引位图对象。
+	 * 
+	 * @see {@link #getIndexPicturesByTileSet(YTileSet)}
 	 * 
 	 * @param layer
 	 *                指定图层
@@ -113,6 +122,19 @@ public final class YTiled
 		return indexPics.get(getTileSetsByLayer(layer).getName());
 	}
 
+	/**
+	 * 获取给定{@code YTileSet}对应的索引位图对象，砖块集{@code YTileSet}仅包含诸如索引图的行列数等信息，
+	 * 并未包含所对应的{@code Bitmap}，想要获取对应的位图对象，可以该方法获取。
+	 * 
+	 * @param tileSet
+	 *                指定砖块集
+	 * @return 索引图
+	 */
+	public Bitmap getIndexPicturesByTileSet(YTileSet tileSet)
+	{
+		return indexPics.get(tileSet.getName());
+	}
+
 	//@formatter:off
 	/**
 	 * 选择指定图层对应的索引图</p> 
@@ -120,6 +142,8 @@ public final class YTiled
 	 * 多个索引图；</br>
 	 * 不过目前两个图层的砖块同时来自于一个索引图会产生黑块，
 	 * 正在解决中， 在解决该问题前，请让索引图和图层一一对应
+	 * @see {@linkplain #getIndexPictureByLayer(YLayer)}
+	 * 
 	 * @param layer 指定图层
 	 * @return 图层对应的索引图
 	 */
@@ -232,7 +256,7 @@ public final class YTiled
 	 * 
 	 * @return 一个砖块元的高度，像素为单位
 	 */
-	public int getTileHeight()
+	public int getTileHeightInPixels()
 	{
 		return tiledBean.getTileheight();
 	}
@@ -242,7 +266,7 @@ public final class YTiled
 	 * 
 	 * @return 一个砖块元的宽度，像素为单位
 	 */
-	public int getTileWidth()
+	public int getTileWidthInPixels()
 	{
 		return tiledBean.getTilewidth();
 	}
