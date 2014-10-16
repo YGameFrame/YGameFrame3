@@ -341,15 +341,15 @@ public class YStaticImageLayerParsePlugin implements YITiledParsePlugin
 			{ fLeft + fTileWidth - fXOffset, fTop + fYOffset, fZ };
 			float[] rightBottom =
 			{ fLeft + fTileWidth - fXOffset,
-					fTop + fTileHeight + fYOffset, fZ };
+					fTop - fTileHeight + fYOffset, fZ };
 			float[] leftBottom =
-			{ fLeft - fXOffset, fTop + fTileHeight + fYOffset, fZ };
+			{ fLeft - fXOffset, fTop - fTileHeight + fYOffset, fZ };
 
-			float[] tmp = concat(leftTopPos, rightBottom);
-			tmp = concat(tmp, leftBottom);
+			float[] tmp = concat(leftTopPos, leftBottom);
+			tmp = concat(tmp, rightBottom);
 			tmp = concat(tmp, leftTopPos);
-			tmp = concat(tmp, rightTopPos);
-			return concat(tmp, rightBottom);
+			tmp = concat(tmp, rightBottom);
+			return concat(tmp, rightTopPos);
 		}
 
 		/**
@@ -358,30 +358,30 @@ public class YStaticImageLayerParsePlugin implements YITiledParsePlugin
 		 */
 		private float[] generateSixTexCoords()
 		{
-			// float[] leftTopPos =
-			// { textureCoord.left, textureCoord.top };
-			// float[] rightTopPos =
-			// { textureCoord.right, textureCoord.top };
-			// float[] rightBottom =
-			// { textureCoord.right, textureCoord.bottom };
-			// float[] leftBottom =
-			// { textureCoord.left, textureCoord.bottom };
+			 float[] leftTopPos =
+			 { textureCoord.left, textureCoord.top };
+			 float[] rightTopPos =
+			 { textureCoord.right, textureCoord.top };
+			 float[] rightBottom =
+			 { textureCoord.right, textureCoord.bottom };
+			 float[] leftBottom =
+			 { textureCoord.left, textureCoord.bottom };
 
 			// OpenGL坐标与bitmap的坐标关于x轴镜像对称，故需上下颠倒一下
-			float[] leftBottom =
-			{ textureCoord.left, textureCoord.top };
-			float[] rightBottom =
-			{ textureCoord.right, textureCoord.top };
-			float[] rightTopPos =
-			{ textureCoord.right, textureCoord.bottom };
-			float[] leftTopPos =
-			{ textureCoord.left, textureCoord.bottom };
+//			float[] leftBottom =
+//			{ textureCoord.left, textureCoord.top };
+//			float[] rightBottom =
+//			{ textureCoord.right, textureCoord.top };
+//			float[] rightTopPos =
+//			{ textureCoord.right, textureCoord.bottom };
+//			float[] leftTopPos =
+//			{ textureCoord.left, textureCoord.bottom };
 
-			float[] tmp = concat(leftTopPos, rightBottom);
-			tmp = concat(tmp, leftBottom);
+			float[] tmp = concat(leftTopPos, leftBottom);
+			tmp = concat(tmp, rightBottom);
 			tmp = concat(tmp, leftTopPos);
-			tmp = concat(tmp, rightTopPos);
-			return concat(tmp, rightBottom);
+			tmp = concat(tmp, rightBottom);
+			return concat(tmp, rightTopPos);
 		}
 
 		private static final YTileData placeholderTileData = new YTileData(
