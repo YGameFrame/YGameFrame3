@@ -26,8 +26,7 @@ import ygame.state_machine.builder.YStateMachineBuilder;
 import ygame.texture.YTileSheet;
 import ygame.transformable.YMover;
 
-public abstract class YASpriteDomainLogic extends
-		YADomainLogic
+public abstract class YASpriteDomainLogic extends YADomainLogic
 {
 	private static final float RAD2DEG = 180 / MathUtils.PI;
 	private static final String TAG = YASpriteDomainLogic.class
@@ -52,6 +51,7 @@ public abstract class YASpriteDomainLogic extends
 	private World world;
 
 	private Orientation orientation = Orientation.RIGHT;
+	private boolean bCameraChase = true;
 
 	protected YASpriteDomainLogic(YTileSheet tileSheet,
 			float fSkeletonSideLen, World world)
@@ -140,8 +140,9 @@ public abstract class YASpriteDomainLogic extends
 		mover.setX(position.x).setY(position.y)
 				.setAngle(body.getAngle() * RAD2DEG);
 		// 3.摄像机追踪角色
-		sceneCurrent.getCurrentCamera().setX(position.x)
-				.setY(position.y);
+		if (bCameraChase)
+			sceneCurrent.getCurrentCamera().setX(position.x)
+					.setY(position.y);
 		// 4.将参数交予着色程序渲染
 		YTileProgram.YAdapter adapter = (YTileProgram.YAdapter) domainContext
 				.getParametersAdapter();
@@ -173,6 +174,16 @@ public abstract class YASpriteDomainLogic extends
 			YScene sceneCurrent, YBaseDomain domainContext)
 	{
 		return stateMachine.inputRequest(request);
+	}
+
+	public void setCameraChase(boolean bChase)
+	{
+		this.bCameraChase = bChase;
+	}
+
+	public boolean getCameraChase()
+	{
+		return bCameraChase;
 	}
 
 }

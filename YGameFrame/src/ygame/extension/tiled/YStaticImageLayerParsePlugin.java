@@ -27,6 +27,12 @@ import android.content.res.Resources;
 import android.graphics.Rect;
 import android.graphics.RectF;
 
+/**
+ * bitmap没有回收
+ * 
+ * @author yunhun.fyy
+ * 
+ */
 public class YStaticImageLayerParsePlugin implements YITiledParsePlugin
 {
 	private static final String TAG = YStaticImageLayerParsePlugin.class
@@ -94,7 +100,7 @@ public class YStaticImageLayerParsePlugin implements YITiledParsePlugin
 		//当骨架确定之后，万事大吉！随后新建实体即可
 		YDomain domain = new YDomain(
 				key,
-				new YTileMapLogic(skeleton,new YTexture(tiled.getIndexPictureByLayer(layer))),
+				new YTileMapLogic(skeleton,new YTexture(tiled.getIndexPictureByLayer(layer),false)),
 				new YDomainView(YTextureProgram.getInstance(resources)));
 		//@formatter:on
 		return domain;

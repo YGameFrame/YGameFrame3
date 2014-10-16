@@ -234,6 +234,9 @@ public final class YTiledBean
 	{
 		private YPolygon[] polygon;
 		private int x, y;
+		private String name;
+		private YPolygon[] polyline;
+//		private YObject.YProperties properties;
 
 		public int getY()
 		{
@@ -263,6 +266,62 @@ public final class YTiledBean
 		void setPolygon(YPolygon[] polygon)
 		{
 			this.polygon = polygon;
+		}
+
+		public String getName()
+		{
+			return name;
+		}
+
+		void setName(String name)
+		{
+			this.name = name;
+		}
+
+		public YPolygon[] getPolyline()
+		{
+			return polyline;
+		}
+
+		void setPolyline(YPolygon[] polyline)
+		{
+			this.polyline = polyline;
+		}
+
+//		public YObject.YProperties getProperties()
+//		{
+//			return properties;
+//		}
+//
+//		void setProperties(YObject.YProperties properties)
+//		{
+//			this.properties = properties;
+//		}
+
+		public static class YProperties
+		{
+			private float friction;
+			private float restitution;
+
+			public float getFriction()
+			{
+				return friction;
+			}
+
+			void setFriction(int friction)
+			{
+				this.friction = friction;
+			}
+
+			public float getRestitution()
+			{
+				return restitution;
+			}
+
+			void setRestitution(int restitution)
+			{
+				this.restitution = restitution;
+			}
 		}
 	}
 
