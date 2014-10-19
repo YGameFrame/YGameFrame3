@@ -20,6 +20,7 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.BitmapFactory.Options;
+import android.graphics.PointF;
 
 public final class YTiled
 {
@@ -269,5 +270,20 @@ public final class YTiled
 	public int getTileWidthInPixels()
 	{
 		return tiledBean.getTilewidth();
+	}
+	
+	/**
+	 * 将Tiled坐标转换为真实世界坐标
+	 * 
+	 * @param point Tiled坐标
+	 * @return 真实世界坐标
+	 */
+	public PointF tiledCoordToWorldCoord(PointF point) {
+		PointF pointInWorld = new PointF();
+		float centerX = getGlobalWidth()*getTileWidthInPixels()/2;
+		float centerY = getGlobalHeight()*getTileHeightInPixels()/2;
+		pointInWorld.x = (point.x - centerX)/fPixelsPerUnit;
+		pointInWorld.y = (centerY - point.y)/fPixelsPerUnit;
+		return pointInWorld;
 	}
 }

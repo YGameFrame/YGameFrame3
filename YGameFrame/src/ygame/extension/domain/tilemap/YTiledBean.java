@@ -233,12 +233,12 @@ public final class YTiledBean
 	public static class YObject
 	{
 		private YPolygon[] polygon;
-		private int x, y;
+		private float x, y;
 		private String name;
 		private YPolygon[] polyline;
 		private YObject.YProperties properties;
 
-		public int getY()
+		public float getY()
 		{
 			return y;
 		}
@@ -248,7 +248,7 @@ public final class YTiledBean
 			this.y = y;
 		}
 
-		public int getX()
+		public float getX()
 		{
 			return x;
 		}
@@ -327,9 +327,9 @@ public final class YTiledBean
 
 	public static class YPolygon
 	{
-		private int x, y;
+		private float x, y;
 
-		public int getX()
+		public float getX()
 		{
 			return x;
 		}
@@ -339,7 +339,7 @@ public final class YTiledBean
 			this.x = x;
 		}
 
-		public int getY()
+		public float getY()
 		{
 			return y;
 		}
