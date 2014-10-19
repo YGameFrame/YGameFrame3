@@ -286,4 +286,23 @@ public final class YTiled
 		pointInWorld.y = (centerY - point.y)/fPixelsPerUnit;
 		return pointInWorld;
 	}
+
+	/**
+	 * 将真实世界坐标转换为Tiled坐标
+	 * 
+	 * @param point 真实世界坐标
+	 * @return Tiled坐标
+	 */
+	public PointF worldCoordToTiledCoord(PointF point) {
+		PointF pointInTiled = new PointF();
+		float centerX = getGlobalWidth()*getTileWidthInPixels()/2;
+		float centerY = getGlobalHeight()*getTileHeightInPixels()/2;
+		pointInTiled.x = point.x*fPixelsPerUnit + centerX;
+		pointInTiled.y = centerY - point.y*fPixelsPerUnit;
+		return pointInTiled;
+	}
+	
+	public float getPixelsPerUnit() {
+		return fPixelsPerUnit;
+	}
 }

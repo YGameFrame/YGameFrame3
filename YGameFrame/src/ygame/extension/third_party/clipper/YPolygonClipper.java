@@ -15,13 +15,16 @@ import ygame.framework.domain.YBaseDomain;
 
 import com.seisw.util.geom.Poly;
 import com.seisw.util.geom.PolyDefault;
+import com.seisw.util.geom.Rectangle2D;
 
-import android.graphics.Point;
 import android.graphics.PointF;
+import android.graphics.RectF;
+
 /**
  * 基于第三方库General Polygon Clipper Library
+ * 
  * @author wangzi6147
- *
+ * 
  */
 public class YPolygonClipper {
 
@@ -43,14 +46,15 @@ public class YPolygonClipper {
 		}
 	}
 
-	public void clipCircle(float x, float y, float radius, YBaseDomain domainContext) {
+	public void clipCircle(float x, float y, float radius,
+			YBaseDomain domainContext) {
 		PolyDefault explosionPolygon = createCircle(20, new PointF(x, y),
 				radius);
 		polygon = (PolyDefault) polygon.difference(explosionPolygon);
 		createEdgeBody(world, domainContext);
 		Body oriBody = findBody("oriTerrain", world);
 		if (oriBody != null) {
-			while(world.isLocked()){
+			while (world.isLocked()) {
 				continue;
 			}
 			world.destroyBody(oriBody);
@@ -83,13 +87,13 @@ public class YPolygonClipper {
 		bodyDef = new BodyDef();
 		bodyDef.position.set(0, 0);
 		bodyDef.type = BodyType.STATIC;
-		while(world.isLocked()){
+		while (world.isLocked()) {
 			continue;
 		}
 		body = world.createBody(bodyDef);
 		body.setUserData("newTerrain");
 		body.setDomain(domainContext);
-		
+
 		fixtureDef = new FixtureDef();
 		shape = new EdgeShape();
 		for (int i = 0; i < polygon.getNumInnerPoly(); i++) {
@@ -124,9 +128,26 @@ public class YPolygonClipper {
 
 		shape.set(v1, v2);
 		fixtureDef.shape = shape;
-		while(world.isLocked()){
+		while (world.isLocked()) {
 			continue;
 		}
 		body.createFixture(fixtureDef);
+	}
+
+	public static RectF getBound(ArrayList<PointF> pointsForPolygon) {
+		RectF rect = new RectF();
+		PolyDefault polygon = toPolygon(pointsForPolygon);
+		Rectangle2D bounds = polygon.getBounds();
+		rect.set((float) bounds.getMinX(), (float) bounds.getMinY(),
+				(float) bounds.getMaxX(), (float) bounds.getMaxY());
+		return rect;
+	}
+
+	public static PolyDefault toPolygon(ArrayList<PointF> pointsForPolygon) {
+		PolyDefault polygon = new PolyDefault();
+		for (int i = 0; i < pointsForPolygon.size(); i++) {
+			polygon.add(pointsForPolygon.get(i).x, pointsForPolygon.get(i).y);
+		}
+		return polygon;
 	}
 }

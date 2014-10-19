@@ -2,12 +2,8 @@ package ygame.extension.domain.tilemap;
 
 import java.util.ArrayList;
 
-import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.World;
 
-import com.seisw.util.geom.Point2D;
-
-import ygame.domain.YABaseShaderProgram.YABaseParametersAdapter;
 import ygame.domain.YADomainLogic;
 import ygame.domain.YDomain;
 import ygame.domain.YDomainView;
@@ -26,7 +22,6 @@ import ygame.framework.core.YSystem;
 import ygame.framework.domain.YBaseDomain;
 import ygame.framework.domain.YWriteBundle;
 import ygame.math.YMatrix;
-import ygame.skeleton.YSkeleton;
 import ygame.texture.YTexture;
 import ygame.transformable.YMover;
 import ygame.utils.YBitmapUtils;
@@ -36,10 +31,8 @@ import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
-import android.graphics.Point;
 import android.graphics.PointF;
 import android.graphics.PorterDuff.Mode;
 import android.graphics.PorterDuffXfermode;
