@@ -13,6 +13,7 @@ import ygame.extension.domain.tilemap.YTiledBean.YTileSet;
 import ygame.extension.program.YTextureProgram;
 import ygame.extension.program.YTextureProgram.YAdapter;
 import ygame.framework.core.YABaseDomain;
+import ygame.framework.core.YClusterDomain;
 import ygame.framework.core.YRequest;
 import ygame.framework.core.YScene;
 import ygame.framework.core.YSystem;
@@ -80,7 +81,9 @@ public class YStaticImageLayerParsePlugin implements YITiledParsePlugin
 						+ layer.getType()
 						+ "的图层，只能解析图块图层", TAG, "");
 		}
-		tiled.addToScene(domains.toArray(new YABaseDomain[0]));
+		YClusterDomain clusterDomainMap = new YClusterDomain(domainKey);
+		clusterDomainMap.addComponentDomains(domains);
+		tiled.addToScene(clusterDomainMap);
 	}
 
 	private YDomain buildLayerDomain(float fPixelsPerUnit, YLayer layer,

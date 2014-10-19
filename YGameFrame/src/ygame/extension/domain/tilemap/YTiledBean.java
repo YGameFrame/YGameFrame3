@@ -302,6 +302,7 @@ public final class YTiledBean
 		{
 			private float friction;
 			private float restitution;
+			private String description;
 
 			public float getFriction()
 			{
@@ -321,6 +322,16 @@ public final class YTiledBean
 			void setRestitution(float restitution)
 			{
 				this.restitution = restitution;
+			}
+
+			public String getDescription()
+			{
+				return description;
+			}
+
+			void setDescription(String description)
+			{
+				this.description = description;
 			}
 		}
 	}

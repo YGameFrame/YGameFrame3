@@ -21,12 +21,14 @@ public class YStaticPolyLineTerrainParsePlugin implements YITiledParsePlugin
 			.getSimpleName();
 	private String[] layerNames;
 	private World world;
+	private String relevantDomainKey;
 
-	public YStaticPolyLineTerrainParsePlugin(World world,
-			String... layerNames)
+	public YStaticPolyLineTerrainParsePlugin(String relevantDomainKey,
+			World world, String... layerNames)
 	{
 		this.layerNames = layerNames;
 		this.world = world;
+		this.relevantDomainKey = relevantDomainKey;
 	}
 
 	@Override
@@ -68,6 +70,7 @@ public class YStaticPolyLineTerrainParsePlugin implements YITiledParsePlugin
 		BodyDef bd = new BodyDef();
 		bd.type = BodyType.STATIC;
 		Body body = world.createBody(bd);
+		body.setDomainKey(relevantDomainKey);
 		toPolyLineBody(body, object, offset, fPixelsPerUnit);
 	}
 
@@ -78,8 +81,8 @@ public class YStaticPolyLineTerrainParsePlugin implements YITiledParsePlugin
 		FixtureDef fd = new FixtureDef();
 		fd.shape = shape;
 		fd.density = 0;
-//		fd.friction = object.getProperties().getFriction();
-//		fd.restitution = object.getProperties().getRestitution();
+		fd.friction = object.getProperties().getFriction();
+		fd.restitution = object.getProperties().getRestitution();
 
 		Vec2 vec2Position = new Vec2(object.getX(), object.getY());
 		Vec2 vec2Pre = new Vec2(0, 0);
@@ -93,7 +96,9 @@ public class YStaticPolyLineTerrainParsePlugin implements YITiledParsePlugin
 			vec2Cur = tiledCoordToBox2dCoord(vec2Cur, vec2Position,
 					offset, fPixelsPerUnit);
 			shape.set(vec2Pre, vec2Cur);
-			body.createFixture(fd);
+			body.createFixture(fd)
+					.setUserData(object.getProperties()
+							.getDescription());
 			vec2Pre = vec2Cur;
 		}
 	}

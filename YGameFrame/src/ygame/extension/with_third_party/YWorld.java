@@ -11,34 +11,37 @@ import org.jbox2d.dynamics.World;
 import org.jbox2d.dynamics.contacts.Contact;
 import org.jbox2d.pooling.IWorldPool;
 
+import ygame.framework.core.YABaseDomain;
 import ygame.framework.core.YISceneClockerPlugin;
+import ygame.framework.core.YSystem;
 import ygame.utils.YLog;
 
 public class YWorld extends World implements YISceneClockerPlugin
 {
-
-	public YWorld(Vec2 gravity, IWorldPool pool, BroadPhase broadPhase)
+	public YWorld(Vec2 gravity, IWorldPool pool, BroadPhase broadPhase,
+			YSystem system)
 	{
 		super(gravity, pool, broadPhase);
-		init();
+		init(system);
 	}
 
-	public YWorld(Vec2 gravity, IWorldPool pool, BroadPhaseStrategy strategy)
+	public YWorld(Vec2 gravity, IWorldPool pool,
+			BroadPhaseStrategy strategy, YSystem system)
 	{
 		super(gravity, pool, strategy);
-		init();
+		init(system);
 	}
 
-	public YWorld(Vec2 gravity, IWorldPool pool)
+	public YWorld(Vec2 gravity, IWorldPool pool, YSystem system)
 	{
 		super(gravity, pool);
-		init();
+		init(system);
 	}
 
-	public YWorld(Vec2 gravity)
+	public YWorld(Vec2 gravity, YSystem system)
 	{
 		super(gravity);
-		init();
+		init(system);
 	}
 
 	@Override
@@ -55,13 +58,20 @@ public class YWorld extends World implements YISceneClockerPlugin
 
 	private boolean bContactLsnSetted;
 
-	private void init()
+	private void init(YSystem system)
 	{
-		setContactListener(new YWorldContactLsn());
+		setContactListener(new YWorldContactLsn(system));
 	}
 
 	private static class YWorldContactLsn implements ContactListener
 	{
+		private YSystem system;
+
+		public YWorldContactLsn(YSystem system)
+		{
+			this.system = system;
+		}
+
 		@Override
 		public void beginContact(Contact contact)
 		{
@@ -72,12 +82,38 @@ public class YWorld extends World implements YISceneClockerPlugin
 					.getOnContactListener();
 			YIOnContactListener lsnB = fixtureB
 					.getOnContactListener();
+//			if (null != lsnA)
+//				lsnA.beginContact(fixtureA, fixtureB, fixtureB
+//						.getBody().getDomain());
+//			if (null != lsnB)
+//				lsnB.beginContact(fixtureB, fixtureA, fixtureA
+//						.getBody().getDomain());
 			if (null != lsnA)
-				lsnA.beginContact(fixtureA, fixtureB, fixtureB
-						.getBody().getDomain());
+			{
+				YABaseDomain domain = fixtureB.getBody()
+						.getDomain();
+				if (null == domain)
+				{
+					domain = system.queryDomainByKey(fixtureB
+							.getBody()
+							.getDomainKey());
+					fixtureB.getBody().setDomain(domain);
+				}
+				lsnA.beginContact(fixtureA, fixtureB, domain);
+			}
 			if (null != lsnB)
-				lsnB.beginContact(fixtureB, fixtureA, fixtureA
-						.getBody().getDomain());
+			{
+				YABaseDomain domain = fixtureA.getBody()
+						.getDomain();
+				if (null == domain)
+				{
+					domain = system.queryDomainByKey(fixtureA
+							.getBody()
+							.getDomainKey());
+					fixtureA.getBody().setDomain(domain);
+				}
+				lsnB.beginContact(fixtureB, fixtureA, domain);
+			}
 		}
 
 		@Override
@@ -91,11 +127,31 @@ public class YWorld extends World implements YISceneClockerPlugin
 			YIOnContactListener lsnB = fixtureB
 					.getOnContactListener();
 			if (null != lsnA)
-				lsnA.endContact(fixtureA, fixtureB, fixtureB
-						.getBody().getDomain());
+			{
+				YABaseDomain domain = fixtureB.getBody()
+						.getDomain();
+				if (null == domain)
+				{
+					domain = system.queryDomainByKey(fixtureB
+							.getBody()
+							.getDomainKey());
+					fixtureB.getBody().setDomain(domain);
+				}
+				lsnA.endContact(fixtureA, fixtureB, domain);
+			}
 			if (null != lsnB)
-				lsnB.endContact(fixtureB, fixtureA, fixtureA
-						.getBody().getDomain());
+			{
+				YABaseDomain domain = fixtureA.getBody()
+						.getDomain();
+				if (null == domain)
+				{
+					domain = system.queryDomainByKey(fixtureA
+							.getBody()
+							.getDomainKey());
+					fixtureA.getBody().setDomain(domain);
+				}
+				lsnB.endContact(fixtureB, fixtureA, domain);
+			}
 		}
 
 		@Override
