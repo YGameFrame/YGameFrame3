@@ -51,7 +51,7 @@ public class YDestructibleTerrainLogic extends YADomainLogic {
 	private PolyDefault polygon;
 	private YTiled tiled;
 	private RectF rect;
-	private ArrayList<Body> bodiesToDestroy;
+	private boolean ifReBuild;
 
 	public YDestructibleTerrainLogic(ArrayList<PointF> points, Bitmap bitmap,
 			World world, YTiled tiled) {
@@ -64,7 +64,7 @@ public class YDestructibleTerrainLogic extends YADomainLogic {
 		this.world = world;
 		this.points = points;
 		this.tiled = tiled;
-		bodiesToDestroy = new ArrayList<Body>();
+		ifReBuild = false;
 	}
 
 	@Override
@@ -97,17 +97,15 @@ public class YDestructibleTerrainLogic extends YADomainLogic {
 	protected void onPreframe(YBaseDomain domainContext) {
 		// TODO Auto-generated method stub
 		super.onPreframe(domainContext);
-		createBody(polygon);
-		Body oriBody = findBody("ori_" + domainContext.KEY);
-		if (oriBody != null) {
-//			while (world.isLocked()) {
-//				continue;
-//			}
-			//bodiesToDestroy.add(oriBody);
-			world.destroyBody(oriBody);
+		if (ifReBuild) {
+			createBody(polygon);
+			Body oriBody = findBody("ori_" + domainContext.KEY);
+			if (oriBody != null) {
+				world.destroyBody(oriBody);
+			}
 		}
 	}
-	
+
 	private void createBody(PolyDefault polygon) {
 		// 刷新刚体时，需要把原刚体信息更新
 		Body oriBody = findBody("new_" + domainContext.KEY);
@@ -119,9 +117,6 @@ public class YDestructibleTerrainLogic extends YADomainLogic {
 		BodyDef bodyDef = new BodyDef();
 		bodyDef.position.set(0, 0);
 		bodyDef.type = BodyType.STATIC;
-//		while (world.isLocked()) {
-//			continue;
-//		}
 		body = world.createBody(bodyDef);
 		body.setUserData("new_" + domainContext.KEY);
 		body.setDomain(domainContext);
@@ -145,9 +140,6 @@ public class YDestructibleTerrainLogic extends YADomainLogic {
 
 		shape.set(v1, v2);
 		fixtureDef.shape = shape;
-//		while (world.isLocked()) {
-//			continue;
-//		}
 		body.createFixture(fixtureDef);
 	}
 
@@ -169,6 +161,7 @@ public class YDestructibleTerrainLogic extends YADomainLogic {
 		clipCircle(x, y, radius);
 		bitmap = reDraw(bitmap, x, y, radius);
 		texture.setBitmap(bitmap, false);
+		ifReBuild = true;
 	}
 
 	private void clipCircle(float x, float y, float radius) {
