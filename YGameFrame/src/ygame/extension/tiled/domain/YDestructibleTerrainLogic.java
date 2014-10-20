@@ -103,6 +103,7 @@ public class YDestructibleTerrainLogic extends YADomainLogic {
 			if (oriBody != null) {
 				world.destroyBody(oriBody);
 			}
+			ifReBuild = false;
 		}
 	}
 
