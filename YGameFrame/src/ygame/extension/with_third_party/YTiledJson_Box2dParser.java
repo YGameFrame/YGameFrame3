@@ -37,6 +37,7 @@ import ygame.extension.YTiledJsonParser;
  * @author yunzhong
  * 
  */
+@Deprecated
 public class YTiledJson_Box2dParser extends YTiledJsonParser
 {
 	private static final String BOX2D_BODYS = "box2d_bodies";
