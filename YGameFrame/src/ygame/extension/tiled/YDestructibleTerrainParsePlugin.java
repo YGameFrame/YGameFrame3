@@ -40,12 +40,16 @@ public class YDestructibleTerrainParsePlugin implements YITiledParsePlugin {
 	/**
 	 * 可破坏地形，目前只支持一个图层的砖块来自于一个索引图。
 	 * 
-	 * @param key 实体Key，生成的实体的真正Key为“Key_0”,“Key_1”等等
-	 * @param imgLayerName 视图层LayerName
-	 * @param objLayerName 对象层LayerName
-	 * @param world Box2D世界
+	 * @param key
+	 *            实体Key，生成的实体的真正Key为“Key_0”,“Key_1”等等
+	 * @param imgLayerName
+	 *            视图层LayerName
+	 * @param objLayerName
+	 *            对象层LayerName
+	 * @param world
+	 *            Box2D世界
 	 */
-	
+
 	public YDestructibleTerrainParsePlugin(String key, String imgLayerName,
 			String objLayerName, World world) {
 		this.key = key;
@@ -69,8 +73,6 @@ public class YDestructibleTerrainParsePlugin implements YITiledParsePlugin {
 		tiled.addToScene(domains.toArray(new YABaseDomain[0]));
 	}
 
-	
-	
 	private ArrayList<YABaseDomain> createDomains(
 			ArrayList<ArrayList<PointF>> pointsInWorld,
 			ArrayList<Bitmap> bitmaps, Resources resources, YTiled tiled) {
@@ -135,8 +137,12 @@ public class YDestructibleTerrainParsePlugin implements YITiledParsePlugin {
 	}
 
 	private Bitmap createLargeBitmap(YTiled tiled, YLayer imgLayer) {
-		int mapWidth = tiled.getGlobalWidth() * tiled.getTileWidthInPixels();
-		int mapHeight = tiled.getGlobalHeight() * tiled.getTileHeightInPixels();
+		int tileWidthInPixels = tiled.getTileWidthInPixels();
+		int tileHeightInPixels = tiled.getTileHeightInPixels();
+		int iTileColumns = tiled.getGlobalWidth();
+		int iTileRows = tiled.getGlobalHeight();
+		int mapWidth = iTileColumns * tileWidthInPixels;
+		int mapHeight = iTileRows * tileHeightInPixels;
 		Bitmap bitmap = Bitmap.createBitmap(mapWidth, mapHeight,
 				Config.ARGB_8888);
 		Canvas canvas = new Canvas(bitmap);
@@ -144,8 +150,6 @@ public class YDestructibleTerrainParsePlugin implements YITiledParsePlugin {
 		YTileSet tileSet = tiled.getTileSetsByLayer(imgLayer);
 		Rect[] peiceTiles = getPieceTiles(tileSet, indexPicture);
 		Rect currentRect = new Rect();
-		int iTileColumns = tiled.getGlobalWidth();
-		int iTileRows = tiled.getGlobalHeight();
 		int[] data = imgLayer.getData();
 		for (int i = 0; i < iTileRows; i++) {
 			for (int j = 0; j < iTileColumns; j++) {
@@ -153,10 +157,10 @@ public class YDestructibleTerrainParsePlugin implements YITiledParsePlugin {
 				if (currentData == 0) {
 					continue;
 				}
-				int leftPoint = j * iTileColumns;
-				int topPoint = i * iTileRows;
-				currentRect.set(leftPoint, topPoint, leftPoint + iTileColumns,
-						topPoint + iTileRows);
+				int leftPoint = j * tileWidthInPixels;
+				int topPoint = i * tileHeightInPixels;
+				currentRect.set(leftPoint, topPoint, leftPoint
+						+ tileWidthInPixels, topPoint + tileHeightInPixels);
 				canvas.drawBitmap(indexPicture, peiceTiles[currentData - 1],
 						currentRect, null);
 			}
