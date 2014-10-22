@@ -33,6 +33,15 @@ public class YException extends RuntimeException
 
 	public YException(YException e)
 	{
-		this(e.detailMsg , e.tag , e.suggest);
+		this(e.detailMsg, e.tag, e.suggest);
+	}
+
+	public YException(Exception e)
+	{
+		super(e);
+		this.detailMsg = "";
+		this.suggest = "";
+		this.tag = "";
+		e.printStackTrace();
 	}
 }

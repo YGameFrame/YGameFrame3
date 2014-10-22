@@ -235,6 +235,8 @@ public final class YTiledBean
 		private YPolygon[] polygon;
 		private float x, y;
 		private String name;
+		private String type;
+		private float width , height;
 		private YPolygon[] polyline;
 		private YObject.YProperties properties;
 
@@ -296,6 +298,36 @@ public final class YTiledBean
 		void setProperties(YObject.YProperties properties)
 		{
 			this.properties = properties;
+		}
+
+		public String getType()
+		{
+			return type;
+		}
+
+		void setType(String type)
+		{
+			this.type = type;
+		}
+
+		public float getWidth()
+		{
+			return width;
+		}
+
+		void setWidth(float width)
+		{
+			this.width = width;
+		}
+
+		public float getHeight()
+		{
+			return height;
+		}
+
+		void setHeight(float height)
+		{
+			this.height = height;
 		}
 
 		public static class YProperties
