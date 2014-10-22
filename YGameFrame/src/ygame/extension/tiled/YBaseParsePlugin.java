@@ -13,14 +13,16 @@ public class YBaseParsePlugin implements YITiledParsePlugin
 	private static String TAG = YBaseParsePlugin.class.getSimpleName();
 
 	private String[] layerNames;
+	private Object[] extraParams;
 
-	public YBaseParsePlugin(String... layerNames)
+	public YBaseParsePlugin(Object[] extraParams, String... layerNames)
 	{
 		this.layerNames = layerNames;
+		this.extraParams = extraParams;
 	}
 
 	@Override
-	public void parse(YTiled tiled, float fPixelsPerUnit,
+	public final void parse(YTiled tiled, float fPixelsPerUnit,
 			Resources resources)
 	{
 		for (String layerName : layerNames)
@@ -30,7 +32,8 @@ public class YBaseParsePlugin implements YITiledParsePlugin
 			for (YObject obj : objects)
 				try
 				{
-					YABaseDomain domain = parseDomain(obj, fPixelsPerUnit, tiled);
+					YABaseDomain domain = parseDomain(obj,
+							fPixelsPerUnit, tiled);
 					tiled.addToScene(domain);
 				} catch (ClassNotFoundException e)
 				{
@@ -47,6 +50,8 @@ public class YBaseParsePlugin implements YITiledParsePlugin
 					throw new YException(e);
 				}
 		}
+		// extraParams不过是为了传参给解析使用而已，解析完成后释放内存
+		extraParams = null;
 	}
 
 	protected YABaseDomain parseDomain(YObject object,
@@ -86,7 +91,7 @@ public class YBaseParsePlugin implements YITiledParsePlugin
 					vec2WorldRectCenter.y,
 					object.getWidth() / fPixelsPerUnit,
 					object.getHeight() / fPixelsPerUnit);
-			return builder.build(info , getExtraParams());
+			return builder.build(info, extraParams);
 		} else
 			throw new YException(builderClassName
 					+ "没有实现YIDomainBuilder接口", TAG, "");
@@ -112,7 +117,7 @@ public class YBaseParsePlugin implements YITiledParsePlugin
 
 	public static interface YIDomainBuilder
 	{
-		YABaseDomain build(YDomainBuildInfo info , Object[] extraParams);
+		YABaseDomain build(YDomainBuildInfo info, Object[] extraParams);
 	}
 
 }
