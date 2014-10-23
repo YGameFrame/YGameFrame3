@@ -168,4 +168,10 @@ public abstract class YABaseDomain extends YAStateMachineContext
 		}
 		sendRequest(request, system);
 	}
+
+	@Override
+	public String toString()
+	{
+		return "domain_" + KEY;
+	}
 }
