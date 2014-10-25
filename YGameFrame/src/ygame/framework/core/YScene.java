@@ -123,7 +123,7 @@ public class YScene extends YAStateMachineContext
 		request.domains = domains;
 		sendRequest(request, SYSTEM);
 	}
-	
+
 	private void handleAddDomains(YABaseDomain[] domains)
 	{
 		for (YABaseDomain domain : domains)
@@ -178,11 +178,25 @@ public class YScene extends YAStateMachineContext
 	{
 		if (null != domains)
 			for (YABaseDomain domain : domains)
-				mapDomains.remove(domain.KEY);
+			{
+				YABaseDomain domainRemoved = mapDomains
+						.remove(domain.KEY);
+				if (null != domainRemoved
+						&& null == SYSTEM
+								.queryDomainByKey(domainRemoved.KEY))
+					domainRemoved.onDestroy(SYSTEM);
+			}
 
 		if (null != domainKeys)
 			for (String key : domainKeys)
-				mapDomains.remove(key);
+			{
+				YABaseDomain domainRemoved = mapDomains
+						.remove(key);
+				if (null != domainRemoved
+						&& null == SYSTEM
+								.queryDomainByKey(domainRemoved.KEY))
+					domainRemoved.onDestroy(SYSTEM);
+			}
 	}
 
 	/**

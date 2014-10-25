@@ -174,4 +174,8 @@ public abstract class YABaseDomain extends YAStateMachineContext
 	{
 		return "domain_" + KEY;
 	}
+
+	protected void onDestroy(YSystem system)
+	{
+	}
 }
