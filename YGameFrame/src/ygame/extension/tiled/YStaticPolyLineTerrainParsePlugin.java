@@ -97,8 +97,7 @@ public class YStaticPolyLineTerrainParsePlugin implements YITiledParsePlugin
 					offset, fPixelsPerUnit);
 			shape.set(vec2Pre, vec2Cur);
 			body.createFixture(fd)
-					.setUserData(object.getProperties()
-							.getDescription());
+					.setUserData(object.getName());
 			vec2Pre = vec2Cur;
 		}
 	}
