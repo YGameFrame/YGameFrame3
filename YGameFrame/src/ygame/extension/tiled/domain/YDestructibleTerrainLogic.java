@@ -58,7 +58,9 @@ public class YDestructibleTerrainLogic extends YADomainLogic {
 		rect = YPolygonClipper.getBound(points);
 		this.skeleton = new YRectangle(rect.width(), rect.height(), false, true);
 		this.mover = new YMover();
-		mover.setX(rect.centerX()).setY(rect.centerY()).setZ(-1);
+//		mover.setX(rect.centerX()).setY(rect.centerY()).setZ(-1);
+		//modify by yunzhong
+		mover.setX(rect.centerX()).setY(rect.centerY()).setZ(0.2f);
 		this.bitmap = bitmap;
 		this.texture = new YTexture(bitmap, false);
 		this.world = world;

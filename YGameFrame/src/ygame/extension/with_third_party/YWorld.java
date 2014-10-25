@@ -77,7 +77,6 @@ public class YWorld extends World implements YISceneClockerPlugin
 		{
 			Fixture fixtureA = contact.getFixtureA();
 			Fixture fixtureB = contact.getFixtureB();
-
 			YIOnContactListener lsnA = fixtureA
 					.getOnContactListener();
 			YIOnContactListener lsnB = fixtureB
@@ -99,7 +98,7 @@ public class YWorld extends World implements YISceneClockerPlugin
 							.getDomainKey());
 					fixtureB.getBody().setDomain(domain);
 				}
-				lsnA.beginContact(fixtureA, fixtureB, domain);
+				lsnA.beginContact(fixtureA, fixtureB, domain , contact);
 			}
 			if (null != lsnB)
 			{
@@ -112,7 +111,7 @@ public class YWorld extends World implements YISceneClockerPlugin
 							.getDomainKey());
 					fixtureA.getBody().setDomain(domain);
 				}
-				lsnB.beginContact(fixtureB, fixtureA, domain);
+				lsnB.beginContact(fixtureB, fixtureA, domain , contact);
 			}
 		}
 
@@ -137,7 +136,7 @@ public class YWorld extends World implements YISceneClockerPlugin
 							.getDomainKey());
 					fixtureB.getBody().setDomain(domain);
 				}
-				lsnA.endContact(fixtureA, fixtureB, domain);
+				lsnA.endContact(fixtureA, fixtureB, domain , contact);
 			}
 			if (null != lsnB)
 			{
@@ -150,7 +149,7 @@ public class YWorld extends World implements YISceneClockerPlugin
 							.getDomainKey());
 					fixtureA.getBody().setDomain(domain);
 				}
-				lsnB.endContact(fixtureB, fixtureA, domain);
+				lsnB.endContact(fixtureB, fixtureA, domain , contact);
 			}
 		}
 
