@@ -105,13 +105,14 @@ public class YDestructibleTerrainParsePlugin implements YITiledParsePlugin {
 			ArrayList<ArrayList<PointF>> pointsOfPolygons, YLayer imgLayer,
 			YTiled tiled) {
 		// TODO Auto-generated method stub
-		Bitmap bitmap = createLargeBitmap(tiled, imgLayer);
+		// Bitmap bitmap = createLargeBitmap(tiled, imgLayer);
 		ArrayList<Bitmap> bitmaps = new ArrayList<Bitmap>();
 		for (ArrayList<PointF> points : pointsOfPolygons) {
 			RectF rect = YPolygonClipper.getBound(points);
-			Bitmap bitmapForDomain = Bitmap.createBitmap(bitmap,
-					(int) rect.left, (int) rect.top, (int) rect.width(),
-					(int) rect.height());
+			Bitmap bitmapForDomain = createPieceBitmap(rect, tiled, imgLayer);
+			// Bitmap bitmapForDomain = Bitmap.createBitmap(bitmap,
+			// (int) rect.left, (int) rect.top, (int) rect.width(),
+			// (int) rect.height());
 			Path path = new Path();
 			path.moveTo(points.get(0).x - rect.left, points.get(0).y - rect.top);
 			for (int i = 1; i < points.size(); i++) {
@@ -122,8 +123,51 @@ public class YDestructibleTerrainParsePlugin implements YITiledParsePlugin {
 			clipBitmapByPath(bitmapForDomain, path);
 			bitmaps.add(bitmapForDomain);
 		}
-		bitmap.recycle();
+		// bitmap.recycle();
 		return bitmaps;
+	}
+
+	private Bitmap createPieceBitmap(RectF rect, YTiled tiled, YLayer imgLayer) {
+		Rect indexRect = new Rect();
+		indexRect.left = (int) rect.left / tiled.getTileWidthInPixels();
+		indexRect.top = (int) rect.top / tiled.getTileHeightInPixels();
+		indexRect.right = (int) rect.right / tiled.getTileWidthInPixels() + 1;
+		indexRect.bottom = (int) rect.bottom / tiled.getTileHeightInPixels()
+				+ 1;
+		int bitmapWidth = (int) (indexRect.width() * tiled
+				.getTileWidthInPixels());
+		int bitmapHeight = (int) (indexRect.height() * tiled
+				.getTileHeightInPixels());
+		Bitmap pieceBitmap = Bitmap.createBitmap(bitmapWidth, bitmapHeight,
+				Config.ARGB_8888);
+		Canvas canvas = new Canvas(pieceBitmap);
+		Bitmap indexPicture = tiled.getIndexPictureByLayer(imgLayer);
+		YTileSet tileSet = tiled.getTileSetsByLayer(imgLayer);
+		Rect[] peiceTiles = getPieceTiles(tileSet, indexPicture);
+		Rect currentRect = new Rect();
+		int[] data = imgLayer.getData();
+		for (int i = 0; i < indexRect.height(); i++) {
+			for (int j = 0; j < indexRect.width(); j++) {
+				int currentData = data[(int) ((indexRect.top + i)
+						* tiled.getGlobalWidth() + indexRect.left + j)];
+				if (currentData == 0) {
+					continue;
+				}
+				int leftPoint = j * tiled.getTileWidthInPixels();
+				int topPoint = i * tiled.getTileHeightInPixels();
+				currentRect.set(leftPoint, topPoint,
+						leftPoint + tiled.getTileWidthInPixels(), topPoint
+								+ tiled.getTileHeightInPixels());
+				canvas.drawBitmap(indexPicture, peiceTiles[currentData - 1],
+						currentRect, null);
+			}
+		}
+		Bitmap bitmapForDomain = Bitmap.createBitmap(pieceBitmap, (int)(rect.left
+				- indexRect.left * tiled.getTileWidthInPixels()), (int)(rect.top
+				- indexRect.top * tiled.getTileHeightInPixels()), (int)rect.width(),
+				(int)rect.height());
+		pieceBitmap.recycle();
+		return bitmapForDomain;
 	}
 
 	private void clipBitmapByPath(Bitmap bitmapForDomain, Path path) {
