@@ -20,6 +20,7 @@ import android.content.Context;
 import android.content.pm.ConfigurationInfo;
 import android.opengl.GLES20;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.SystemClock;
 import android.util.Log;
 import android.view.WindowManager;
@@ -87,7 +88,9 @@ public final class YSystem
 
 	public volatile boolean bFPS_Debug;
 
-	final private Handler handler;
+	final private Handler handler = new Handler(Looper.getMainLooper());
+
+	private final YAudioManager audioManager;
 
 	YSystem(YView yview)
 	{
@@ -98,12 +101,12 @@ public final class YSystem
 		dbFrameRate_fps = getRefreshRate(YVIEW.getContext());
 		context = YVIEW.getContext();
 
-		handler = new Handler();
-
 		sceneDEFAULT = new YScene(this, "DEFAULT");
 		scenes.add(sceneDEFAULT);
 		sceneCurrent = sceneDEFAULT;
 		sceneCurrent.forceRun();
+
+		audioManager = new YAudioManager(this);
 	}
 
 	/**
@@ -154,6 +157,11 @@ public final class YSystem
 			return true;
 		}
 		return false;
+	}
+
+	public YAudioManager getAudioManager()
+	{
+		return audioManager;
 	}
 
 	/**
