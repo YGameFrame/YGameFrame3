@@ -28,12 +28,15 @@ public class YBaseParsePlugin implements YITiledParsePlugin
 		for (String layerName : layerNames)
 		{
 			YLayer layer = tiled.getLayerByName(layerName);
+			final float z = null == layer.getProperties() ? 0
+					: layer.getProperties().getZ();
 			YObject[] objects = layer.getObjects();
 			for (YObject obj : objects)
 				try
 				{
 					YABaseDomain domain = parseDomain(obj,
-							fPixelsPerUnit, tiled);
+							fPixelsPerUnit, z,
+							tiled);
 					tiled.addToScene(domain);
 				} catch (ClassNotFoundException e)
 				{
@@ -55,7 +58,7 @@ public class YBaseParsePlugin implements YITiledParsePlugin
 	}
 
 	protected YABaseDomain parseDomain(YObject object,
-			float fPixelsPerUnit, YTiled tiled)
+			float fPixelsPerUnit, float z, YTiled tiled)
 			throws ClassNotFoundException, InstantiationException,
 			IllegalAccessException
 	{
@@ -88,7 +91,7 @@ public class YBaseParsePlugin implements YITiledParsePlugin
 			YDomainBuildInfo info = new YDomainBuildInfo(
 					object.getName(),
 					vec2WorldRectCenter.x,
-					vec2WorldRectCenter.y,
+					vec2WorldRectCenter.y, z,
 					object.getWidth() / fPixelsPerUnit,
 					object.getHeight() / fPixelsPerUnit);
 			return builder.build(info, extraParams);

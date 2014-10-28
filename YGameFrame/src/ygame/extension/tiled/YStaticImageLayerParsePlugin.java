@@ -154,7 +154,8 @@ public class YStaticImageLayerParsePlugin implements YITiledParsePlugin
 				tileDatas.toArray(new YTileData[0]), rows, cols);
 		//@formatter:off
 		// 2.根据2维的tileDatas计算其左上角顶点的坐标信息
-		final float fZ = calculateZByLayerIndex(getLayerIndex(layer));
+		final float fZ = null == layer.getProperties()? calculateZByLayerIndex(getLayerIndex(layer)) :
+			layer.getProperties().getZ();
 		YTileSet tileSet = tiled.getTileSetsByLayer(layer);
 		final float fWidth = tileSet.getTilewidth() / fPixelsPerUnit;
 		final float fHeight = tileSet.getTileheight() / fPixelsPerUnit;
@@ -361,24 +362,24 @@ public class YStaticImageLayerParsePlugin implements YITiledParsePlugin
 		 */
 		private float[] generateSixTexCoords()
 		{
-			 float[] leftTopPos =
-			 { textureCoord.left, textureCoord.top };
-			 float[] rightTopPos =
-			 { textureCoord.right, textureCoord.top };
-			 float[] rightBottom =
-			 { textureCoord.right, textureCoord.bottom };
-			 float[] leftBottom =
-			 { textureCoord.left, textureCoord.bottom };
+			float[] leftTopPos =
+			{ textureCoord.left, textureCoord.top };
+			float[] rightTopPos =
+			{ textureCoord.right, textureCoord.top };
+			float[] rightBottom =
+			{ textureCoord.right, textureCoord.bottom };
+			float[] leftBottom =
+			{ textureCoord.left, textureCoord.bottom };
 
 			// OpenGL坐标与bitmap的坐标关于x轴镜像对称，故需上下颠倒一下
-//			float[] leftBottom =
-//			{ textureCoord.left, textureCoord.top };
-//			float[] rightBottom =
-//			{ textureCoord.right, textureCoord.top };
-//			float[] rightTopPos =
-//			{ textureCoord.right, textureCoord.bottom };
-//			float[] leftTopPos =
-//			{ textureCoord.left, textureCoord.bottom };
+			// float[] leftBottom =
+			// { textureCoord.left, textureCoord.top };
+			// float[] rightBottom =
+			// { textureCoord.right, textureCoord.top };
+			// float[] rightTopPos =
+			// { textureCoord.right, textureCoord.bottom };
+			// float[] leftTopPos =
+			// { textureCoord.left, textureCoord.bottom };
 
 			float[] tmp = concat(leftTopPos, leftBottom);
 			tmp = concat(tmp, rightBottom);

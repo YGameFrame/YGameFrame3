@@ -47,6 +47,7 @@ public abstract class YASpriteDomainLogic extends YADomainLogic
 
 	protected float fInitX_M;
 	protected float fInitY_M;
+	protected float fInitZ_M;
 
 	private World world;
 
@@ -82,6 +83,7 @@ public abstract class YASpriteDomainLogic extends YADomainLogic
 		BodyDef bd = new BodyDef();
 		bd.type = BodyType.DYNAMIC;
 		bd.position.set(fInitX_M, fInitY_M);
+		mover.setZ(fInitZ_M);
 		this.body = world.createBody(bd);
 		world = null;// 释放之
 		body.setDomain(domainContext);
@@ -184,6 +186,17 @@ public abstract class YASpriteDomainLogic extends YADomainLogic
 	public boolean getCameraChase()
 	{
 		return bCameraChase;
+	}
+
+	public void showImage(int iColumnIndex, int iRowIndex)
+	{
+		this.iColumnIndex = iColumnIndex;
+		this.iRowIndex = iRowIndex;
+	}
+
+	public YTileSheet getTileSheet()
+	{
+		return tileSheet;
 	}
 
 }

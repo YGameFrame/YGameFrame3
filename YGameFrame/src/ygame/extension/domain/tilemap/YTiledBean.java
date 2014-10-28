@@ -121,6 +121,7 @@ public final class YTiledBean
 		// 暂未使用
 		// private boolean visible;
 		private int x, y;
+		private YLayer.YProperties properties;
 		private String type;
 		private String name;
 		private int[] data;
@@ -214,6 +215,16 @@ public final class YTiledBean
 			this.objects = objects;
 		}
 
+		public YLayer.YProperties getProperties()
+		{
+			return properties;
+		}
+
+		void setProperties(YLayer.YProperties properties)
+		{
+			this.properties = properties;
+		}
+
 		@Override
 		public String toString()
 		{
@@ -228,6 +239,21 @@ public final class YTiledBean
 			return sb.toString();
 		}
 
+		public static class YProperties
+		{
+			private float z;
+
+			public float getZ()
+			{
+				return z;
+			}
+
+			void setZ(float z)
+			{
+				this.z = z;
+			}
+		}
+
 	}
 
 	public static class YObject
@@ -236,7 +262,7 @@ public final class YTiledBean
 		private float x, y;
 		private String name;
 		private String type;
-		private float width , height;
+		private float width, height;
 		private YPolygon[] polyline;
 		private YObject.YProperties properties;
 
