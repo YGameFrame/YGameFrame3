@@ -9,6 +9,8 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import org.jbox2d.common.Vec2;
+
 import ygame.exception.YException;
 import ygame.extension.domain.tilemap.YTiledBean;
 import ygame.extension.domain.tilemap.YTiledBean.YLayer;
@@ -271,38 +273,63 @@ public final class YTiled
 	{
 		return tiledBean.getTilewidth();
 	}
-	
+
 	/**
 	 * 将Tiled坐标转换为真实世界坐标
 	 * 
-	 * @param point Tiled坐标
+	 * @param point
+	 *                Tiled坐标
 	 * @return 真实世界坐标
 	 */
-	public PointF tiledCoordToWorldCoord(PointF point) {
+	public PointF tiledCoordToWorldCoord(PointF point)
+	{
 		PointF pointInWorld = new PointF();
-		float centerX = getGlobalWidth()*getTileWidthInPixels()/2;
-		float centerY = getGlobalHeight()*getTileHeightInPixels()/2;
-		pointInWorld.x = (point.x - centerX)/fPixelsPerUnit;
-		pointInWorld.y = (centerY - point.y)/fPixelsPerUnit;
+		float centerX = getGlobalWidth() * getTileWidthInPixels() / 2;
+		float centerY = getGlobalHeight() * getTileHeightInPixels() / 2;
+		pointInWorld.x = (point.x - centerX) / fPixelsPerUnit;
+		pointInWorld.y = (centerY - point.y) / fPixelsPerUnit;
 		return pointInWorld;
 	}
 
 	/**
 	 * 将真实世界坐标转换为Tiled坐标
 	 * 
-	 * @param point 真实世界坐标
+	 * @param point
+	 *                真实世界坐标
 	 * @return Tiled坐标
 	 */
-	public PointF worldCoordToTiledCoord(PointF point) {
+	public PointF worldCoordToTiledCoord(PointF point)
+	{
 		PointF pointInTiled = new PointF();
-		float centerX = getGlobalWidth()*getTileWidthInPixels()/2;
-		float centerY = getGlobalHeight()*getTileHeightInPixels()/2;
-		pointInTiled.x = point.x*fPixelsPerUnit + centerX;
-		pointInTiled.y = centerY - point.y*fPixelsPerUnit;
+		float centerX = getGlobalWidth() * getTileWidthInPixels() / 2;
+		float centerY = getGlobalHeight() * getTileHeightInPixels() / 2;
+		pointInTiled.x = point.x * fPixelsPerUnit + centerX;
+		pointInTiled.y = centerY - point.y * fPixelsPerUnit;
 		return pointInTiled;
 	}
-	
-	public float getPixelsPerUnit() {
+
+	public float getPixelsPerUnit()
+	{
 		return fPixelsPerUnit;
+	}
+
+	public Vec2 tiledCoordToWorldCoord(Vec2 vec2Tiled,
+			Vec2 vec2Position)
+	{
+		final int iWidthInPixel = getTileWidthInPixels()
+				* getGlobalWidth();
+		final int iHeightInPixel = getTileHeightInPixels()
+				* getGlobalHeight();
+
+		final Vec2 OFFSET = new Vec2(-iWidthInPixel / 2.0f,
+				-iHeightInPixel / 2.0f);
+
+		Vec2 vecOppo = vec2Tiled.add(vec2Position).add(OFFSET);
+
+		vecOppo.y = -vecOppo.y;
+
+		vecOppo.x = vecOppo.x / fPixelsPerUnit;
+		vecOppo.y = vecOppo.y / fPixelsPerUnit;
+		return vecOppo;
 	}
 }
