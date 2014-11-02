@@ -10,18 +10,21 @@ import org.jbox2d.dynamics.BodyDef;
 import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.World;
 import org.jbox2d.dynamics.joints.DistanceJointDef;
+import org.jbox2d.dynamics.joints.Joint;
 import org.jbox2d.dynamics.joints.RevoluteJointDef;
 
 import ygame.domain.YADomainLogic;
 import ygame.domain.YDomain;
 import ygame.domain.YDomainView;
 import ygame.exception.YException;
+import ygame.extension.domain.YPolyLineDomain;
 import ygame.extension.domain.tilemap.YTiledBean.YLayer;
 import ygame.extension.domain.tilemap.YTiledBean.YObject;
 import ygame.extension.primitives.YRectangle;
 import ygame.extension.program.YSimpleProgram;
 import ygame.extension.program.YSimpleProgram.YAdapter;
 import ygame.extension.with_third_party.YWorld;
+import ygame.framework.core.YABaseDomain;
 import ygame.framework.core.YRequest;
 import ygame.framework.core.YScene;
 import ygame.framework.core.YSystem;
@@ -121,11 +124,47 @@ public class YGearParsePlugin implements YITiledParsePlugin
 		}
 
 		DistanceJointDef jd = new DistanceJointDef();
-		PointF jointPoint = tiled.tiledCoordToWorldCoord(new PointF(
-				objJoint.getX(), objJoint.getY()));
-//		jd.initialize(bodyA, bodyB,
-//				new Vec2(jointPoint.x, jointPoint.y));
-		world.createJoint(jd);
+		Vec2 jointPos = new Vec2(objJoint.getX(), objJoint.getY());
+		Vec2 anchorA = tiled.tiledCoordToWorldCoord(
+				new Vec2(objJoint.getPolyline()[0].getX(),
+						objJoint.getPolyline()[0]
+								.getY()),
+				jointPos);
+		Vec2 anchorB = tiled.tiledCoordToWorldCoord(
+				new Vec2(objJoint.getPolyline()[1].getX(),
+						objJoint.getPolyline()[1]
+								.getY()),
+				jointPos);
+
+		jd.initialize(bodyA, bodyB, anchorA, anchorB);
+		Joint joint = world.createJoint(jd);
+		tiled.addToScene(createJointDomain(jointName, joint));
+	}
+
+	private YABaseDomain createJointDomain(String jointName,
+			final Joint joint)
+	{
+		return new YPolyLineDomain(jointName, resources)
+		{
+			private Vec2 anchorA = new Vec2();
+			private Vec2 anchorB = new Vec2();
+
+			@Override
+			protected void onClockCycle(double dbElapseTime_s,
+					YSystem system, YScene sceneCurrent,
+					YMatrix matrix4pv,
+					YMatrix matrix4Projection,
+					YMatrix matrix4View)
+			{
+				super.onClockCycle(dbElapseTime_s, system,
+						sceneCurrent, matrix4pv,
+						matrix4Projection, matrix4View);
+				joint.getAnchorA(anchorA);
+				joint.getAnchorB(anchorB);
+				show(anchorA.x, anchorA.y, 0.03f, anchorB.x,
+						anchorB.y, 0.03f);
+			}
+		};
 	}
 
 	private void createRevoluteJointAndBodyIfNeed(YTiled tiled,
