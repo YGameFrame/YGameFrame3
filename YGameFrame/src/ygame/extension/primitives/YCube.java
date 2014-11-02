@@ -79,7 +79,7 @@ public class YCube extends YSkeleton
 		
 		setIndices(indices);
 		setNormals(normals);
-		setPositions(vertices);
+		setPositions(vertices , true);
 		if (mCreateVertexColorBuffer)
 			setColors(colors);
 		if (mCreateTextureCoords)

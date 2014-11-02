@@ -4,8 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import ygame.domain.YABaseShaderProgram;
-import ygame.exception.YException;
-import ygame.skeleton.YAttributeDataSource;
+import ygame.skeleton.YIAttributeDataSource;
 import ygame.texture.YTexture;
 import android.opengl.GLES20;
 
@@ -299,7 +298,7 @@ public abstract class YAShaderProgram extends YABaseShaderProgram
 	 *                数据源
 	 */
 	protected final void setAttribute(String strAttributeValueName,
-			YAttributeDataSource dataSource)
+			YIAttributeDataSource dataSource)
 	{
 		bindAttribute(attributes.get(strAttributeValueName), dataSource);
 	}
@@ -313,15 +312,10 @@ public abstract class YAShaderProgram extends YABaseShaderProgram
 	 *                数据源
 	 */
 	protected final void bindAttribute(YAttributeValue attributeValue,
-			YAttributeDataSource dataSource)
+			YIAttributeDataSource dataSource)
 	{
-		if (attributeValue.type != dataSource.type)
-			throw new YException("脚本变量与数据源类型不匹配",
-					YAttributeDataSource.class.getName(),
-					"脚本变量类型为：" + attributeValue.type.name
-							+ "，但数据源类型为："
-							+ dataSource.type.name);
-		bindDataSrcToValue(dataSource, attributeValue);
+		// bindDataSrcToValue(dataSource, attributeValue);
+		dataSource.bindToAttributeValue(attributeValue);
 	}
 
 	/**
@@ -349,17 +343,17 @@ public abstract class YAShaderProgram extends YABaseShaderProgram
 		return uniforms.get(strUniformValueName);
 	}
 
-	private static void bindDataSrcToValue(YAttributeDataSource dataSource,
-			YAttributeValue attribute)
-	{
-		GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER,
-				dataSource.getHandle());
-
-		GLES20.glEnableVertexAttribArray(attribute.iValueHandle);
-		GLES20.glVertexAttribPointer(attribute.iValueHandle,
-				attribute.type.componentNum,
-				attribute.type.componentType, false, 0, 0);
-	}
+//	private static void bindDataSrcToValue(YAttributeDataSource dataSource,
+//			YAttributeValue attribute)
+//	{
+//		GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER,
+//				dataSource.getHandle());
+//
+//		GLES20.glEnableVertexAttribArray(attribute.valueHandle);
+//		GLES20.glVertexAttribPointer(attribute.valueHandle,
+//				attribute.type.componentNum,
+//				attribute.type.componentType, false, 0, 0);
+//	}
 
 	private static Map<String, YAttributeValue> getAttributes(
 			int iProgramHandle)

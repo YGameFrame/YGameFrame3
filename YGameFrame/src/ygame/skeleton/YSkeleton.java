@@ -33,10 +33,10 @@ import ygame.utils.YBufferUtils;
 public abstract class YSkeleton
 {
 
-	private YAttributeDataSource aColor;
-	private YAttributeDataSource aTexCoord;
-	private YAttributeDataSource aNormal;
-	private YAttributeDataSource aPosition;
+	private YIAttributeDataSource aColor;
+	private YIAttributeDataSource aTexCoord;
+	private YIAttributeDataSource aNormal;
+	private YIAttributeDataSource aPosition;
 
 	private int iVertexNum;
 	private Buffer bufferIndex;
@@ -44,16 +44,31 @@ public abstract class YSkeleton
 
 	private boolean bHasIBO;
 
+
 	/**
 	 * 设置顶点位置坐标，默认其类型为<b>三维浮点向量</b> {@link YAttributeType#VEC3}
 	 * 
 	 * @param f_arrPosition
 	 *                顶点位置坐标数组
+	 * @param bImmutable
+	 *                真则不可变，反之可变
 	 */
-	final protected void setPositions(float[] f_arrPosition)
+	final protected void setPositions(float[] f_arrPosition,
+			boolean bImmutable)
 	{
-		aPosition = new YAttributeDataSource(f_arrPosition,
-				YAttributeType.VEC3);
+		if (bImmutable)
+			aPosition = new YImmutableAttributeDataSource(
+					f_arrPosition, YAttributeType.VEC3);
+		else
+		{
+			if (null == aPosition)
+				aPosition = new YMutableAttributeDataSource(
+						f_arrPosition,
+						YAttributeType.VEC3);
+			else
+				((YMutableAttributeDataSource) aPosition)
+						.setDatas(f_arrPosition);
+		}
 		iVertexNum = f_arrPosition.length / 3;
 	}
 
@@ -65,7 +80,7 @@ public abstract class YSkeleton
 	 */
 	final protected void setNormals(float[] f_arrNormals)
 	{
-		aNormal = new YAttributeDataSource(f_arrNormals,
+		aNormal = new YImmutableAttributeDataSource(f_arrNormals,
 				YAttributeType.VEC3);
 	}
 
@@ -77,7 +92,7 @@ public abstract class YSkeleton
 	 */
 	final protected void setTexCoords(float[] f_arrTexCoords)
 	{
-		aTexCoord = new YAttributeDataSource(f_arrTexCoords,
+		aTexCoord = new YImmutableAttributeDataSource(f_arrTexCoords,
 				YAttributeType.VEC2);
 	}
 
@@ -89,7 +104,7 @@ public abstract class YSkeleton
 	 */
 	final protected void setColors(float[] f_arrColors)
 	{
-		aColor = new YAttributeDataSource(f_arrColors,
+		aColor = new YImmutableAttributeDataSource(f_arrColors,
 				YAttributeType.VEC4);
 	}
 
@@ -114,7 +129,7 @@ public abstract class YSkeleton
 	 * 
 	 * @return 顶点颜色数据源
 	 */
-	final public YAttributeDataSource getColorDataSource()
+	final public YIAttributeDataSource getColorDataSource()
 	{
 		return aColor;
 	}
@@ -124,7 +139,7 @@ public abstract class YSkeleton
 	 * 
 	 * @return 顶点纹理坐标数据源
 	 */
-	final public YAttributeDataSource getTexCoordDataSource()
+	final public YIAttributeDataSource getTexCoordDataSource()
 	{
 		return aTexCoord;
 	}
@@ -134,7 +149,7 @@ public abstract class YSkeleton
 	 * 
 	 * @return 顶点法向量数据源
 	 */
-	final public YAttributeDataSource getNormalDataSource()
+	final public YIAttributeDataSource getNormalDataSource()
 	{
 		return aNormal;
 	}
@@ -144,7 +159,7 @@ public abstract class YSkeleton
 	 * 
 	 * @return 顶点位置坐标数据源
 	 */
-	final public YAttributeDataSource getPositionDataSource()
+	final public YIAttributeDataSource getPositionDataSource()
 	{
 		return aPosition;
 	}

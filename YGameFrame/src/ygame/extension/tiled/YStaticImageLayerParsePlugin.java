@@ -432,7 +432,7 @@ public class YStaticImageLayerParsePlugin implements YITiledParsePlugin
 	{
 		private YTileSkeleton(float[] pos, float[] texCoords)
 		{
-			setPositions(pos);
+			setPositions(pos , true);
 			setTexCoords(texCoords);
 		}
 	}

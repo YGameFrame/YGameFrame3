@@ -56,7 +56,7 @@ public class YRectangle extends YSkeleton
 				fHalfWidth, fHalfHeight, 0, // 右上
 				fHalfWidth, -fHalfHeight, 0 // 右下
 		};
-		setPositions(fVertexPosition);
+		setPositions(fVertexPosition , true);
 
 		// 索引坐标
 		short[] sIndices =

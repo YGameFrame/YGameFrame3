@@ -30,7 +30,7 @@ class YTiledRectangle extends YSkeleton
 	{
 		float[] fTexCoord = getTexCoords();
 		float[] fVertexPosition = getVertexPosition(fTexCoord);
-		setPositions(fVertexPosition);
+		setPositions(fVertexPosition , true);
 		setIndices(getIndices());
 
 		if (bCreateTexCoord)

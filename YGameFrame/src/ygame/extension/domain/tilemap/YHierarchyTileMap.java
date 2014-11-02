@@ -519,7 +519,7 @@ final class YHierarchyTileMap extends YATileMapDomain
 	{
 		private YTileSkeleton(float[] pos, float[] texCoords)
 		{
-			setPositions(pos);
+			setPositions(pos , true);
 			setTexCoords(texCoords);
 		}
 	}

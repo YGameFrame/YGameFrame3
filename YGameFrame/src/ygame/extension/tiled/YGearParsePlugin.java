@@ -9,6 +9,7 @@ import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.BodyDef;
 import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.World;
+import org.jbox2d.dynamics.joints.DistanceJointDef;
 import org.jbox2d.dynamics.joints.RevoluteJointDef;
 
 import ygame.domain.YADomainLogic;
@@ -37,6 +38,7 @@ import android.graphics.PointF;
 public class YGearParsePlugin implements YITiledParsePlugin
 {
 	public static final String REVOLUTE_JOINT = "revolute_joint";
+	public static final String DISTANCE_JOINT = "distance_joint";
 
 	public static final String STATIC_BODY = "static_body";
 	public static final String DYNAMIC_BODY = "dynamic_body";
@@ -73,40 +75,92 @@ public class YGearParsePlugin implements YITiledParsePlugin
 				//@formatter:off
 					if (REVOLUTE_JOINT.equals(obj.getType()))
 					{
-						String jointName = obj.getName();
-						String[] bodyNames = jointName.split("\\:");
-						YObject objA = getObjectByName(bodyNames[0],objects);
-						YObject objB = getObjectByName(bodyNames[1],objects);
-						
-						Body bodyA = mapBody.get(objA);
-						if(null == bodyA)
-						{
-							bodyA = createBody(world,objA, tiled);
-							mapBody.put(objA, bodyA);
-							tiled.addToScene(createDomain(bodyA,objA,fPixelsPerUnit));
-						}
-						Body bodyB = mapBody.get(objB);
-						if(null == bodyB)
-						{
-							bodyB = createBody(world,objB, tiled);
-							mapBody.put(objB, bodyB);
-							tiled.addToScene(createDomain(bodyB, objB, fPixelsPerUnit));
-						}
-						
-						RevoluteJointDef jd = new RevoluteJointDef();
-						PointF jointPoint = tiled.tiledCoordToWorldCoord(new PointF(obj.getX(), obj.getY()));
-						jd.initialize(bodyA, bodyB, new Vec2(jointPoint.x, jointPoint.y));
-//						jd.lowerAngle = -8.0f * MathUtils.PI / 180.0f;
-//						jd.upperAngle = 8.0f * MathUtils.PI / 180.0f;
-//						jd.enableLimit = true;
-						world.createJoint(jd);
-						
-//						bodyA.applyAngularImpulse(100.0f);
-						
-						//@formatter:on
-				}
+						createRevoluteJointAndBodyIfNeed(
+								tiled,
+								fPixelsPerUnit,
+								mapBody,
+								objects, obj);
+					}else if(DISTANCE_JOINT.equals(obj.getType()))
+					{
+						createDistanceJointAndBodyIfNeed(
+								tiled,
+								fPixelsPerUnit,
+								mapBody,
+								objects, obj);
+					}
+					//@formatter:on
 			}
 		}
+	}
+
+	private void createDistanceJointAndBodyIfNeed(YTiled tiled,
+			float fPixelsPerUnit,
+			Map<YObject, Body> bodiesGenerated, YObject[] objects,
+			YObject objJoint)
+	{
+		String jointName = objJoint.getName();
+		String[] bodyNames = jointName.split("\\:");
+		YObject objA = getObjectByName(bodyNames[0], objects);
+		YObject objB = getObjectByName(bodyNames[1], objects);
+
+		Body bodyA = bodiesGenerated.get(objA);
+		if (null == bodyA)
+		{
+			bodyA = createBody(world, objA, tiled);
+			bodiesGenerated.put(objA, bodyA);
+			tiled.addToScene(createDomain(bodyA, objA,
+					fPixelsPerUnit));
+		}
+		Body bodyB = bodiesGenerated.get(objB);
+		if (null == bodyB)
+		{
+			bodyB = createBody(world, objB, tiled);
+			bodiesGenerated.put(objB, bodyB);
+			tiled.addToScene(createDomain(bodyB, objB,
+					fPixelsPerUnit));
+		}
+
+		DistanceJointDef jd = new DistanceJointDef();
+		PointF jointPoint = tiled.tiledCoordToWorldCoord(new PointF(
+				objJoint.getX(), objJoint.getY()));
+//		jd.initialize(bodyA, bodyB,
+//				new Vec2(jointPoint.x, jointPoint.y));
+		world.createJoint(jd);
+	}
+
+	private void createRevoluteJointAndBodyIfNeed(YTiled tiled,
+			float fPixelsPerUnit,
+			Map<YObject, Body> bodiesGenerated, YObject[] objects,
+			YObject objJoint)
+	{
+		String jointName = objJoint.getName();
+		String[] bodyNames = jointName.split("\\:");
+		YObject objA = getObjectByName(bodyNames[0], objects);
+		YObject objB = getObjectByName(bodyNames[1], objects);
+
+		Body bodyA = bodiesGenerated.get(objA);
+		if (null == bodyA)
+		{
+			bodyA = createBody(world, objA, tiled);
+			bodiesGenerated.put(objA, bodyA);
+			tiled.addToScene(createDomain(bodyA, objA,
+					fPixelsPerUnit));
+		}
+		Body bodyB = bodiesGenerated.get(objB);
+		if (null == bodyB)
+		{
+			bodyB = createBody(world, objB, tiled);
+			bodiesGenerated.put(objB, bodyB);
+			tiled.addToScene(createDomain(bodyB, objB,
+					fPixelsPerUnit));
+		}
+
+		RevoluteJointDef jd = new RevoluteJointDef();
+		PointF jointPoint = tiled.tiledCoordToWorldCoord(new PointF(
+				objJoint.getX(), objJoint.getY()));
+		jd.initialize(bodyA, bodyB,
+				new Vec2(jointPoint.x, jointPoint.y));
+		world.createJoint(jd);
 	}
 
 	private YObject getObjectByName(String bodyName, YObject[] objects)

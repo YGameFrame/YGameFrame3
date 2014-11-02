@@ -27,8 +27,6 @@ import ygame.framework.domain.YBaseDomain;
 public class YDomain extends YBaseDomain
 {
 
-	private YDomainView view;
-
 	/**
 	 * @param KEY
 	 *                实体标识
@@ -40,9 +38,8 @@ public class YDomain extends YBaseDomain
 	public YDomain(String KEY, YADomainLogic logic, YDomainView view)
 	{
 		super(KEY, logic, view);
-		this.view = view;
 	}
-
+	
 	/**
 	 * 获取<b>渲染程序</b>的<b>参数适配器</b>
 	 * {@link YABaseParametersAdapter}</br>
@@ -53,7 +50,7 @@ public class YDomain extends YBaseDomain
 	 */
 	public final YABaseParametersAdapter getParametersAdapter()
 	{
-		return view.program.daParamsAdapter;
+		return ((YDomainView)view).program.daParamsAdapter;
 	}
 
 }

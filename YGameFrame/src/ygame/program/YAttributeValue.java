@@ -23,13 +23,13 @@ package ygame.program;
  */
 public final class YAttributeValue
 {
-	final int iValueHandle;
+	public final int valueHandle;
 	final String strName;
-	final YAttributeType type;
+	public final YAttributeType type;
 
 	YAttributeValue(int iValueHandle, String strName, YAttributeType type)
 	{
-		this.iValueHandle = iValueHandle;
+		this.valueHandle = iValueHandle;
 		this.strName = strName;
 		this.type = type;
 	}

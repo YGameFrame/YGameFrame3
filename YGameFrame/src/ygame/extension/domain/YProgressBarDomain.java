@@ -151,7 +151,7 @@ public final class YProgressBarDomain extends YBaseDomain
 						domainView.iDrawMode);
 			else
 				drawWithVBO(skeleton.getVertexNum(),
-						domainView.iDrawMode);;
+						domainView.iDrawMode);
 		}
 
 	}

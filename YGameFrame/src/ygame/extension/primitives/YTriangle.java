@@ -49,7 +49,7 @@ public class YTriangle extends YSkeleton
 		{ 1, 2, 0 };
 
 		setColors(fVertexColor);
-		setPositions(fVertexPosition);
+		setPositions(fVertexPosition , true);
 		setIndices(sIndices);
 	}
 }

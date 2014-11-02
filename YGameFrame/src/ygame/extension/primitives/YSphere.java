@@ -147,7 +147,7 @@ public class YSphere extends YSkeleton
 		else
 			colors = createColorData(vertices.length / 3, f_arrRGBA);
 
-		setPositions(vertices);
+		setPositions(vertices , true);
 		setNormals(normals);
 		setTexCoords(textureCoords);
 		setColors(colors);
