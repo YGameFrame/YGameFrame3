@@ -3,6 +3,7 @@
 !YGameFrame/res/drawable
 !.gitignore
 !YGameFrame/libs/
+!YGameFrame/pom.xml
 
 YGameFrame/.classpath
 YGameFrame/.project
@@ -11,3 +12,4 @@ YGameFrame/AndroidManifest.xml
 YGameFrame/bin/
 YGameFrame/project.properties
 YGameFrame/gen/
+YGameFrame/target/

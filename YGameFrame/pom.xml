@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>ygame</groupId>
+	<artifactId>ygame</artifactId>
+	<version>1.0.0-SNAPSHOT</version>
+	<packaging>aar</packaging>
+
+	<properties>
+		<!-- use UTF-8 for everything -->
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>
+			UTF-8
+		</project.reporting.outputEncoding>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>com.google.android</groupId>
+			<artifactId>android</artifactId>
+			<version>4.4.2</version>
+			<scope>provided</scope>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>com.simpligility.maven.plugins</groupId>
+				<artifactId>android-maven-plugin</artifactId>
+				<extensions>true</extensions>
+				<configuration>
+					<androidManifestFile>
+						${project.basedir}/AndroidManifest.xml
+					</androidManifestFile>
+					<resourceDirectory>
+						${project.basedir}/res
+					</resourceDirectory>
+					<nativeLibrariesDirectory>
+						${project.basedir}/libs
+					</nativeLibrariesDirectory>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>
