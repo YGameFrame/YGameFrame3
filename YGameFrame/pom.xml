@@ -23,9 +23,52 @@
 			<version>4.4.2</version>
 			<scope>provided</scope>
 		</dependency>
+
+		<dependency>
+			<groupId>ygame-3rd-party</groupId>
+			<artifactId>gpcj</artifactId>
+			<version>1.0</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/libs/gpcj-2.2.0-full.jar</systemPath>
+		</dependency>
+
+		<dependency>
+			<groupId>ygame-3rd-party</groupId>
+			<artifactId>jackson-annotations</artifactId>
+			<version>1.0</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/libs/jackson-annotations-2.4.0.jar</systemPath>
+		</dependency>
+
+		<dependency>
+			<groupId>ygame-3rd-party</groupId>
+			<artifactId>jackson-core</artifactId>
+			<version>1.0</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/libs/jackson-core-2.4.1.1.jar</systemPath>
+		</dependency>
+
+		<dependency>
+			<groupId>ygame-3rd-party</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>1.0</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/libs/jackson-databind-2.4.1.3.jar</systemPath>
+		</dependency>
+
+		<dependency>
+			<groupId>ygame-3rd-party</groupId>
+			<artifactId>jbox2dlib</artifactId>
+			<version>1.0</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/libs/Jbox2dLib.jar</systemPath>
+		</dependency>
 	</dependencies>
 
 	<build>
+		<sourceDirectory>
+				${project.basedir}/src
+		</sourceDirectory>
 		<plugins>
 			<plugin>
 				<groupId>com.simpligility.maven.plugins</groupId>
@@ -35,6 +78,9 @@
 					<androidManifestFile>
 						${project.basedir}/AndroidManifest.xml
 					</androidManifestFile>
+					<sourceDirectory>
+						${project.basedir}/src
+					</sourceDirectory>
 					<resourceDirectory>
 						${project.basedir}/res
 					</resourceDirectory>
